@@ -28,5 +28,16 @@ Arogya connects with read-only Google Drive permission (`drive.readonly`) via Fi
 ```bash
 npm install
 npm run dev
+npm test
 npm run build
 ```
+
+## Local Content and Assets
+
+The health-reference panels load their Markdown directly from `health-content/`; keep those source documents in place. Model and background-video copies used by the app are served from `public/models/` and `public/videos/`, while the original assets remain under `3d-models/` and at the project root.
+
+The Zustand mission store persists through IndexedDB. Browser storage errors are reported in the console; the store uses in-memory persistence only in non-browser test/server environments.
+
+## Safety Scope
+
+Arogya is a demonstration decision-support tool. The displayed thresholds are not validated for operational use, and any urgent or worsening symptoms must follow mission medical escalation procedures.

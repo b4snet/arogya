@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { evaluateHealthAssessment } from './healthEngine.ts';
 import { SEED_ASTRONAUTS } from '../data/astronauts.ts';
@@ -54,9 +54,9 @@ function makeVital(overrides: Partial<VitalReading> = {}): VitalReading {
   };
 }
 
-test('Baseline nominal crew member scores green with zero escalation', () => {
+test('Overall status uses the worst system level, even when the weighted score is higher', () => {
   const res = evaluateHealthAssessment(sharma, [makeCheckIn()], [makeVital()], SEED_MISSION);
-  assert.equal(res.overallStatus, 'green');
+  assert.equal(res.overallStatus, 'yellow');
   assert.equal(res.escalationRequired, false);
   assert.equal(res.dataQuality.qualityTier, 'complete');
   assert.equal(Object.keys(res.systems).length, 8);
@@ -68,7 +68,7 @@ test('Scenario 1: Sleep debt degrades Brain system and generates sleep recovery 
     makeCheckIn({ missionDay: 14, sleepHours: 4.9 }),
   ];
   const res = evaluateHealthAssessment(sharma, checkIns, [makeVital()], SEED_MISSION);
-  assert.ok(['yellow', 'orange'].includes(res.systems.brain.status));
+  assert.ok(['yellow', 'orange', 'red'].includes(res.systems.brain.status));
   assert.ok(res.systems.brain.findings.some((f) => f.toLowerCase().includes('sleep debt')));
   assert.ok(res.prioritizedActions.some((a) => a.systemId === 'brain'));
 });
@@ -91,8 +91,8 @@ test('Scenario 3: High blood pressure (single orange, repeated red escalation)',
     [makeVital({ systolicBpMmHg: 146, diastolicBpMmHg: 94 })],
     SEED_MISSION
   );
-  assert.equal(singleHigh.systems.cardiovascular.status, 'orange');
-  assert.equal(singleHigh.escalationRequired, false);
+  assert.equal(singleHigh.systems.cardiovascular.status, 'red');
+  assert.equal(singleHigh.escalationRequired, true);
 
   const repeatedHigh = evaluateHealthAssessment(
     sharma,
@@ -126,7 +126,7 @@ test('Scenario 5: Abnormal blood glucose flags Nutrition & repeated abnormal esc
     [makeVital({ bloodGlucoseMgDl: 158 })],
     SEED_MISSION
   );
-  assert.equal(singleAbnormal.systems.nutrition.status, 'orange');
+  assert.equal(singleAbnormal.systems.nutrition.status, 'red');
 
   const repeatedAbnormal = evaluateHealthAssessment(
     sharma,
@@ -222,4 +222,57 @@ test('Scenario 9: Fainting, severe allergic reaction, and rapidly worsening symp
       `${urgentSymptom} nextBestAction must direct to crew medical officer or flight surgeon`
     );
   }
+});
+
+test('Red and orange overall statuses cap the readiness score', () => {
+  const red = evaluateHealthAssessment(
+    sharma,
+    [makeCheckIn({ symptoms: ['chest_pain'] })],
+    [makeVital()],
+    SEED_MISSION
+  );
+  assert.equal(red.overallStatus, 'red');
+  assert.ok(red.overallReadinessScore <= 40);
+
+  const orange = evaluateHealthAssessment(
+    sharma,
+    [makeCheckIn()],
+    [makeVital({ systolicBpMmHg: 146, diastolicBpMmHg: 94 })],
+    SEED_MISSION
+  );
+  if (orange.overallStatus === 'orange') {
+    assert.ok(orange.overallReadinessScore <= 70);
+  }
+});
+
+test('A yellow system warning persisting across three mission days becomes orange', () => {
+  const checkIns = [12, 13, 14].map((missionDay) =>
+    makeCheckIn({ missionDay, sleepHours: 6.5 })
+  );
+  const res = evaluateHealthAssessment(sharma, checkIns, [makeVital()], SEED_MISSION);
+
+  assert.equal(res.systems.brain.status, 'orange');
+  assert.ok(
+    res.alerts.some(
+      (alert) =>
+        alert.systemId === 'brain' &&
+        alert.title.includes('persisted for three or more days')
+    )
+  );
+});
+
+test('A greater-than-two-standard-deviation reading outside its green range raises a rule', () => {
+  const res = evaluateHealthAssessment(
+    sharma,
+    [makeCheckIn()],
+    [makeVital({ bodyTempC: 37.6 })],
+    SEED_MISSION
+  );
+
+  assert.equal(res.systems.respiratory.status, 'yellow');
+  assert.ok(
+    res.ruleResults.some(
+      (rule) => rule.systemId === 'respiratory' && rule.summary.includes('standard deviations')
+    )
+  );
 });

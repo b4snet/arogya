@@ -20,6 +20,7 @@ import {
   worstStatus,
 } from './thresholds';
 import { SYSTEM_HAZARD_KNOWLEDGE } from './hazardKnowledge';
+import { applyHealthAssessmentRules } from './healthAssessmentRules';
 
 function clamp(n: number): number {
   return Math.max(0, Math.min(100, Math.round(n)));
@@ -63,7 +64,7 @@ function buildRange(params: {
   };
 }
 
-export function evaluateHealthAssessment(
+function evaluateHealthAssessmentBase(
   astronaut: Astronaut,
   checkIns: CheckIn[],
   vitalReadings: VitalReading[],
@@ -1145,9 +1146,33 @@ export function evaluateHealthAssessment(
     escalationReasons,
     dataQuality,
     systems,
+    ruleResults: alerts.map((alert) => ({
+      id: alert.id,
+      systemId: alert.systemId,
+      severity: alert.severity,
+      triggered: true,
+      summary: alert.rationale,
+    })),
     alerts,
     prioritizedActions: actions,
     nextBestAction,
     disclaimer: SAFETY_DISCLAIMER,
   };
+}
+
+export function evaluateHealthAssessment(
+  astronaut: Astronaut,
+  checkIns: CheckIn[],
+  vitalReadings: VitalReading[],
+  mission: Mission
+): HealthAssessment {
+  const assessment = evaluateHealthAssessmentBase(astronaut, checkIns, vitalReadings, mission);
+  return applyHealthAssessmentRules(
+    assessment,
+    astronaut,
+    checkIns,
+    vitalReadings,
+    mission,
+    evaluateHealthAssessmentBase
+  );
 }

@@ -17,7 +17,6 @@ export { ActiveAlerts } from './ActiveAlerts';
 export { NextBestAction } from './NextBestAction';
 export { MissionProgressWidget } from './MissionProgressWidget';
 export { AstronautSelector } from './AstronautSelector';
-export { Small3DAstronautPreview } from './Small3DAstronautPreview';
 
 export function AstronautProfileCard({ astronaut }: { astronaut: Astronaut }) {
   return (

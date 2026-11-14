@@ -1,7 +1,7 @@
 import type { OrganTarget } from '../types';
+import { REFERENCE_RANGE_DISCLAIMER } from '../engine/thresholds';
 
-export const ATLAS_REFERENCE_RANGE_NOTE =
-  'Reference ranges are general adult educational ranges and may not apply to spaceflight, individual physiology, measurement conditions, or an astronaut’s personal baseline. Arogya does not diagnose conditions. Contact your crew medical officer or flight surgeon for interpretation and care.';
+export const ATLAS_REFERENCE_RANGE_NOTE = REFERENCE_RANGE_DISCLAIMER;
 
 export interface AtlasContentSpec {
   organ: OrganTarget;

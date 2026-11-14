@@ -16,7 +16,7 @@ import type {
 import { CLINICAL_THRESHOLDS, SAFETY_DISCLAIMER, STATUS_META } from './thresholds';
 
 export const REPORTS_EXACT_DISCLAIMER =
-  'This report is an educational decision-support summary generated from self-reported and optional device data. It is not a medical diagnosis. Reference ranges are general educational ranges and may not reflect individual baselines, spaceflight conditions, or clinical standards. Contact qualified medical personnel for interpretation and care.';
+  `${SAFETY_DISCLAIMER} Reference ranges are educational and may not reflect individual baselines, spaceflight conditions, or clinical standards. Contact qualified medical personnel for interpretation and care.`;
 
 export const REPORT_PERIOD_LABELS: Record<ReportPeriod, string> = {
   today: 'Today (Current Mission Day)',

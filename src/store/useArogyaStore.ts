@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { createJSONStorage, persist } from 'zustand/middleware';
 import type {
   Astronaut,
   AstronautBaseline,
@@ -16,6 +16,7 @@ import { SEED_MISSION } from '../data/missionData';
 import { SEED_VITALS_BY_ASTRONAUT } from '../data/vitals14Day';
 import { SEED_CHECKINS_BY_ASTRONAUT } from '../data/checkIns14Day';
 import { clearCachedDriveAssets, loadCachedDriveAssets } from '../services/offlineStorage';
+import { indexedDbStateStorage } from '../services/indexedDbStateStorage';
 
 export interface AtlasLayerState {
   selectedOrgan: OrganTarget;
@@ -315,6 +316,7 @@ export const useArogyaStore = create<ArogyaStore>()(
     }),
     {
       name: 'arogya-mission-store-v2',
+      storage: createJSONStorage(() => indexedDbStateStorage),
       // Only synthetic demo mission data and non-identifying UI preferences are persisted;
       // zero real personal data, OAuth tokens, or emails are ever stored.
       partialize: (state) => ({
@@ -326,7 +328,11 @@ export const useArogyaStore = create<ArogyaStore>()(
         reports: state.reports,
         preferences: state.preferences,
       }),
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state, error) => {
+        if (error) {
+          console.error('Could not restore Arogya state from IndexedDB.', error);
+          return;
+        }
         if (!state) return;
         const valid = state.astronauts.some((a) => a.id === state.activeAstronautId);
         if (!valid && state.astronauts.length > 0) {

@@ -32,6 +32,7 @@ import { VitalsChartsGrid, type VitalsTimeWindow } from '../components/vitals/Vi
 import { VitalsReferenceTable } from '../components/vitals/VitalsReferenceTable';
 import { ManualVitalsPanel } from '../components/vitals/ManualVitalsPanel';
 import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../utils/unitConversions';
+import { SAFETY_DISCLAIMER } from '../engine/thresholds';
 
 function formatSourceLabel(source: string): string {
   switch (source) {
@@ -232,7 +233,7 @@ export function VitalsPage() {
             Biometric Vitals & Reference Surveillance
           </h1>
           <p className="max-w-3xl text-sm text-[var(--arogya-text-secondary)]">
-            Longitudinal vital-sign tracking comparing personal crew baselines separately from general adult reference ranges. Arogya provides decision support only and never diagnoses conditions.
+            Longitudinal vital-sign tracking compares personal crew baselines separately from general reference ranges. {SAFETY_DISCLAIMER}
           </p>
         </div>
 

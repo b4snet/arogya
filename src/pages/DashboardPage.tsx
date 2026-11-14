@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { Activity, RotateCcw } from 'lucide-react';
 import { useActiveAssessment } from '../hooks/useActiveAssessment';
@@ -8,13 +9,18 @@ import { AstronautSelector } from '../components/dashboard/AstronautSelector';
 import { HealthReadinessCard } from '../components/dashboard/HealthReadinessCard';
 import { ActiveAlerts } from '../components/dashboard/ActiveAlerts';
 import { NextBestAction } from '../components/dashboard/NextBestAction';
-import { Small3DAstronautPreview } from '../components/dashboard/Small3DAstronautPreview';
 import { MissionProgressWidget } from '../components/dashboard/MissionProgressWidget';
 import {
   CheckInStatusCard,
   MiniTrendGrid,
 } from '../components/dashboard/DashboardWidgets';
 import { DashboardVitalsChart } from '../components/dashboard/DashboardVitalsChart';
+
+const Small3DAstronautPreview = lazy(() =>
+  import('../components/dashboard/Small3DAstronautPreview').then((module) => ({
+    default: module.Small3DAstronautPreview,
+  }))
+);
 
 export function DashboardPage() {
   const { astronaut, mission, vitals14d, checkIns14d, assessment } =
@@ -72,10 +78,20 @@ export function DashboardPage() {
 
           {/* Center Column: Compact Interactive 3D Astronaut Preview (ordered after check-in on mobile) */}
           <div className="order-3 xl:order-2 xl:col-span-4">
-            <Small3DAstronautPreview
-              status={assessment.overallStatus}
-              astronautName={astronaut.fullName}
-            />
+            <Suspense
+              fallback={
+                <div
+                  className="h-[310px] rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface)] sm:h-[340px] xl:h-[370px]"
+                  role="status"
+                  aria-label="Loading astronaut preview"
+                />
+              }
+            >
+              <Small3DAstronautPreview
+                status={assessment.overallStatus}
+                astronautName={astronaut.fullName}
+              />
+            </Suspense>
           </div>
 
           {/* Right Column: Today's Check-In Status + Daily Indicator Summaries */}

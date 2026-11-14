@@ -4,6 +4,7 @@ import { useArogyaStore } from '../../store/useArogyaStore';
 import { useActiveAssessment } from '../../hooks/useActiveAssessment';
 import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 import { AstronautSelector } from '../dashboard/AstronautSelector';
+import { SAFETY_DISCLAIMER } from '../../engine/thresholds';
 
 interface TopTelemetryBarProps {
   pageTitle: string;
@@ -147,7 +148,7 @@ export function SafetyDisclaimerFooter() {
         <p className="flex items-center gap-2">
           <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-[#EAB308]" aria-hidden="true" />
           <span>
-            Decision-support only — Arogya does not diagnose medical conditions, prescribe medication, or replace professional medical guidance.
+            {SAFETY_DISCLAIMER}
           </span>
         </p>
         <span

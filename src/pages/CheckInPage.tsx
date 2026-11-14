@@ -16,7 +16,7 @@ import { useActiveAssessment } from '../hooks/useActiveAssessment';
 import { useArogyaStore } from '../store/useArogyaStore';
 import { buildStructuredReport } from '../engine/reportGenerator';
 import { evaluateHealthAssessment } from '../engine/healthEngine';
-import { STATUS_META } from '../engine/thresholds';
+import { SAFETY_DISCLAIMER, STATUS_META } from '../engine/thresholds';
 import type { AppetiteLevel, PainLevel, SymptomTag } from '../types';
 import {
   celsiusToFahrenheit,
@@ -665,7 +665,7 @@ export function CheckInPage() {
             </h2>
           </div>
           <p className="mt-1 text-xs text-[var(--arogya-text-secondary)]">
-            Decision-support self-check only. Arogya tracks trends against your personal baseline and does not diagnose conditions.
+            {SAFETY_DISCLAIMER}
           </p>
         </div>
 

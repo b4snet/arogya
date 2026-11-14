@@ -1,5 +1,6 @@
 import type { Astronaut, HealthAssessment } from '../../types';
-import { STATUS_GUIDANCE_COPY, STATUS_PILL_LABELS } from '../../engine/atlasPanelBuilder';
+import { STATUS_PILL_LABELS } from '../../engine/atlasPanelBuilder';
+import { getStatusAlertMessage } from '../../content/healthContent';
 import { AstronautAvatar, Card, StatusPill, healthStatusToTone } from '../ui';
 
 interface HealthReadinessCardProps {
@@ -74,7 +75,7 @@ export function HealthReadinessCard({ assessment, astronaut }: HealthReadinessCa
       <p
         className={`mt-3 rounded-lg border px-3 py-2 text-xs font-medium ${STATUS_GUIDANCE_SURFACE[assessment.overallStatus]}`}
       >
-        {STATUS_GUIDANCE_COPY[assessment.overallStatus]}
+        {getStatusAlertMessage(assessment.overallStatus)}
       </p>
 
       {assessment.dataQuality.missingFields.length > 0 && (

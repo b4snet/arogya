@@ -1,5 +1,5 @@
 import type { Astronaut, HealthStatusLevel, VitalReading } from '../types';
-import { CLINICAL_THRESHOLDS } from './thresholds';
+import { CLINICAL_THRESHOLDS, REFERENCE_RANGE_DISCLAIMER } from './thresholds';
 import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../utils/unitConversions';
 
 export type VitalsTrendDirection = 'rising' | 'falling' | 'stable' | 'insufficient';
@@ -31,8 +31,7 @@ export interface VitalReferenceRow {
   latestDay: number | null;
 }
 
-export const VITALS_REFERENCE_TABLE_NOTE =
-  'Reference ranges are general adult educational ranges and may not apply to spaceflight, individual physiology, measurement conditions, or an astronaut’s personal baseline. Arogya does not diagnose conditions. Contact your crew medical officer or flight surgeon for interpretation and care.';
+export const VITALS_REFERENCE_TABLE_NOTE = REFERENCE_RANGE_DISCLAIMER;
 
 function isPresent(v: number | null | undefined): v is number {
   return typeof v === 'number' && !Number.isNaN(v);

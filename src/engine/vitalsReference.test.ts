@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import {
   VITALS_REFERENCE_TABLE_NOTE,
@@ -7,6 +7,7 @@ import {
 } from './vitalsReference.ts';
 import { SEED_ASTRONAUTS } from '../data/astronauts.ts';
 import { SEED_VITALS_BY_ASTRONAUT } from '../data/vitals14Day.ts';
+import { SAFETY_DISCLAIMER } from './thresholds';
 
 test('buildVitalReferenceRows returns all 8 required vital signs with cautious non-diagnostic phrasing', () => {
   const astronaut = SEED_ASTRONAUTS[1]; // Maya Patel (includes elevated BP & missing values in history)
@@ -45,7 +46,7 @@ test('buildVitalReferenceRows returns all 8 required vital signs with cautious n
     )
   );
 
-  assert.ok(VITALS_REFERENCE_TABLE_NOTE.includes('Arogya does not diagnose conditions.'));
+  assert.ok(VITALS_REFERENCE_TABLE_NOTE.includes(SAFETY_DISCLAIMER));
 });
 
 test('Missing vital channels are explicitly marked MISSING and missing status rather than nominal', () => {

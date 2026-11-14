@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 import { useArogyaStore } from './useArogyaStore';
 import { SEED_ASTRONAUTS } from '../data/astronauts';
 import { evaluateHealthAssessment } from '../engine/healthEngine';

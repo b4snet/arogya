@@ -17,7 +17,13 @@ export interface SpaceflightHazard {
 
 export interface LicenseItem {
   name: string;
-  category: 'UI & Routing' | '3D Graphics' | 'Charts & Icons' | 'State & Cloud' | 'Typography' | 'Build Tooling';
+  category:
+    | 'UI & Routing'
+    | '3D Graphics'
+    | 'Charts & Icons'
+    | 'State & Cloud'
+    | 'Typography'
+    | 'Build Tooling';
   versionOrSource: string;
   license: string;
 }
@@ -218,12 +224,12 @@ export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
   },
   {
     id: 'asset-drive-glb',
-    assetName: 'Optional External .glb Models (/models/{astronaut,brain,heart,lungs}.glb & Drive Sync)',
+    assetName: 'Local 3D .glb Models (Astronaut, Brain, Heart, Lungs)',
     type: '3D Geometry',
-    source: 'Local /public/models/ or user-connected Google Drive mission asset folder',
-    license: 'Retains original creator/NASA public-domain license per synced file',
+    source: 'Project-provided files copied from 3d-models/',
+    license: 'Unverified; confirm each original license before redistribution',
     notes:
-      'Loaded via Three.js GLTFLoader + DRACOLoader and cached in local IndexedDB for offline playback.',
+      'Original asset files are preserved. Source and license records were not present in the workspace at audit time.',
   },
   {
     id: 'asset-poster-img',
@@ -236,12 +242,12 @@ export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
   },
   {
     id: 'asset-drive-video',
-    assetName: 'Optional Muted Dashboard Background Video (.mp4)',
+    assetName: 'Dashboard Background Video (dashboard-background.mp4)',
     type: 'Background Media',
-    source: 'User-connected Google Drive folder (drive.readonly)',
-    license: 'Retains source media license (e.g. NASA Media Usage Guidelines / public domain)',
+    source: 'Project-provided dashboard-background.mp4',
+    license: 'Unverified; confirm the original creator and license before redistribution',
     notes:
-      'Enforces a <= 5 MB size budget, lazy-loading, no audio autoplay, tab-visibility pause, and prefers-reduced-motion suppression.',
+      'Loaded locally with the supplied poster fallback, lazy loading, muted playback, tab-visibility pause, and reduced-motion suppression.',
   },
   {
     id: 'asset-fonts',
@@ -257,6 +263,7 @@ export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
 export const OPEN_SOURCE_LICENSES: LicenseItem[] = [
   { name: 'React & React DOM', category: 'UI & Routing', versionOrSource: '^19.0.1', license: 'MIT License' },
   { name: 'React Router (react-router-dom)', category: 'UI & Routing', versionOrSource: '^7.18.5', license: 'MIT License' },
+  { name: 'React Markdown', category: 'UI & Routing', versionOrSource: '10.1.0', license: 'MIT License' },
   { name: 'Tailwind CSS & @tailwindcss/vite', category: 'UI & Routing', versionOrSource: '^4.3.3', license: 'MIT License' },
   { name: 'Motion', category: 'UI & Routing', versionOrSource: '^12.23.24', license: 'MIT License' },
   { name: 'Three.js & @types/three', category: '3D Graphics', versionOrSource: '^0.187.0', license: 'MIT License' },
@@ -267,5 +274,7 @@ export const OPEN_SOURCE_LICENSES: LicenseItem[] = [
   { name: 'Zustand', category: 'State & Cloud', versionOrSource: '^5.1.0', license: 'MIT License' },
   { name: 'Firebase JS SDK', category: 'State & Cloud', versionOrSource: '^13.3.0', license: 'Apache-2.0 License' },
   { name: 'IBM Plex Sans & IBM Plex Mono', category: 'Typography', versionOrSource: 'Google Fonts', license: 'SIL OFL 1.1' },
-  { name: 'Vite & TypeScript', category: 'Build Tooling', versionOrSource: 'Vite ^8.3.0 · TS ^7.0.2', license: 'MIT / Apache-2.0' },
+  { name: 'Vite & React plugin', category: 'Build Tooling', versionOrSource: 'Vite ^8.3.0 · @vitejs/plugin-react ^6.1.1', license: 'MIT License' },
+  { name: 'TypeScript & esbuild', category: 'Build Tooling', versionOrSource: 'TypeScript ^7.0.2 · esbuild ^0.28.2', license: 'Apache-2.0 / MIT' },
+  { name: 'Vitest', category: 'Build Tooling', versionOrSource: '5.1.0', license: 'MIT License' },
 ];

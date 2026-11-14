@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import test from 'node:test';
+import { test } from 'vitest';
 import { SEED_ASTRONAUTS } from '../data/astronauts';
 import { SEED_CHECKINS_BY_ASTRONAUT } from '../data/checkIns14Day';
 import { SEED_MISSION } from '../data/missionData';

@@ -1,7 +1,8 @@
 import type { BodySystemId, HealthStatusLevel } from '../types';
+import { HEALTH_CONTENT } from '../content/healthContent';
 
 export const CLINICAL_THRESHOLDS = {
-  // General Population Reference Bands (Aerospace Crew Standards)
+  // Demonstration bands only; these are not validated operational thresholds.
   generalRestingHrMin: 50,
   generalRestingHrMax: 90,
   generalSystolicMin: 95,
@@ -35,6 +36,20 @@ export const CLINICAL_THRESHOLDS = {
   calorieDeficitYellowRatio: 0.18,
   dailyRadiationWatchMsv: 1.2,
   dailyRadiationOrangeMsv: 2.0,
+} as const;
+
+export const PERSONAL_BASELINE_STANDARD_DEVIATIONS = {
+  heartRateBpm: 5,
+  systolicBpMmHg: 8,
+  diastolicBpMmHg: 5,
+  spo2Percent: 1.5,
+  respiratoryRateBpm: 2,
+  bodyTempC: 0.3,
+  bloodGlucoseMgDl: 15,
+  sleepHours: 1,
+  hydrationLiters: 0.4,
+  exerciseMinutes: 15,
+  caloriesKcal: 300,
 } as const;
 
 export const SYSTEM_WEIGHTS: Record<BodySystemId, number> = {
@@ -105,5 +120,6 @@ export const STATUS_META: Record<
   },
 };
 
-export const SAFETY_DISCLAIMER =
-  'Decision-support only — Arogya does not diagnose medical conditions, prescribe medication, or replace a crew medical officer or flight surgeon.';
+export const SAFETY_DISCLAIMER = HEALTH_CONTENT.disclaimers.trim();
+export const REFERENCE_RANGE_DISCLAIMER =
+  `Reference ranges are general educational references and may not apply to spaceflight, individual physiology, measurement conditions, or personal baselines. ${SAFETY_DISCLAIMER}`;

@@ -19,6 +19,8 @@ import {
 import { SAFETY_DISCLAIMER } from '../engine/thresholds';
 import { useDriveMedia } from '../hooks/useDriveMedia';
 import { Card, CardHeader } from '../components/ui';
+import { getResourceUrls, HEALTH_CONTENT } from '../content/healthContent';
+import { MarkdownContent } from '../content/MarkdownContent';
 
 const TEAM_MEMBERS = [
   {
@@ -35,7 +37,7 @@ const TEAM_MEMBERS = [
   },
 ];
 
-const GITHUB_REPO_URL = 'https://github.com/dibyanbasnet/arogya-space-health';
+const GITHUB_REPO_URL = 'https://github.com/b4snet/arogya';
 const DEMO_VIDEO_FALLBACK_URL = 'https://www.spaceappschallenge.org/';
 
 export function AboutPage() {
@@ -337,6 +339,55 @@ export function AboutPage() {
                 {ref.summary}
               </p>
             </article>
+          ))}
+        </div>
+        <div className="border-t border-[var(--arogya-border)] pt-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-[var(--arogya-text-secondary)]">
+            Supplied Resource Lists
+          </h3>
+          <ul className="mt-2 space-y-2 text-xs">
+            {[...getResourceUrls('nasaResources'), ...getResourceUrls('partnerResources')].map((url) => (
+              <li key={url}>
+                <a
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="break-all text-[#22D3EE] underline"
+                >
+                  {url}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Card>
+
+      <Card padding="md" className="space-y-4">
+        <CardHeader
+          title="Health Content & Safety References"
+          subtitle="Rendered directly from the project health-content Markdown files."
+        />
+        <div className="space-y-3">
+          {[
+            ['Alert messages', HEALTH_CONTENT.alerts],
+            ['Body-system explanations', HEALTH_CONTENT.bodySystems],
+            ['Disclaimers', HEALTH_CONTENT.disclaimers],
+            ['Glossary', HEALTH_CONTENT.glossary],
+            ['Health indicators', HEALTH_CONTENT.healthIndicators],
+            ['Safe actions', HEALTH_CONTENT.safeActions],
+            ['Spaceflight hazards', HEALTH_CONTENT.spaceflightHazards],
+          ].map(([title, content]) => (
+            <details
+              key={title}
+              className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-4"
+            >
+              <summary className="cursor-pointer font-semibold text-[var(--arogya-text-primary)] focus-visible:outline">
+                {title}
+              </summary>
+              <div className="mt-3 border-t border-[var(--arogya-border)] pt-3">
+                <MarkdownContent content={content} />
+              </div>
+            </details>
           ))}
         </div>
       </Card>

@@ -34,6 +34,14 @@ export interface Alert {
   recommendedAction: string;
 }
 
+export interface RuleResult {
+  id: string;
+  systemId: BodySystemId;
+  severity: HealthStatusLevel;
+  triggered: boolean;
+  summary: string;
+}
+
 export interface ActionItem {
   id: string;
   priority: 'immediate' | 'today' | 'monitor';
@@ -75,6 +83,7 @@ export interface HealthAssessment {
   escalationReasons: string[];
   dataQuality: DataQualitySummary;
   systems: Record<BodySystemId, SystemAssessment>;
+  ruleResults: RuleResult[];
   alerts: Alert[];
   prioritizedActions: ActionItem[];
   nextBestAction: string;
