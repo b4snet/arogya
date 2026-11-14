@@ -122,4 +122,4 @@ export const STATUS_META: Record<
 
 export const SAFETY_DISCLAIMER = HEALTH_CONTENT.disclaimers.trim();
 export const REFERENCE_RANGE_DISCLAIMER =
-  `Reference ranges are general educational references and may not apply to spaceflight, individual physiology, measurement conditions, or personal baselines. ${SAFETY_DISCLAIMER}`;
+  'Reference ranges are general adult educational ranges and may not apply to spaceflight, individual physiology, measurement conditions, or an astronaut’s personal baseline. Arogya does not diagnose conditions. Contact your crew medical officer or flight surgeon for interpretation and care.';

@@ -46,7 +46,10 @@ test('buildVitalReferenceRows returns all 8 required vital signs with cautious n
     )
   );
 
-  assert.ok(VITALS_REFERENCE_TABLE_NOTE.includes(SAFETY_DISCLAIMER));
+  assert.equal(
+    VITALS_REFERENCE_TABLE_NOTE,
+    'Reference ranges are general adult educational ranges and may not apply to spaceflight, individual physiology, measurement conditions, or an astronaut’s personal baseline. Arogya does not diagnose conditions. Contact your crew medical officer or flight surgeon for interpretation and care.'
+  );
 });
 
 test('Missing vital channels are explicitly marked MISSING and missing status rather than nominal', () => {

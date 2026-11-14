@@ -82,11 +82,7 @@ const SYMPTOM_CHIPS: Array<{ id: SymptomTag; label: string; caution?: boolean }>
   { id: 'nausea', label: 'Nausea' },
   { id: 'visual_blur', label: 'Vision changes' },
   { id: 'shortness_of_breath', label: 'Shortness of breath', caution: true },
-  { id: 'severe_shortness_of_breath', label: 'Severe shortness of breath', caution: true },
-  { id: 'chest_pain', label: 'Chest pain / pressure', caution: true },
-  { id: 'fainting', label: 'Fainting / syncope', caution: true },
-  { id: 'severe_allergic_reaction', label: 'Severe allergic reaction', caution: true },
-  { id: 'rapidly_worsening', label: 'Rapidly worsening symptoms', caution: true },
+  { id: 'chest_pain', label: 'Chest discomfort', caution: true },
   { id: 'muscle_soreness', label: 'Muscle or joint pain' },
   { id: 'back_pain', label: 'Back pain' },
   { id: 'skin_irritation', label: 'Skin irritation' },
@@ -94,6 +90,10 @@ const SYMPTOM_CHIPS: Array<{ id: SymptomTag; label: string; caution?: boolean }>
   { id: 'anxiety', label: 'Anxiety' },
   { id: 'low_mood', label: 'Low mood' },
   { id: 'fever_chills', label: 'Feverish feeling', caution: true },
+  { id: 'severe_shortness_of_breath', label: 'Severe shortness of breath', caution: true },
+  { id: 'fainting', label: 'Fainting / syncope', caution: true },
+  { id: 'severe_allergic_reaction', label: 'Severe allergic reaction', caution: true },
+  { id: 'rapidly_worsening', label: 'Rapidly worsening symptoms', caution: true },
 ];
 
 const STEPS: Array<{ step: StepNumber; title: string; subtitle: string }> = [
