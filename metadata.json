@@ -1,0 +1,6 @@
+{
+  "name": "Arogya — Astronaut Health Monitoring System",
+  "description": "Offline-first astronaut health-monitoring and early-warning decision-support system for long-duration space missions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

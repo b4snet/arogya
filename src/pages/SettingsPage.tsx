@@ -1,0 +1,205 @@
+import { useEffect, useState, type FormEvent } from 'react';
+import { CheckCircle2, RotateCcw } from 'lucide-react';
+import { useActiveAssessment } from '../hooks/useActiveAssessment';
+import { useArogyaStore } from '../store/useArogyaStore';
+import {
+  AstronautAvatar,
+  Button,
+  Card,
+  CardHeader,
+  FormField,
+  NumberInput,
+  ToggleSwitch,
+} from '../components/ui';
+
+export function SettingsPage() {
+  const { astronaut } = useActiveAssessment();
+  const updateAstronautBaseline = useArogyaStore((s) => s.updateAstronautBaseline);
+  const preferences = useArogyaStore((s) => s.preferences);
+  const setPreferences = useArogyaStore((s) => s.setPreferences);
+  const resetDemoData = useArogyaStore((s) => s.resetDemoData);
+  const clearDriveCache = useArogyaStore((s) => s.clearDriveCache);
+
+  const [hrBaseline, setHrBaseline] = useState(astronaut.baseline.restingHeartRateBpm);
+  const [sleepTarget, setSleepTarget] = useState(astronaut.baseline.sleepTargetHours);
+  const [hydrationTarget, setHydrationTarget] = useState(
+    astronaut.baseline.hydrationTargetLiters
+  );
+  const [exerciseTarget, setExerciseTarget] = useState(
+    astronaut.baseline.exerciseTargetMinutes
+  );
+  const [radiationBudget, setRadiationBudget] = useState(
+    astronaut.baseline.radiationBudgetMsv
+  );
+  const [savedNotice, setSavedNotice] = useState(false);
+
+  useEffect(() => {
+    setHrBaseline(astronaut.baseline.restingHeartRateBpm);
+    setSleepTarget(astronaut.baseline.sleepTargetHours);
+    setHydrationTarget(astronaut.baseline.hydrationTargetLiters);
+    setExerciseTarget(astronaut.baseline.exerciseTargetMinutes);
+    setRadiationBudget(astronaut.baseline.radiationBudgetMsv);
+    setSavedNotice(false);
+  }, [astronaut.id, astronaut.baseline]);
+
+  const handleSaveBaseline = (e: FormEvent) => {
+    e.preventDefault();
+    updateAstronautBaseline(astronaut.id, {
+      restingHeartRateBpm: hrBaseline,
+      sleepTargetHours: sleepTarget,
+      hydrationTargetLiters: hydrationTarget,
+      exerciseTargetMinutes: exerciseTarget,
+      radiationBudgetMsv: radiationBudget,
+    });
+    setSavedNotice(true);
+    setTimeout(() => setSavedNotice(false), 3000);
+  };
+
+  return (
+    <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
+      <div>
+        <h2 className="arogya-h1 text-[var(--arogya-text-primary)]">
+          Settings & Crew Profile
+        </h2>
+        <p className="mt-1 text-sm text-[var(--arogya-text-secondary)]">
+          Calibrate personal physiological baselines, high-contrast lighting mode, and offline storage.
+        </p>
+      </div>
+
+      {savedNotice && (
+        <div
+          role="status"
+          className="flex items-center gap-2 rounded-xl border border-[#22C55E]/35 bg-[#22C55E]/10 px-4 py-3 text-sm text-[#4ADE80]"
+        >
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          <span>Astronaut baseline updated locally.</span>
+        </div>
+      )}
+
+      <Card padding="lg">
+        <form onSubmit={handleSaveBaseline} className="space-y-5">
+          <div className="flex items-center gap-3 border-b border-[var(--arogya-border)] pb-4">
+            <AstronautAvatar
+              astronautId={astronaut.id}
+              fullName={astronaut.fullName}
+              size="lg"
+              active
+            />
+            <CardHeader
+              title={`${astronaut.fullName} (${astronaut.callSign})`}
+              subtitle={`${astronaut.role} · Age ${astronaut.age} · Blood Type ${astronaut.bloodType} · EVA ${astronaut.evaHoursTotal} h`}
+              className="flex-1"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <FormField id="base-hr" label="Baseline Resting HR (bpm)">
+              <NumberInput
+                id="base-hr"
+                value={hrBaseline}
+                onChange={(e) => setHrBaseline(Number(e.target.value))}
+              />
+            </FormField>
+            <FormField id="base-sleep" label="Sleep Target (hours)">
+              <NumberInput
+                id="base-sleep"
+                step="0.1"
+                value={sleepTarget}
+                onChange={(e) => setSleepTarget(Number(e.target.value))}
+              />
+            </FormField>
+            <FormField id="base-hydro" label="Hydration Target (L/day)">
+              <NumberInput
+                id="base-hydro"
+                step="0.1"
+                value={hydrationTarget}
+                onChange={(e) => setHydrationTarget(Number(e.target.value))}
+              />
+            </FormField>
+            <FormField id="base-exercise" label="Exercise Target (min/day)">
+              <NumberInput
+                id="base-exercise"
+                step="5"
+                value={exerciseTarget}
+                onChange={(e) => setExerciseTarget(Number(e.target.value))}
+              />
+            </FormField>
+            <FormField id="base-rad" label="Mission Radiation Budget (mSv)">
+              <NumberInput
+                id="base-rad"
+                step="10"
+                value={radiationBudget}
+                onChange={(e) => setRadiationBudget(Number(e.target.value))}
+              />
+            </FormField>
+          </div>
+
+          <Button type="submit" variant="primary" size="md">
+            Save Personal Baseline
+          </Button>
+        </form>
+      </Card>
+
+      <Card padding="lg" className="space-y-4">
+        <CardHeader
+          title="Display, High-Contrast & Accessibility"
+          subtitle="Optimized for high-stress operations and low-light cabin conditions"
+        />
+
+        <ToggleSwitch
+          id="toggle-high-contrast"
+          label="High-Contrast Mode"
+          description="Deepen space background and elevate border/text contrast for bright or low-light environments."
+          checked={preferences.highContrast}
+          onChange={(checked) => setPreferences({ highContrast: checked })}
+        />
+
+        <ToggleSwitch
+          id="toggle-video-backdrop"
+          label="Dashboard MP4 Video Backdrop"
+          description="Play the synced Google Drive MP4 video behind the mission-control overview."
+          checked={preferences.enableVideoBackdrop}
+          onChange={(checked) => setPreferences({ enableVideoBackdrop: checked })}
+        />
+
+        <ToggleSwitch
+          id="toggle-reduced-motion"
+          label="Reduced Motion Override"
+          description="Disable CSS transitions, video backdrop playback, and automatic 3D animations."
+          checked={preferences.reducedMotionOverride}
+          onChange={(checked) => setPreferences({ reducedMotionOverride: checked })}
+        />
+      </Card>
+
+      <Card padding="lg">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h3 className="arogya-h2 text-[var(--arogya-text-primary)]">
+              Offline Storage & Demo Reset
+            </h3>
+            <p className="mt-1 text-xs text-[var(--arogya-text-secondary)]">
+              Restore initial 14-day mission telemetry or clear locally cached Google Drive media blobs.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => void clearDriveCache()}
+            >
+              Clear Drive Media Cache
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
+              onClick={resetDemoData}
+            >
+              Load Demo Mission
+            </Button>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}
