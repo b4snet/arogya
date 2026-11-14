@@ -20,6 +20,7 @@ import { AstronautSelector } from '../components/dashboard/AstronautSelector';
 import { getOrganSelectorStatus } from '../engine/atlasPanelBuilder';
 import { STATUS_META } from '../engine/thresholds';
 import type { HealthStatusLevel, OrganTarget } from '../types';
+import { ORGAN_TO_PRESET } from '../config/atlasAnatomyConfig';
 
 function AccessibleStatusBadge({ status }: { status: HealthStatusLevel }) {
   const meta = STATUS_META[status];
@@ -27,10 +28,10 @@ function AccessibleStatusBadge({ status }: { status: HealthStatusLevel }) {
     status === 'red'
       ? ShieldAlert
       : status === 'orange'
-      ? AlertTriangle
-      : status === 'yellow'
-      ? AlertCircle
-      : CheckCircle2;
+        ? AlertTriangle
+        : status === 'yellow'
+          ? AlertCircle
+          : CheckCircle2;
 
   return (
     <span className={`inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium ${meta.badgeClass}`}>
@@ -68,6 +69,7 @@ export function AtlasPage() {
 
   const handleSelectOrgan = (organ: OrganTarget) => {
     selectOrgan(organ);
+    setAtlasState({ cameraPreset: ORGAN_TO_PRESET[organ] });
     setSearchParams({ organ });
     setMobilePanelOpen(true);
   };
@@ -90,35 +92,35 @@ export function AtlasPage() {
     icon: typeof Brain;
     status: HealthStatusLevel;
   }> = [
-    {
-      id: 'brain',
-      label: 'Brain',
-      panelName: 'Mind, Sleep & Behavior',
-      icon: Brain,
-      status: getOrganSelectorStatus('brain', assessment),
-    },
-    {
-      id: 'heart',
-      label: 'Heart',
-      panelName: 'Cardiovascular Health',
-      icon: HeartPulse,
-      status: getOrganSelectorStatus('heart', assessment),
-    },
-    {
-      id: 'lungs',
-      label: 'Lungs',
-      panelName: 'Respiratory Health',
-      icon: Wind,
-      status: getOrganSelectorStatus('lungs', assessment),
-    },
-    {
-      id: 'full_body',
-      label: 'Full Body',
-      panelName: 'Full-Body Health Overview',
-      icon: User,
-      status: getOrganSelectorStatus('full_body', assessment),
-    },
-  ];
+      {
+        id: 'brain',
+        label: 'Brain',
+        panelName: 'Mind, Sleep & Behavior',
+        icon: Brain,
+        status: getOrganSelectorStatus('brain', assessment),
+      },
+      {
+        id: 'heart',
+        label: 'Heart',
+        panelName: 'Cardiovascular Health',
+        icon: HeartPulse,
+        status: getOrganSelectorStatus('heart', assessment),
+      },
+      {
+        id: 'lungs',
+        label: 'Lungs',
+        panelName: 'Respiratory Health',
+        icon: Wind,
+        status: getOrganSelectorStatus('lungs', assessment),
+      },
+      {
+        id: 'full_body',
+        label: 'Full Body',
+        panelName: 'Full-Body Health Overview',
+        icon: User,
+        status: getOrganSelectorStatus('full_body', assessment),
+      },
+    ];
 
   const activePanelMeta =
     accessibleSystems.find((item) => item.id === atlasState.selectedOrgan) ?? accessibleSystems[3];
@@ -147,11 +149,10 @@ export function AtlasPage() {
                   type="button"
                   onClick={() => handleSelectOrgan(item.id)}
                   aria-pressed={active}
-                  className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                    active
+                  className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors ${active
                       ? 'border-[#22D3EE]/50 bg-[#121C2B] text-white'
                       : 'border-[var(--arogya-border)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
-                  }`}
+                    }`}
                 >
                   <Icon className="h-3.5 w-3.5 text-[#22D3EE]" aria-hidden="true" />
                   <span>{item.label}</span>

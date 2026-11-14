@@ -36,19 +36,13 @@ import { useDriveMedia } from '../../hooks/useDriveMedia';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { getOrganSelectorStatus } from '../../engine/atlasPanelBuilder';
 import { STATUS_META } from '../../engine/thresholds';
+import {
+  ATLAS_ANATOMY_CONFIG,
+  ATLAS_CAMERA_PRESETS,
+} from '../../config/atlasAnatomyConfig';
 
 const _targetPos = new THREE.Vector3();
 const _targetLook = new THREE.Vector3();
-
-const CAMERA_PRESETS: Record<
-  'overview' | 'brain' | 'heart' | 'lungs',
-  { pos: [number, number, number]; look: [number, number, number] }
-> = {
-  overview: { pos: [0, 1.35, 3.1], look: [0, 0.95, 0] },
-  brain: { pos: [0.35, 1.72, 0.92], look: [0, 1.56, 0] },
-  heart: { pos: [0.28, 1.24, 0.86], look: [0.02, 1.14, 0] },
-  lungs: { pos: [-0.36, 1.28, 0.96], look: [0, 1.17, 0] },
-};
 
 function statusHex(status: HealthStatusLevel): string {
   return STATUS_META[status].colorHex;
@@ -125,7 +119,7 @@ function CameraRig({
     const controls = controlsRef.current;
     if (!controls || !activeTransitionRef.current) return;
 
-    const cfg = CAMERA_PRESETS[preset];
+    const cfg = ATLAS_CAMERA_PRESETS[preset] ?? ATLAS_CAMERA_PRESETS.overview;
     _targetPos.set(...cfg.pos);
     _targetLook.set(...cfg.look);
 
@@ -250,6 +244,11 @@ export function HealthAtlasCanvas({
   const allLoadedGltf = Object.values(assetStates).some((s) => s.status === 'loaded');
   const pauseRenderLoop = tabHidden || !inViewport || reducedMotion;
 
+  const cfgAstronaut = ATLAS_ANATOMY_CONFIG.astronaut;
+  const cfgBrain = ATLAS_ANATOMY_CONFIG.brain;
+  const cfgHeart = ATLAS_ANATOMY_CONFIG.heart;
+  const cfgLungs = ATLAS_ANATOMY_CONFIG.lungs;
+
   const errorFallback = (
     <div className="flex h-full min-h-[520px] items-center justify-center rounded-xl border border-white/10 bg-[#070B16] p-6">
       <ErrorState
@@ -343,20 +342,26 @@ export function HealthAtlasCanvas({
             <group position={[0, 0, 0]}>
               {/* Astronaut Body / Outer Suit Layer */}
               {showSuitShell && (
-                <group>
+                <group position={cfgAstronaut.position} rotation={cfgAstronaut.rotation}>
                   <AtlasGltfModel
                     modelKey="astronaut"
                     driveUrl={astronautModelUrl}
-                    targetHeight={1.76}
+                    targetHeight={cfgAstronaut.targetHeight}
                     transparentOverride={showOrgans || showSkeleton}
-                    opacityOverride={showOrgans || showSkeleton ? 0.22 : 0.96}
+                    opacityOverride={
+                      showOrgans || showSkeleton
+                        ? cfgAstronaut.transparentShellOpacity
+                        : cfgAstronaut.opaqueShellOpacity
+                    }
                     emissiveTint={statusHex(assessment.overallStatus)}
                     emissiveIntensity={
                       selectedOrgan === 'full_body'
-                        ? 0.16
+                        ? cfgAstronaut.selectedEmissiveIntensity
+                        : hoveredOrgan === 'full_body'
+                        ? cfgAstronaut.hoverEmissiveIntensity
                         : assessment.overallStatus === 'green'
-                        ? 0.03
-                        : 0.09
+                        ? cfgAstronaut.idleEmissiveIntensity
+                        : cfgAstronaut.idleEmissiveIntensity * 2
                     }
                     retryToken={retryToken}
                     onStatusChange={(s, msg) => updateAssetStatus('astronaut', s, msg)}
@@ -380,21 +385,21 @@ export function HealthAtlasCanvas({
               {showOrgans && (
                 <>
                   {/* Brain (Cranial Cavity) */}
-                  <group position={[0, 1.56, 0.01]}>
+                  <group position={cfgBrain.position} rotation={cfgBrain.rotation}>
                     <AtlasGltfModel
                       modelKey="brain"
                       driveUrl={brainModelUrl}
-                      targetHeight={0.14}
-                      position={[0, -0.07, 0]}
+                      targetHeight={cfgBrain.targetHeight}
+                      position={cfgBrain.offset}
                       emissiveTint={statusHex(brainCombinedStatus)}
                       emissiveIntensity={
                         selectedOrgan === 'brain'
-                          ? 0.35
+                          ? cfgBrain.selectedEmissiveIntensity
                           : hoveredOrgan === 'brain'
-                          ? 0.22
+                          ? cfgBrain.hoverEmissiveIntensity
                           : brainCombinedStatus === 'green'
-                          ? 0.06
-                          : 0.14
+                          ? cfgBrain.idleEmissiveIntensity
+                          : cfgBrain.idleEmissiveIntensity * 1.8
                       }
                       retryToken={retryToken}
                       onStatusChange={(s, msg) => updateAssetStatus('brain', s, msg)}
@@ -423,21 +428,21 @@ export function HealthAtlasCanvas({
                   </group>
 
                   {/* Heart (Left-Center Thoracic Cavity) */}
-                  <group position={[0.028, 1.13, 0.045]}>
+                  <group position={cfgHeart.position} rotation={cfgHeart.rotation}>
                     <AtlasGltfModel
                       modelKey="heart"
                       driveUrl={heartModelUrl}
-                      targetHeight={0.15}
-                      position={[0, -0.075, 0]}
+                      targetHeight={cfgHeart.targetHeight}
+                      position={cfgHeart.offset}
                       emissiveTint={statusHex(heartSystem.status)}
                       emissiveIntensity={
                         selectedOrgan === 'heart'
-                          ? 0.35
+                          ? cfgHeart.selectedEmissiveIntensity
                           : hoveredOrgan === 'heart'
-                          ? 0.22
+                          ? cfgHeart.hoverEmissiveIntensity
                           : heartSystem.status === 'green'
-                          ? 0.06
-                          : 0.14
+                          ? cfgHeart.idleEmissiveIntensity
+                          : cfgHeart.idleEmissiveIntensity * 1.8
                       }
                       retryToken={retryToken}
                       onStatusChange={(s, msg) => updateAssetStatus('heart', s, msg)}
@@ -466,21 +471,21 @@ export function HealthAtlasCanvas({
                   </group>
 
                   {/* Lungs (Bilateral Thoracic Cavity) */}
-                  <group position={[0, 1.16, -0.01]}>
+                  <group position={cfgLungs.position} rotation={cfgLungs.rotation}>
                     <AtlasGltfModel
                       modelKey="lungs"
                       driveUrl={lungsModelUrl}
-                      targetHeight={0.27}
-                      position={[0, -0.135, 0]}
+                      targetHeight={cfgLungs.targetHeight}
+                      position={cfgLungs.offset}
                       emissiveTint={statusHex(lungsSystem.status)}
                       emissiveIntensity={
                         selectedOrgan === 'lungs'
-                          ? 0.32
+                          ? cfgLungs.selectedEmissiveIntensity
                           : hoveredOrgan === 'lungs'
-                          ? 0.2
+                          ? cfgLungs.hoverEmissiveIntensity
                           : lungsSystem.status === 'green'
-                          ? 0.06
-                          : 0.14
+                          ? cfgLungs.idleEmissiveIntensity
+                          : cfgLungs.idleEmissiveIntensity * 1.8
                       }
                       retryToken={retryToken}
                       onStatusChange={(s, msg) => updateAssetStatus('lungs', s, msg)}
