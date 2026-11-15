@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   Activity,
   BookOpen,
@@ -7,7 +7,6 @@ import {
   FileText,
   Globe2,
   LayoutDashboard,
-  Scan,
   Settings,
   X,
 } from 'lucide-react';
@@ -17,7 +16,6 @@ import { StatusPill, healthStatusToTone } from '../ui/StatusPill';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', shortLabel: 'Home', icon: LayoutDashboard, end: true },
-  { to: '/atlas', label: '3D Health Atlas', shortLabel: 'Atlas', icon: Scan },
   { to: '/check-in', label: 'Daily Check-In', shortLabel: 'Check-In', icon: ClipboardCheck },
   { to: '/vitals', label: 'Vitals', shortLabel: 'Vitals', icon: Activity },
   { to: '/reports', label: 'Reports', shortLabel: 'Reports', icon: FileText },
@@ -32,6 +30,8 @@ interface SidebarNavProps {
 }
 
 export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
+  const location = useLocation();
+  const isDashboard = location.pathname === '/';
   const { astronaut, assessment } = useActiveAssessment();
   const tone = healthStatusToTone(assessment.overallStatus);
 
@@ -45,18 +45,24 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
   }, [mobileOpen, onCloseMobile]);
 
   const navContent = (
-    <div className="flex h-full flex-col justify-between border-r border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-3 py-5">
+    <div
+      className={`flex h-full flex-col justify-between transition-all duration-200 ${
+        isDashboard
+          ? 'm-3 rounded-2xl border border-[var(--arogya-border)] bg-white p-4 shadow-sm'
+          : 'border-r border-[var(--arogya-border)] bg-white px-3 py-5'
+      }`}
+    >
       <div>
         <div className="mb-6 flex items-center justify-between px-2">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)]">
-              <span className="font-mono-tabular text-sm font-bold text-[#22D3EE]">A</span>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--arogya-border)] bg-[#1E3A5F] shadow-sm">
+              <span className="font-mono-tabular text-sm font-bold text-white">A</span>
             </div>
             <div>
-              <p className="text-base font-bold tracking-tight text-[var(--arogya-text-primary)]">
+              <p className="text-sm font-bold tracking-tight text-[var(--arogya-text-primary)]">
                 Arogya
               </p>
-              <p className="text-[11px] text-[var(--arogya-text-secondary)]">
+              <p className="text-[10px] text-[var(--arogya-text-muted)]">
                 Crew Health Console
               </p>
             </div>
@@ -64,7 +70,7 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
           <button
             type="button"
             onClick={onCloseMobile}
-            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-[var(--arogya-text-secondary)] hover:bg-white/5 hover:text-[var(--arogya-text-primary)] lg:hidden"
+            className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg p-2 text-[var(--arogya-text-secondary)] hover:bg-[var(--arogya-bg)] hover:text-[var(--arogya-text-primary)] lg:hidden"
             aria-label="Close navigation menu"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -81,10 +87,10 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
                 end={item.end}
                 onClick={onCloseMobile}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap ${
+                  `flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors duration-150 whitespace-nowrap ${
                     isActive
-                      ? 'border border-[#22D3EE]/35 bg-[#121C2B] text-[#22D3EE]'
-                      : 'border border-transparent text-[var(--arogya-text-secondary)] hover:bg-white/[0.04] hover:text-[var(--arogya-text-primary)]'
+                      ? 'border border-[#1E3A5F]/20 bg-[#1E3A5F]/8 text-[#1E3A5F] shadow-sm'
+                      : 'border border-transparent text-[var(--arogya-text-secondary)] hover:bg-[var(--arogya-bg)] hover:text-[var(--arogya-text-primary)]'
                   }`
                 }
               >
@@ -96,11 +102,11 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
         </nav>
       </div>
 
-      <div className="mt-6 rounded-xl border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
-        <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--arogya-text-secondary)]">
+      <div className="mt-4 rounded-xl border border-[var(--arogya-border)] bg-[var(--arogya-bg)] p-3">
+        <p className="text-[10px] font-medium uppercase tracking-wider text-[var(--arogya-text-muted)]">
           Active Crew
         </p>
-        <div className="mt-2 flex items-center gap-2.5">
+        <div className="mt-1.5 flex items-center gap-2">
           <AstronautAvatar
             astronautId={astronaut.id}
             fullName={astronaut.fullName}
@@ -109,19 +115,17 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
             active
           />
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-[var(--arogya-text-primary)]">
+            <p className="truncate text-xs font-semibold text-[var(--arogya-text-primary)]">
               {astronaut.fullName}
             </p>
-            <p className="truncate font-mono-tabular text-[11px] text-[var(--arogya-text-secondary)]">
-              {astronaut.callSign} · {astronaut.role}
+            <p className="truncate font-mono-tabular text-[10px] text-[var(--arogya-text-muted)]">
+              {astronaut.callSign}
             </p>
           </div>
         </div>
-        <div className="mt-2.5 flex items-center justify-between gap-2">
-          <span className="font-mono-tabular text-xs text-[var(--arogya-text-secondary)]">
-            {astronaut.id}
-          </span>
-          <StatusPill tone={tone} />
+        <div className="mt-2 flex items-center justify-between text-[10px] text-[var(--arogya-text-muted)]">
+          <span>Mission Control v2.0</span>
+          <StatusPill tone={tone} size="sm" />
         </div>
       </div>
     </div>
@@ -129,7 +133,13 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
 
   return (
     <>
-      <aside className="no-print hidden w-60 shrink-0 lg:block">{navContent}</aside>
+      <aside
+        className={`no-print hidden shrink-0 transition-all duration-200 lg:block ${
+          isDashboard ? 'w-[205px]' : 'w-60'
+        }`}
+      >
+        {navContent}
+      </aside>
 
       {/* Mobile Slide-over Drawer */}
       {mobileOpen && (
@@ -140,7 +150,7 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
           className="fixed inset-0 z-50 flex lg:hidden"
         >
           <div
-            className="fixed inset-0 bg-black/75"
+            className="fixed inset-0 bg-black/30"
             onClick={onCloseMobile}
             aria-hidden="true"
           />
@@ -151,7 +161,7 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
       {/* Compact Mobile Bottom Navigation Bar */}
       <nav
         aria-label="Mobile Quick Navigation"
-        className="no-print fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-2 py-1.5 lg:hidden"
+        className="no-print fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t border-[var(--arogya-border)] bg-white px-2 py-1.5 lg:hidden"
       >
         {NAV_ITEMS.slice(0, 5).map((item) => {
           const Icon = item.icon;
@@ -163,7 +173,7 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
               className={({ isActive }) =>
                 `flex min-h-[44px] min-w-[52px] flex-col items-center justify-center gap-0.5 rounded-lg px-2 text-[11px] font-medium transition-colors ${
                   isActive
-                    ? 'text-[#22D3EE]'
+                    ? 'text-[#1E3A5F]'
                     : 'text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                 }`
               }

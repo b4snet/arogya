@@ -1,0 +1,27 @@
+{
+  "studyId": "OSD-575",
+  "title": "SpaceX Inspiration4 Blood Serum Metabolic Panel and Immune/Cardiac Cytokine Arrays (Comprehensive Metabolic Panel and Multiplex)",
+  "version": "3",
+  "doi": "10.26030/mc5d-p710",
+  "officialUrl": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-575",
+  "metadataUrl": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/",
+  "manifestUrl": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/files/",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "licenseVerification": "Verified against the official OSDR OSD-575 Version 3 study page, which lists License: CC0-1.0. The direct HTML response did not expose the page content to the local fetcher.",
+  "downloadUrl": "https://osdr.nasa.gov/geode-py/ws/studies/OSD-575/download?source=datamanager&file=LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv",
+  "filename": "LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv",
+  "sha256": "5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9",
+  "retrievedAt": "2026-11-15T06:53:23.576Z",
+  "transformDescription": "Parsed the NASA OSDR transformed CSV into sample records and analyte result objects; source NA/N/A/blank tokens become null. No interpolation, normalization, unit conversion, or diagnostic classification is performed.",
+  "sourceSampleRows": 28,
+  "importedMeasurements": 532,
+  "unitsAndNormalization": "Values retain the physical units encoded in the source headers. The CMP protocol describes Quest Diagnostics laboratory results; this transformed CMP file does not specify a log or cross-sample normalization. The file is transformed to a reusable table schema.",
+  "limitations": [
+    "Study IDs C001–C004 are shown as source pseudonyms and are not linked to Arogya demo astronauts or re-identified.",
+    "This is archived serum laboratory research data, not live telemetry, a medical device reading, or a diagnosis.",
+    "The study overview description lists L-92, L-44, L-3, R+1, R+45, and R+82; the official study sample table and CMP file also include R+194 samples. All source timepoint labels are preserved as supplied.",
+    "No exact collection dates or daily observations are inferred from relative timepoints.",
+    "Per-result ranges are displayed only as source-reported laboratory intervals and are not used to assign flags."
+  ]
+}

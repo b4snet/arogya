@@ -19,11 +19,11 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className={`flex flex-col items-center justify-center rounded-xl border border-[#F97316]/35 bg-[var(--arogya-surface)] text-center ${
+      className={`flex flex-col items-center justify-center rounded-xl border border-[var(--arogya-caution-border)] bg-[var(--arogya-surface)] text-center ${
         compact ? 'p-5' : 'px-6 py-12'
       }`}
     >
-      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-[#F97316]/35 bg-[#F97316]/10 text-[#FB923C]">
+      <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--arogya-caution-border)] bg-[var(--arogya-caution-soft)] text-[var(--arogya-caution-text)]">
         <AlertCircle className="h-5 w-5" aria-hidden="true" />
       </div>
       <p className="text-sm font-semibold text-[var(--arogya-text-primary)]">{title}</p>

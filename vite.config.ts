@@ -6,14 +6,21 @@ import {defineConfig} from 'vite';
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+  const releaseBuild = mode === 'release';
   return {
     plugins: [react(), tailwindcss()],
     assetsInclude: ['**/*.glb'],
     resolve: {
-      alias: {
-        '@': resolve(projectRoot, '.'),
-      },
+      alias: [
+        { find: '@', replacement: resolve(projectRoot, '.') },
+        ...(releaseBuild
+          ? [{
+              find: /^\.\.\/\.\.\/assets\/images\/dashboard_poster_1794643417554\.jpg$/,
+              replacement: resolve(projectRoot, 'src/utils/noPosterImage.ts'),
+            }]
+          : []),
+      ],
     },
     server: {
       // HMR is disabled in AI Studio via DISABLE_HMR env var.
@@ -23,6 +30,9 @@ export default defineConfig(() => {
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
     build: {
+      // The release pipeline copies only an explicit runtime asset allowlist after Vite builds.
+      // This prevents local-only GLBs from being swept into dist-release by publicDir copying.
+      ...(releaseBuild ? { outDir: 'dist-release', emptyOutDir: true } : {}),
       rolldownOptions: {
         output: {
           codeSplitting: {
@@ -38,5 +48,6 @@ export default defineConfig(() => {
         },
       },
     },
+    ...(releaseBuild ? { publicDir: false } : {}),
   };
 });

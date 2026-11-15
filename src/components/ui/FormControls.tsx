@@ -46,7 +46,7 @@ export function FormField({ id, label, hint, error, children }: FormFieldProps) 
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="text-[11px] font-medium text-[#F87171]">
+        <p id={errorId} role="alert" className="text-[11px] font-medium text-[var(--arogya-critical-text)]">
           {error}
         </p>
       )}
@@ -55,7 +55,7 @@ export function FormField({ id, label, hint, error, children }: FormFieldProps) 
 }
 
 const INPUT_BASE =
-  'w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 text-sm text-[var(--arogya-text-primary)] placeholder:text-[var(--arogya-text-muted)] transition-colors duration-150 hover:border-white/25 disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-[#EF4444]';
+  'w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 text-sm text-[var(--arogya-text-primary)] placeholder:text-[var(--arogya-text-muted)] transition-colors duration-150 hover:border-[var(--arogya-text-muted)] disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-[var(--arogya-critical)]';
 
 export function TextInput({
   className = '',
@@ -138,13 +138,13 @@ export function ToggleSwitch({
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors duration-150 ${
           checked
-            ? 'border-[#22D3EE] bg-[#22D3EE]'
+            ? 'border-[#1E3A5F] bg-[#1E3A5F]'
             : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)]'
         }`}
       >
         <span
           className={`inline-block h-4 w-4 rounded-full transition-transform duration-150 ${
-            checked ? 'translate-x-6 bg-[#060B14]' : 'translate-x-1 bg-[#94A3B8]'
+            checked ? 'translate-x-6 bg-white' : 'translate-x-1 bg-[#94A3B8]'
           }`}
         />
       </button>

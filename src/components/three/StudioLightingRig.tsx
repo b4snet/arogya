@@ -3,19 +3,27 @@ import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-export function detectSoftwareWebGL(): boolean {
+export type WebGLCapability = 'hardware' | 'software' | 'unavailable';
+
+export function detectWebGLCapability(): WebGLCapability {
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl2') || canvas.getContext('webgl');
-    if (!gl) return true;
+    if (!gl) return 'unavailable';
     const ext = gl.getExtension('WEBGL_debug_renderer_info');
     const param = ext ? ext.UNMASKED_RENDERER_WEBGL : gl.RENDERER;
     const gpu = String(gl.getParameter(param) ?? '');
     gl.getExtension('WEBGL_lose_context')?.loseContext();
-    return /SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(gpu);
+    return /SwiftShader|llvmpipe|softpipe|Software|Basic Render/i.test(gpu)
+      ? 'software'
+      : 'hardware';
   } catch {
-    return false;
+    return 'unavailable';
   }
+}
+
+export function detectSoftwareWebGL(): boolean {
+  return detectWebGLCapability() !== 'hardware';
 }
 
 export function StudioLightingRig() {

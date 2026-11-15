@@ -271,7 +271,7 @@ export function ManualVitalsPanel({
         {(errors.form || Object.keys(errors).length > 0) && (
           <div
             role="alert"
-            className="rounded-lg border border-[#EF4444]/40 bg-[#EF4444]/10 px-3 py-2 text-xs text-[#FCA5A5]"
+            className="rounded-lg border border-[var(--arogya-critical-border)] bg-[var(--arogya-critical-soft)] text-[var(--arogya-critical-text)] px-3 py-2 text-xs"
           >
             {errors.form ? (
               <p>{errors.form}</p>

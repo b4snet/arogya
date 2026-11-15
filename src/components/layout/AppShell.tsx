@@ -54,7 +54,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
     <div className="flex min-h-screen w-full bg-[var(--arogya-bg)] text-[var(--arogya-text-primary)]">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:border focus:border-[#22D3EE] focus:bg-[#0B1120] focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:text-[#22D3EE] focus:shadow-xl"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:border focus:border-[#1E3A5F] focus:bg-white focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:text-[#1E3A5F] focus:shadow-xl"
       >
         Skip to main content
       </a>
@@ -75,7 +75,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
           <div
             role="status"
             aria-live="polite"
-            className="no-print flex items-center gap-2 border-b border-[#EAB308]/35 bg-[#EAB308]/10 px-4 py-2 text-xs text-[#FACC15] sm:px-6"
+            className="no-print flex items-center gap-2 border-b border-[#CA8A04]/25 bg-[#CA8A04]/8 px-4 py-2 text-xs text-[#92400E] sm:px-6"
           >
             <WifiOff className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>

@@ -2,9 +2,9 @@ import type { HealthStatusLevel } from '../../types';
 import { STATUS_META } from '../../engine/thresholds';
 
 const ROLE_AVATAR_THEMES: Record<string, string> = {
-  'AST-01': 'border-[#22D3EE]/50 bg-[#0B3D91]/50 text-[#BAE6FD]',
-  'AST-02': 'border-[#A78BFA]/50 bg-[#312E81]/50 text-[#DDD6FE]',
-  'AST-03': 'border-[#38BDF8]/50 bg-[#0F3D5E]/50 text-[#BAE6FD]',
+  'AST-01': 'border-[#1E3A5F]/40 bg-[#E2ECF7] text-[#1E3A5F]',
+  'AST-02': 'border-[#6D28D9]/30 bg-[#F3E8FF] text-[#5B21B6]',
+  'AST-03': 'border-[#1D4ED8]/30 bg-[#EFF6FF] text-[#1D4ED8]',
 };
 
 const RANK_PREFIXES = new Set([
@@ -71,12 +71,12 @@ export function AstronautAvatar({
       aria-hidden="true"
       className={`relative inline-flex shrink-0 items-center justify-center rounded-full border font-mono-tabular font-bold tracking-tight select-none ${
         SIZE_CLASSES[size]
-      } ${theme} ${active ? 'ring-2 ring-[#22D3EE]/70 ring-offset-1 ring-offset-[#060B14]' : ''}`}
+      } ${theme} ${active ? 'ring-2 ring-[#1E3A5F]/70 ring-offset-1 ring-offset-white' : ''}`}
     >
       {initials}
       {status && (
         <span
-          className={`absolute rounded-full border border-[#060B14] ${DOT_SIZE_CLASSES[size]}`}
+          className={`absolute rounded-full border border-white ${DOT_SIZE_CLASSES[size]}`}
           style={{ backgroundColor: STATUS_META[status].colorHex }}
         />
       )}

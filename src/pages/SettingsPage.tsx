@@ -69,7 +69,7 @@ export function SettingsPage() {
       {savedNotice && (
         <div
           role="status"
-          className="flex items-center gap-2 rounded-xl border border-[#22C55E]/35 bg-[#22C55E]/10 px-4 py-3 text-sm text-[#4ADE80]"
+          className="flex items-center gap-2 rounded-xl border border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)] px-4 py-3 text-sm text-[var(--arogya-success-text)]"
         >
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           <span>Astronaut baseline updated locally.</span>
@@ -154,18 +154,26 @@ export function SettingsPage() {
           onChange={(checked) => setPreferences({ highContrast: checked })}
         />
 
-        <ToggleSwitch
-          id="toggle-video-backdrop"
-          label="Dashboard MP4 Video Backdrop"
-          description="Play the synced Google Drive MP4 video behind the mission-control overview."
-          checked={preferences.enableVideoBackdrop}
-          onChange={(checked) => setPreferences({ enableVideoBackdrop: checked })}
-        />
+        {import.meta.env.MODE === 'release' ? (
+          <p role="note" className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-bg)] p-3 text-xs text-[var(--arogya-text-secondary)]">
+            Dashboard backdrop: static CSS illustration in this public release. The unverified local video remains available only in development builds.
+          </p>
+        ) : (
+          <ToggleSwitch
+            id="toggle-video-backdrop"
+            label="Dashboard MP4 Video Backdrop"
+            description="Play the synced Google Drive MP4 video behind the mission-control overview."
+            checked={preferences.enableVideoBackdrop}
+            onChange={(checked) => setPreferences({ enableVideoBackdrop: checked })}
+          />
+        )}
 
         <ToggleSwitch
           id="toggle-reduced-motion"
           label="Reduced Motion Override"
-          description="Disable CSS transitions, video backdrop playback, and automatic 3D animations."
+          description={import.meta.env.MODE === 'release'
+            ? 'Disable transitions and automatic 3D animations; the public dashboard backdrop is already static.'
+            : 'Disable CSS transitions, video backdrop playback, and automatic 3D animations.'}
           checked={preferences.reducedMotionOverride}
           onChange={(checked) => setPreferences({ reducedMotionOverride: checked })}
         />

@@ -24,9 +24,9 @@ function TrendBadge({
 
   const toneClass =
     direction === 'rising'
-      ? 'text-[#38BDF8]'
+      ? 'text-[var(--arogya-info)]'
       : direction === 'falling'
-      ? 'text-[#FACC15]'
+      ? 'text-[var(--arogya-warning-text)]'
       : direction === 'stable'
       ? 'text-[var(--arogya-text-secondary)]'
       : 'text-[var(--arogya-text-muted)]';
@@ -42,7 +42,7 @@ function TrendBadge({
 function RowStatusBadge({ row }: { row: VitalReferenceRow }) {
   if (row.status === 'missing') {
     return (
-      <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-[var(--arogya-border-strong)] bg-white/[0.04] px-2 py-0.5 text-xs font-medium text-[var(--arogya-text-secondary)]">
+      <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-2 py-0.5 text-xs font-medium text-[var(--arogya-text-secondary)]">
         <HelpCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
         <span>Missing</span>
       </span>
@@ -94,7 +94,7 @@ export function VitalsReferenceTable({
               return (
                 <tr
                   key={row.id}
-                  className="align-top transition-colors hover:bg-white/[0.02]"
+                  className="align-top transition-colors hover:bg-[var(--arogya-bg)]"
                 >
                   <th
                     scope="row"
@@ -104,7 +104,7 @@ export function VitalsReferenceTable({
                   </th>
                   <td
                     className={`px-3 py-3.5 font-mono-tabular font-semibold whitespace-nowrap ${
-                      isMissing ? 'text-[#FACC15]' : 'text-[var(--arogya-text-primary)]'
+                      isMissing ? 'text-[var(--arogya-warning-text)]' : 'text-[var(--arogya-text-primary)]'
                     }`}
                   >
                     {row.latestFormatted}
@@ -115,7 +115,7 @@ export function VitalsReferenceTable({
                   <td className="px-3 py-3.5 font-mono-tabular text-[var(--arogya-text-secondary)]">
                     {row.generalReferenceRange}
                   </td>
-                  <td className="px-3 py-3.5 font-mono-tabular text-[#38BDF8]">
+                  <td className="px-3 py-3.5 font-mono-tabular text-[var(--arogya-info)]">
                     {row.personalBaseline}
                   </td>
                   <td className="px-3 py-3.5 whitespace-nowrap">
@@ -130,7 +130,7 @@ export function VitalsReferenceTable({
                   <td className="px-3 py-3.5 leading-relaxed text-[var(--arogya-text-primary)]">
                     {row.recommendedAction}
                   </td>
-                  <td className="px-4 py-3.5 leading-relaxed font-mono-tabular text-[11px] text-[#FB923C]">
+                  <td className="px-4 py-3.5 leading-relaxed font-mono-tabular text-[11px] text-[var(--arogya-caution-text)]">
                     {row.escalationThreshold}
                   </td>
                 </tr>

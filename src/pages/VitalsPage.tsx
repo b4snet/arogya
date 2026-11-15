@@ -31,7 +31,15 @@ import {
 import { VitalsChartsGrid, type VitalsTimeWindow } from '../components/vitals/VitalsChartsGrid';
 import { VitalsReferenceTable } from '../components/vitals/VitalsReferenceTable';
 import { ManualVitalsPanel } from '../components/vitals/ManualVitalsPanel';
+import { OrganMotionPanel } from '../components/vitals/OrganMotionPanel';
+import { NasaResearchDataPanel } from '../components/vitals/NasaResearchDataPanel';
 import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../utils/unitConversions';
+import {
+  computeObservationWindow,
+  countObservedDays,
+  describeWindowCoverage,
+  filterByObservationWindow,
+} from '../utils/observationWindow';
 import { SAFETY_DISCLAIMER } from '../engine/thresholds';
 
 function formatSourceLabel(source: string): string {
@@ -84,9 +92,25 @@ export function VitalsPage() {
     [vitals14d]
   );
 
+  // Mission-day window anchored to the current mission day (integer days, timezone-free).
+  const observationWindow = useMemo(
+    () => computeObservationWindow(mission.currentDay, timeWindow),
+    [mission.currentDay, timeWindow]
+  );
+
   const windowVitals = useMemo(
-    () => sortedVitals.slice(-timeWindow),
-    [sortedVitals, timeWindow]
+    () => filterByObservationWindow(sortedVitals, observationWindow),
+    [sortedVitals, observationWindow]
+  );
+
+  const windowCheckIns = useMemo(
+    () => filterByObservationWindow(checkIns14d, observationWindow),
+    [checkIns14d, observationWindow]
+  );
+
+  const windowCoverageNotice = describeWindowCoverage(
+    observationWindow,
+    countObservedDays(windowVitals)
   );
 
   const latest = sortedVitals[sortedVitals.length - 1];
@@ -131,7 +155,7 @@ export function VitalsPage() {
     setShowManualForm(false);
     setFeedbackBanner({
       type: 'vitals',
-      message: `Mission Day ${reading.missionDay} biometric reading saved for ${astronaut.fullName}. Dashboard, Atlas, and assessment updated.`,
+      message: `Mission Day ${reading.missionDay} biometric reading saved for ${astronaut.fullName}. Dashboard, Vitals, and assessment updated.`,
     });
   };
 
@@ -154,7 +178,7 @@ export function VitalsPage() {
       assessment,
       mission,
       vitalsWindow: windowVitals,
-      checkInsWindow: checkIns14d.slice(-timeWindow),
+      checkInsWindow: windowCheckIns,
       format: assessment.escalationRequired ? 'anomaly_brief' : 'flight_surgeon_sbar',
       preparedForRole: 'Flight Surgeon',
     });
@@ -219,7 +243,7 @@ export function VitalsPage() {
             <span className="font-mono-tabular">Mission Day {mission.currentDay}</span>
             <span aria-hidden="true">·</span>
             <span className="inline-flex items-center gap-1 font-mono-tabular">
-              <Clock className="h-3.5 w-3.5 text-[#38BDF8]" aria-hidden="true" />
+              <Clock className="h-3.5 w-3.5 text-[var(--arogya-info)]" aria-hidden="true" />
               Latest reading: {latest ? `Day ${latest.missionDay} (${latestTimestampLabel})` : 'None'}
             </span>
             {latest && (
@@ -307,17 +331,17 @@ export function VitalsPage() {
       {feedbackBanner && (
         <div
           role="status"
-          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#22D3EE]/35 bg-[#22D3EE]/10 px-4 py-3 text-xs text-[var(--arogya-text-primary)]"
+          className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--arogya-info-border)] bg-[var(--arogya-info-soft)] px-4 py-3 text-xs text-[var(--arogya-text-primary)]"
         >
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 shrink-0 text-[#22D3EE]" aria-hidden="true" />
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
             <span>{feedbackBanner.message}</span>
           </div>
           <div className="flex items-center gap-3">
             {feedbackBanner.type === 'report' && (
               <Link
                 to="/reports"
-                className="font-semibold text-[#22D3EE] underline underline-offset-2 hover:text-[#38BDF8]"
+                className="font-semibold text-[var(--arogya-info)] underline underline-offset-2 hover:text-[var(--arogya-info)]"
               >
                 Open Briefings
               </Link>
@@ -350,7 +374,7 @@ export function VitalsPage() {
         <Card padding="md" className="lg:col-span-8">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <Database className="mt-0.5 h-5 w-5 shrink-0 text-[#38BDF8]" aria-hidden="true" />
+              <Database className="mt-0.5 h-5 w-5 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
               <div>
                 <h2 className="arogya-h3 text-[var(--arogya-text-primary)]">
                   Telemetry Data-Quality Status
@@ -380,21 +404,30 @@ export function VitalsPage() {
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 border-t border-[var(--arogya-border)] pt-3 text-xs text-[var(--arogya-text-secondary)]">
             <span className="font-mono-tabular">
               Today&apos;s vitals (Day {mission.currentDay}):{' '}
-              <strong className={assessment.dataQuality.hasTodayVitals ? 'text-[#4ADE80]' : 'text-[#FACC15]'}>
+              <strong className={assessment.dataQuality.hasTodayVitals ? 'text-[var(--arogya-success-text)]' : 'text-[var(--arogya-warning-text)]'}>
                 {assessment.dataQuality.hasTodayVitals ? 'Logged' : 'Missing'}
               </strong>
             </span>
             <span aria-hidden="true">·</span>
+            {windowCoverageNotice && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span className="font-medium text-[var(--arogya-warning-text)]">
+                  {windowCoverageNotice}
+                </span>
+              </>
+            )}
+            <span aria-hidden="true">·</span>
             <span className="font-mono-tabular">
               Window gaps ({timeWindow}d):{' '}
-              <strong className={windowMissingCount > 0 ? 'text-[#FACC15]' : 'text-[var(--arogya-text-primary)]'}>
+              <strong className={windowMissingCount > 0 ? 'text-[var(--arogya-warning-text)]' : 'text-[var(--arogya-text-primary)]'}>
                 {windowMissingCount} missing channel{windowMissingCount === 1 ? '' : 's'}
               </strong>
             </span>
             {assessment.dataQuality.missingFields.length > 0 && (
               <>
                 <span aria-hidden="true">·</span>
-                <span className="text-[#FACC15]">
+                <span className="text-[var(--arogya-warning-text)]">
                   Flagged missing: {assessment.dataQuality.missingFields.join(', ')}
                 </span>
               </>
@@ -411,7 +444,7 @@ export function VitalsPage() {
             <div className="flex items-start gap-2.5">
               <ShieldAlert
                 className={`mt-0.5 h-5 w-5 shrink-0 ${
-                  assessment.escalationRequired ? 'text-[#F87171]' : 'text-[#38BDF8]'
+                  assessment.escalationRequired ? 'text-[var(--arogya-critical-text)]' : 'text-[var(--arogya-info)]'
                 }`}
                 aria-hidden="true"
               />
@@ -490,7 +523,7 @@ export function VitalsPage() {
                       {row.name}
                     </span>
                     {row.status === 'missing' ? (
-                      <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md border border-[var(--arogya-border-strong)] bg-white/[0.04] px-2 py-0.5 text-xs font-medium text-[var(--arogya-text-secondary)]">
+                      <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-2 py-0.5 text-xs font-medium text-[var(--arogya-text-secondary)]">
                         <HelpCircle className="h-3 w-3" aria-hidden="true" />
                         <span>Missing</span>
                       </span>
@@ -502,7 +535,7 @@ export function VitalsPage() {
                   <div className="mt-2.5 flex items-baseline gap-1.5">
                     <span
                       className={`font-mono-tabular text-2xl font-semibold ${
-                        isMissing ? 'text-[#FACC15]' : 'text-[var(--arogya-text-primary)]'
+                        isMissing ? 'text-[var(--arogya-warning-text)]' : 'text-[var(--arogya-text-primary)]'
                       }`}
                     >
                       {isMissing
@@ -527,7 +560,7 @@ export function VitalsPage() {
                 <div className="mt-3 space-y-1 border-t border-[var(--arogya-border)] pt-2.5 text-[11px]">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-[var(--arogya-text-muted)]">Personal Baseline</span>
-                    <span className="font-mono-tabular text-[#38BDF8] text-right">
+                    <span className="font-mono-tabular text-[var(--arogya-info)] text-right">
                       {row.personalBaseline}
                     </span>
                   </div>
@@ -550,10 +583,14 @@ export function VitalsPage() {
         </div>
       </section>
 
+      {/* Illustrative heart/lung motion, thematically separate from the removed Atlas route */}
+      <OrganMotionPanel astronaut={astronaut} latestVital={latest ?? null} rows={referenceRows} />
+
       {/* 7D / 14D / 30D Recharts Visualizations */}
       <VitalsChartsGrid
         astronaut={astronaut}
         allReadings={sortedVitals}
+        currentMissionDay={mission.currentDay}
         timeWindow={timeWindow}
         onTimeWindowChange={setTimeWindow}
         units={units}
@@ -600,7 +637,7 @@ export function VitalsPage() {
             </thead>
             <tbody className="divide-y divide-[var(--arogya-border)] font-mono-tabular text-[var(--arogya-text-primary)]">
               {[...windowVitals].reverse().map((v) => (
-                <tr key={v.id} className="hover:bg-white/[0.02]">
+                <tr key={v.id} className="hover:bg-[var(--arogya-bg)]">
                   <th scope="row" className="px-4 py-2.5 font-semibold">
                     D{v.missionDay}
                   </th>
@@ -613,48 +650,48 @@ export function VitalsPage() {
                   <td className="px-3 py-2.5 font-sans text-[var(--arogya-text-secondary)]">
                     {v.source === 'manual_entry' ? 'Manual' : 'Wearable'}
                   </td>
-                  <td className={`px-3 py-2.5 ${v.heartRateBpm == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-3 py-2.5 ${v.heartRateBpm == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.heartRateBpm != null ? `${v.heartRateBpm} bpm` : 'MISSING'}
                   </td>
                   <td
                     className={`px-3 py-2.5 ${
-                      v.systolicBpMmHg == null || v.diastolicBpMmHg == null ? 'text-[#FACC15]' : ''
+                      v.systolicBpMmHg == null || v.diastolicBpMmHg == null ? 'text-[var(--arogya-warning-text)]' : ''
                     }`}
                   >
                     {v.systolicBpMmHg != null && v.diastolicBpMmHg != null
                       ? `${v.systolicBpMmHg}/${v.diastolicBpMmHg}`
                       : 'MISSING'}
                   </td>
-                  <td className={`px-3 py-2.5 ${v.bodyTempC == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-3 py-2.5 ${v.bodyTempC == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.bodyTempC != null
                       ? isImperial
                         ? `${celsiusToFahrenheit(v.bodyTempC).toFixed(1)} °F`
                         : `${v.bodyTempC.toFixed(1)} °C`
                       : 'MISSING'}
                   </td>
-                  <td className={`px-3 py-2.5 ${v.bloodGlucoseMgDl == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-3 py-2.5 ${v.bloodGlucoseMgDl == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.bloodGlucoseMgDl != null
                       ? isImperial
                         ? `${mgDlToMmolL(v.bloodGlucoseMgDl).toFixed(1)} mmol/L`
                         : `${v.bloodGlucoseMgDl} mg/dL`
                       : 'MISSING'}
                   </td>
-                  <td className={`px-3 py-2.5 ${v.bodyMassKg == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-3 py-2.5 ${v.bodyMassKg == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.bodyMassKg != null
                       ? isImperial
                         ? `${kgToLb(v.bodyMassKg).toFixed(1)} lb`
                         : `${v.bodyMassKg.toFixed(1)} kg`
                       : 'MISSING'}
                   </td>
-                  <td className={`px-3 py-2.5 ${v.dailyRadiationMsv == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-3 py-2.5 ${v.dailyRadiationMsv == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.dailyRadiationMsv != null ? `${v.dailyRadiationMsv.toFixed(2)} mSv` : 'MISSING'}
                   </td>
-                  <td className={`px-3 py-2.5 ${v.cumulativeRadiationMsv == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-3 py-2.5 ${v.cumulativeRadiationMsv == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.cumulativeRadiationMsv != null
                       ? `${v.cumulativeRadiationMsv.toFixed(2)} mSv`
                       : 'MISSING'}
                   </td>
-                  <td className={`px-4 py-2.5 ${v.spo2Percent == null ? 'text-[#FACC15]' : ''}`}>
+                  <td className={`px-4 py-2.5 ${v.spo2Percent == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.spo2Percent != null ? `${v.spo2Percent}%` : 'MISSING'}
                   </td>
                 </tr>
@@ -665,6 +702,7 @@ export function VitalsPage() {
       </Card>
         </>
       )}
+      <NasaResearchDataPanel />
     </div>
   );
 }

@@ -7,9 +7,6 @@ import { useArogyaStore } from './store/useArogyaStore';
 const DashboardPage = lazy(() =>
   import('./pages/DashboardPage').then((module) => ({ default: module.DashboardPage }))
 );
-const AtlasPage = lazy(() =>
-  import('./pages/AtlasPage').then((module) => ({ default: module.AtlasPage }))
-);
 const CheckInPage = lazy(() =>
   import('./pages/CheckInPage').then((module) => ({ default: module.CheckInPage }))
 );
@@ -31,7 +28,6 @@ const AboutPage = lazy(() =>
 
 const ROUTE_TITLES: Record<string, string> = {
   '/': 'Mission Health Dashboard',
-  '/atlas': '3D Health Atlas',
   '/check-in': 'Daily Crew Check-In',
   '/vitals': 'Biometric Vitals',
   '/reports': 'Flight Surgeon Briefings',
@@ -61,7 +57,7 @@ function RoutedContent() {
         >
           <Routes>
             <Route path="/" element={<DashboardPage />} />
-            <Route path="/atlas" element={<AtlasPage />} />
+            <Route path="/atlas" element={<Navigate to="/vitals" replace />} />
             <Route path="/check-in" element={<CheckInPage />} />
             <Route path="/vitals" element={<VitalsPage />} />
             <Route path="/reports" element={<ReportsPage />} />

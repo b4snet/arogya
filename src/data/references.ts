@@ -35,6 +35,10 @@ export interface AssetAttribution {
   source: string;
   license: string;
   notes: string;
+  creator?: string;
+  sourceUrl?: string;
+  licenseUrl?: string;
+  copyrightNotice?: string;
 }
 
 export const HOW_IT_WORKS_STEPS = [
@@ -214,49 +218,108 @@ export const SPACEFLIGHT_REFERENCES: ReferenceSource[] = [
 
 export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
   {
-    id: 'asset-procedural-3d',
-    assetName: 'Anatomical 3D Crew & Organ Meshes (Astronaut, Brain, Heart, Lungs, Skeleton)',
+    id: 'asset-programme-erizon',
+    assetName: 'Programme ERIZON spacecraft model',
     type: '3D Geometry',
-    source: 'Authored procedural Three.js geometry in src/components/three/ProceduralOrganModels.tsx',
+    source: 'Programme ERIZON — Sketchfab',
+    creator: 'nejenabinupa',
+    sourceUrl: 'https://sketchfab.com/3d-models/programme-erizon-1dfbae39ee674334848da02301b77d68',
+    license: 'CC BY-NC-ND 4.0 (separate third-party asset license)',
+    licenseUrl: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+    notes:
+      'Creator, title, source, and license are preserved from the GLB metadata. Source-page license verification is pending (the page returned HTTP 403). No copyright notice was supplied in the embedded metadata. NonCommercial and NoDerivatives restrictions require public-release review. The model remains local and is excluded from the initial public release; Arogya code MIT licensing does not cover this asset.',
+  },
+  {
+    id: 'asset-procedural-3d',
+    assetName: 'Procedural Astronaut, Organ Illustrations & Mission Spacecraft',
+    type: '3D Geometry',
+    source: 'Arogya-authored Three.js geometry in src/components/three/ProceduralOrganModels.tsx and ProceduralSpaceship.tsx',
     license: 'MIT License (Project Source)',
     notes:
-      'Provides guaranteed offline 3D visualization with zero external network reliance when optional /models/*.glb files are not present.',
+      'Used by the public release for the Dashboard astronaut, Vitals heart/lungs and Mission spacecraft. Illustrative project geometry; no third-party model file is shipped.',
   },
   {
-    id: 'asset-drive-glb',
-    assetName: 'Local 3D .glb Models (Astronaut, Brain, Heart, Lungs)',
+    id: 'asset-local-astronaut-glb',
+    assetName: 'Astronaut GLB — local development only',
     type: '3D Geometry',
-    source: 'Project-provided files copied from 3d-models/',
-    license: 'Unverified; confirm each original license before redistribution',
+    source: 'Sketchfab metadata embedded in the GLB',
+    creator: 'Jungle Jim',
+    sourceUrl: 'https://sketchfab.com/3d-models/astronaut-by-jungle-jim-c775a977606a4e4e990afe783c6bc845',
+    license: 'Embedded metadata states CC BY 4.0; source-page verification pending',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     notes:
-      'Original asset files are preserved. Source and license records were not present in the workspace at audit time.',
+      'Embedded title: “Astronaut by Jungle Jim”. The Sketchfab source page was not independently accessible during this pass. Not included in the public release; no redistribution permission is inferred from the local file.',
   },
   {
-    id: 'asset-poster-img',
-    assetName: 'Dashboard Orbital Horizon Fallback Poster (dashboard_poster_1794643417554.jpg)',
+    id: 'asset-local-brain-glb',
+    assetName: 'Brain GLB — local development only',
+    type: '3D Geometry',
+    source: 'Embedded GLB asset metadata',
+    license: 'No creator, source, or license notice found in embedded metadata',
+    notes:
+      'The embedded generator field identifies Microsoft GLTF Exporter 2.8.3.32, not the model creator or rights holder. Excluded from the public release pending source and permission review.',
+  },
+  {
+    id: 'asset-local-heart-glb',
+    assetName: 'Heart GLB — local development only',
+    type: '3D Geometry',
+    source: 'Sketchfab metadata embedded in the GLB',
+    creator: 'neshallads',
+    sourceUrl: 'https://sketchfab.com/3d-models/realistic-human-heart-3f8072336ce94d18b3d0d055a1ece089',
+    license: 'Embedded metadata states CC BY 4.0; source-page verification pending',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    notes:
+      'Embedded title: “Realistic Human Heart”. The Sketchfab source page returned HTTP 403 during this pass. Not included in the public release; no redistribution permission is inferred from the local file.',
+  },
+  {
+    id: 'asset-local-lungs-glb',
+    assetName: 'Lungs GLB — local development only',
+    type: '3D Geometry',
+    source: 'Sketchfab metadata embedded in the GLB',
+    creator: 'neshallads',
+    sourceUrl: 'https://sketchfab.com/3d-models/realistic-human-lungs-ce09f4099a68467880f46e61eb9a3531',
+    license: 'Embedded metadata states CC BY 4.0; source-page verification pending',
+    licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
+    notes:
+      'Embedded title: “Realistic Human Lungs”. The Sketchfab source page returned HTTP 403 during this pass. Not included in the public release; no redistribution permission is inferred from the local file.',
+  },
+  {
+    id: 'asset-local-poster-img',
+    assetName: 'Dashboard poster image — local development only',
     type: 'Background Media',
-    source: 'Generated locally for Arogya Dashboard static backdrop',
-    license: 'Bundled project asset (Offline)',
+    source: 'Local file src/assets/images/dashboard_poster_1794643417554.jpg; no external source record supplied',
+    license: 'Unverified; no creator or license record available',
     notes:
-      'Displayed automatically during reduced-motion mode, initial pre-load, or when no background video is supplied.',
+      'The prior description called this locally generated, but no provenance or license evidence is recorded. It is not shipped; the public release uses an original CSS starfield instead.',
   },
   {
-    id: 'asset-drive-video',
-    assetName: 'Dashboard Background Video (dashboard-background.mp4)',
+    id: 'asset-local-dashboard-video',
+    assetName: 'Dashboard background video — local development only',
     type: 'Background Media',
     source: 'Project-provided dashboard-background.mp4',
-    license: 'Unverified; confirm the original creator and license before redistribution',
+    license: 'Unverified; no creator, original source, or license record available',
     notes:
-      'Loaded locally with the supplied poster fallback, lazy loading, muted playback, tab-visibility pause, and reduced-motion suppression.',
+      'Embedded MP4 metadata contains only the Lavf 63.1.101 encoder tag; it does not identify a creator or license. Kept for local development behavior only. The public release uses a static CSS backdrop and does not request this file.',
+  },
+  {
+    id: 'asset-local-unused-aistudio-image',
+    assetName: 'Unused AI Studio PNG — not used by the application',
+    type: 'Background Media',
+    source: 'public/assets/aistudio/image_74130baa.png; no source record supplied',
+    license: 'Unverified; no creator, source, or license record available',
+    notes:
+      'No application runtime reference was found. It is not included in the public release artifact.',
   },
   {
     id: 'asset-fonts',
     assetName: 'IBM Plex Sans & IBM Plex Mono',
     type: 'Typography',
-    source: 'IBM Corporation via Google Fonts',
+    source: 'IBM Plex — IBM/plex (loaded remotely through Google Fonts)',
+    sourceUrl: 'https://github.com/IBM/plex',
     license: 'SIL Open Font License 1.1 (OFL-1.1)',
+    licenseUrl: 'https://github.com/IBM/plex/blob/master/LICENSE.txt',
     notes:
-      'Used for clinical body legibility and tabular numeric telemetry alignment.',
+      'IBM’s official repository confirms the OFL-1.1 license. Fonts are fetched from Google Fonts at runtime and are not bundled as binary files in the release artifact.',
   },
 ];
 

@@ -14,62 +14,69 @@ import { ChartContainer } from '../ui';
 import type { Astronaut, VitalReading } from '../../types';
 import { CLINICAL_THRESHOLDS } from '../../engine/thresholds';
 import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../../utils/unitConversions';
+import {
+  OBSERVATION_WINDOW_OPTIONS,
+  buildDailySeries,
+  computeObservationWindow,
+  countObservedDays,
+  describeWindowCoverage,
+  filterByObservationWindow,
+  type ObservationWindowDays,
+} from '../../utils/observationWindow';
 
-export type VitalsTimeWindow = 7 | 14 | 30;
+export type VitalsTimeWindow = ObservationWindowDays;
 
 interface VitalsChartsGridProps {
   astronaut: Astronaut;
   allReadings: VitalReading[];
+  currentMissionDay: number;
   timeWindow: VitalsTimeWindow;
   onTimeWindowChange: (win: VitalsTimeWindow) => void;
   units: 'metric' | 'imperial';
 }
 
 const TOOLTIP_STYLE = {
-  backgroundColor: '#0D1522',
-  borderColor: 'rgba(255,255,255,0.16)',
+  backgroundColor: '#FFFFFF',
+  borderColor: '#CBD5E1',
   borderRadius: '8px',
   fontSize: '12px',
-  color: '#E6EDF6',
+  color: '#0F172A',
 };
 
 export function VitalsChartsGrid({
   astronaut,
   allReadings,
+  currentMissionDay,
   timeWindow,
   onTimeWindowChange,
   units,
 }: VitalsChartsGridProps) {
   const isImperial = units === 'imperial';
-  const sorted = [...allReadings].sort((a, b) => a.missionDay - b.missionDay);
-  const windowData = sorted.slice(-timeWindow);
 
-  const chartData = windowData.map((v) => ({
-    missionDay: `D${v.missionDay}`,
-    heartRateBpm: v.heartRateBpm,
-    systolicBpMmHg: v.systolicBpMmHg,
-    diastolicBpMmHg: v.diastolicBpMmHg,
-    spo2Percent: v.spo2Percent,
-    bodyTemp:
-      v.bodyTempC != null
-        ? isImperial
-          ? celsiusToFahrenheit(v.bodyTempC)
-          : v.bodyTempC
-        : null,
-    bloodGlucose:
-      v.bloodGlucoseMgDl != null
-        ? isImperial
-          ? mgDlToMmolL(v.bloodGlucoseMgDl)
-          : v.bloodGlucoseMgDl
-        : null,
-    bodyMass:
-      v.bodyMassKg != null
-        ? isImperial
-          ? kgToLb(v.bodyMassKg)
-          : v.bodyMassKg
-        : null,
-    dailyRadiationMsv: v.dailyRadiationMsv,
-    cumulativeRadiationMsv: v.cumulativeRadiationMsv,
+  // Real date window: the mission-day range the selector asks for, clamped to mission start.
+  const window = computeObservationWindow(currentMissionDay, timeWindow);
+  const windowData = filterByObservationWindow(allReadings, window);
+  const coverageNotice = describeWindowCoverage(window, countObservedDays(windowData));
+
+  const toTemp = (c: number | null | undefined) =>
+    c != null ? (isImperial ? celsiusToFahrenheit(c) : c) : null;
+  const toGlucose = (mgDl: number | null | undefined) =>
+    mgDl != null ? (isImperial ? mgDlToMmolL(mgDl) : mgDl) : null;
+  const toMass = (kg: number | null | undefined) =>
+    kg != null ? (isImperial ? kgToLb(kg) : kg) : null;
+
+  // One slot per day of the window keeps missing days visible as gaps (never interpolated).
+  const chartData = buildDailySeries(windowData, window).map(({ missionDay, item }) => ({
+    missionDay: `D${missionDay}`,
+    heartRateBpm: item?.heartRateBpm ?? null,
+    systolicBpMmHg: item?.systolicBpMmHg ?? null,
+    diastolicBpMmHg: item?.diastolicBpMmHg ?? null,
+    spo2Percent: item?.spo2Percent ?? null,
+    bodyTemp: toTemp(item?.bodyTempC),
+    bloodGlucose: toGlucose(item?.bloodGlucoseMgDl),
+    bodyMass: toMass(item?.bodyMassKg),
+    dailyRadiationMsv: item?.dailyRadiationMsv ?? null,
+    cumulativeRadiationMsv: item?.cumulativeRadiationMsv ?? null,
   }));
 
   const tempUnit = isImperial ? '°F' : '°C';
@@ -102,7 +109,6 @@ export function VitalsChartsGrid({
         : astronaut.baseline.bodyMassKg
       : null;
 
-  const hasFewerDaysThanWindow = sorted.length < timeWindow;
   const latestChart = chartData[chartData.length - 1];
   const latestDay = latestChart?.missionDay ?? 'N/A';
 
@@ -120,12 +126,18 @@ export function VitalsChartsGrid({
           </h2>
           <p className="mt-0.5 text-xs text-[var(--arogya-text-secondary)]">
             Dashed horizontal lines indicate {astronaut.callSign} personal baselines; shaded bands and dotted bounds indicate general adult reference ranges.
-            {hasFewerDaysThanWindow && (
-              <span className="ml-1 text-[var(--arogya-text-muted)]">
-                (Showing {sorted.length} logged mission days within {timeWindow}-day window.)
-              </span>
-            )}
+            <span className="ml-1 font-mono-tabular text-[var(--arogya-text-muted)]">
+              (D{window.startDay}–D{window.endDay} window)
+            </span>
           </p>
+          {coverageNotice && (
+            <p
+              role="status"
+              className="mt-1 inline-flex items-center rounded-md border border-[var(--arogya-warning-border)] bg-[var(--arogya-warning-soft)] px-2 py-1 text-[11px] font-medium text-[var(--arogya-warning-text)]"
+            >
+              {coverageNotice}
+            </p>
+          )}
         </div>
 
         <div
@@ -133,7 +145,7 @@ export function VitalsChartsGrid({
           aria-label="Trend chart time window"
           className="inline-flex items-center gap-1 rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface)] p-1"
         >
-          {([7, 14, 30] as const).map((win) => {
+          {OBSERVATION_WINDOW_OPTIONS.map((win) => {
             const active = timeWindow === win;
             return (
               <button
@@ -141,9 +153,10 @@ export function VitalsChartsGrid({
                 type="button"
                 onClick={() => onTimeWindowChange(win)}
                 aria-pressed={active}
-                className={`min-h-[40px] whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                /* Constant weight/width: activating a period must not resize or move the group. */
+                className={`min-h-[40px] min-w-[76px] whitespace-nowrap rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
                   active
-                    ? 'bg-[#22D3EE] text-[#060B14] font-semibold'
+                    ? 'bg-[#1E3A5F] text-white'
                     : 'text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                 }`}
               >
@@ -165,39 +178,39 @@ export function VitalsChartsGrid({
           <div role="img" aria-label={cvAriaLabel} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 12, left: -12, bottom: 0 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-              <XAxis dataKey="missionDay" stroke="#94A3B8" fontSize={11} />
-              <YAxis stroke="#94A3B8" fontSize={11} domain={[40, 165]} />
+              <CartesianGrid stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="missionDay" stroke="#64748B" fontSize={11} />
+              <YAxis stroke="#64748B" fontSize={11} domain={[40, 165]} />
               <Tooltip contentStyle={TOOLTIP_STYLE} />
               <Legend wrapperStyle={{ fontSize: '11px' }} />
               {/* General Adult Systolic Reference Band */}
               <ReferenceArea
                 y1={CLINICAL_THRESHOLDS.generalSystolicMin}
                 y2={CLINICAL_THRESHOLDS.generalSystolicMax}
-                fill="#38BDF8"
+                fill="#1D4ED8"
                 fillOpacity={0.07}
                 ifOverflow="extendDomain"
               />
               {/* Personal Baselines */}
               <ReferenceLine
                 y={astronaut.baseline.restingHeartRateBpm}
-                stroke="#22D3EE"
+                stroke="#0E7490"
                 strokeDasharray="4 4"
                 strokeOpacity={0.65}
-                label={{ value: 'Personal HR', position: 'insideBottomRight', fill: '#22D3EE', fontSize: 10 }}
+                label={{ value: 'Personal HR', position: 'insideBottomRight', fill: '#0E7490', fontSize: 10 }}
               />
               <ReferenceLine
                 y={astronaut.baseline.systolicBpMmHg}
-                stroke="#F97316"
+                stroke="#C2410C"
                 strokeDasharray="4 4"
                 strokeOpacity={0.65}
-                label={{ value: 'Personal Sys', position: 'insideTopRight', fill: '#FB923C', fontSize: 10 }}
+                label={{ value: 'Personal Sys', position: 'insideTopRight', fill: '#C2410C', fontSize: 10 }}
               />
               <Line
                 type="monotone"
                 dataKey="systolicBpMmHg"
                 name="Systolic BP (mmHg)"
-                stroke="#F97316"
+                stroke="#C2410C"
                 strokeWidth={2}
                 dot={{ r: 2.5 }}
                 connectNulls={false}
@@ -206,7 +219,7 @@ export function VitalsChartsGrid({
                 type="monotone"
                 dataKey="diastolicBpMmHg"
                 name="Diastolic BP (mmHg)"
-                stroke="#38BDF8"
+                stroke="#1D4ED8"
                 strokeWidth={2}
                 strokeDasharray="5 3"
                 dot={{ r: 2.5 }}
@@ -216,7 +229,7 @@ export function VitalsChartsGrid({
                 type="monotone"
                 dataKey="heartRateBpm"
                 name="Resting HR (bpm)"
-                stroke="#22D3EE"
+                stroke="#0E7490"
                 strokeWidth={2.2}
                 strokeDasharray="2 2"
                 dot={{ r: 2.5 }}
@@ -237,18 +250,18 @@ export function VitalsChartsGrid({
           <div role="img" aria-label={thermoAriaLabel} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-              <XAxis dataKey="missionDay" stroke="#94A3B8" fontSize={11} />
+              <CartesianGrid stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="missionDay" stroke="#64748B" fontSize={11} />
               <YAxis
                 yAxisId="left"
-                stroke="#FACC15"
+                stroke="#B45309"
                 fontSize={11}
                 domain={isImperial ? [95, 103] : [35.5, 39.5]}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                stroke="#22D3EE"
+                stroke="#0E7490"
                 fontSize={11}
                 domain={[88, 102]}
               />
@@ -258,25 +271,25 @@ export function VitalsChartsGrid({
               <ReferenceLine
                 yAxisId="left"
                 y={tempBaseline}
-                stroke="#EAB308"
+                stroke="#A16207"
                 strokeDasharray="4 4"
                 strokeOpacity={0.7}
-                label={{ value: 'Personal Temp', position: 'insideTopLeft', fill: '#FACC15', fontSize: 10 }}
+                label={{ value: 'Personal Temp', position: 'insideTopLeft', fill: '#B45309', fontSize: 10 }}
               />
               {/* General Adult SpO2 Threshold */}
               <ReferenceLine
                 yAxisId="right"
                 y={CLINICAL_THRESHOLDS.generalSpo2Min}
-                stroke="#94A3B8"
+                stroke="#64748B"
                 strokeDasharray="2 3"
-                label={{ value: 'Gen SpO₂ 95%', position: 'insideBottomRight', fill: '#94A3B8', fontSize: 10 }}
+                label={{ value: 'Gen SpO₂ 95%', position: 'insideBottomRight', fill: '#64748B', fontSize: 10 }}
               />
               <Line
                 yAxisId="left"
                 type="monotone"
                 dataKey="bodyTemp"
                 name={`Temperature (${tempUnit})`}
-                stroke="#EAB308"
+                stroke="#A16207"
                 strokeWidth={2.2}
                 dot={{ r: 2.5 }}
                 connectNulls={false}
@@ -286,7 +299,7 @@ export function VitalsChartsGrid({
                 type="monotone"
                 dataKey="spo2Percent"
                 name="SpO₂ (%)"
-                stroke="#22D3EE"
+                stroke="#0E7490"
                 strokeWidth={2.2}
                 strokeDasharray="5 3"
                 dot={{ r: 2.5 }}
@@ -307,18 +320,18 @@ export function VitalsChartsGrid({
           <div role="img" aria-label={metabolicAriaLabel} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 12, left: -10, bottom: 0 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-              <XAxis dataKey="missionDay" stroke="#94A3B8" fontSize={11} />
+              <CartesianGrid stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="missionDay" stroke="#64748B" fontSize={11} />
               <YAxis
                 yAxisId="left"
-                stroke="#38BDF8"
+                stroke="#1D4ED8"
                 fontSize={11}
                 domain={isImperial ? [3, 11] : [60, 180]}
               />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                stroke="#22C55E"
+                stroke="#15803D"
                 fontSize={11}
                 domain={['auto', 'auto']}
               />
@@ -329,23 +342,23 @@ export function VitalsChartsGrid({
                 yAxisId="left"
                 y1={glucoseGenMin}
                 y2={glucoseGenMax}
-                fill="#38BDF8"
+                fill="#1D4ED8"
                 fillOpacity={0.07}
               />
               {/* Personal Fasting Glucose Baseline */}
               <ReferenceLine
                 yAxisId="left"
                 y={glucoseBaseline}
-                stroke="#38BDF8"
+                stroke="#1D4ED8"
                 strokeDasharray="4 4"
                 strokeOpacity={0.75}
-                label={{ value: 'Personal Glucose', position: 'insideTopLeft', fill: '#38BDF8', fontSize: 10 }}
+                label={{ value: 'Personal Glucose', position: 'insideTopLeft', fill: '#1D4ED8', fontSize: 10 }}
               />
               {massBaseline != null && (
                 <ReferenceLine
                   yAxisId="right"
                   y={massBaseline}
-                  stroke="#22C55E"
+                  stroke="#15803D"
                   strokeDasharray="4 4"
                   strokeOpacity={0.6}
                 />
@@ -355,7 +368,7 @@ export function VitalsChartsGrid({
                 type="monotone"
                 dataKey="bloodGlucose"
                 name={`Blood Glucose (${glucoseUnit})`}
-                stroke="#38BDF8"
+                stroke="#1D4ED8"
                 strokeWidth={2.2}
                 dot={{ r: 2.5 }}
                 connectNulls={false}
@@ -365,7 +378,7 @@ export function VitalsChartsGrid({
                 type="monotone"
                 dataKey="bodyMass"
                 name={`Body Mass (${massUnit})`}
-                stroke="#22C55E"
+                stroke="#15803D"
                 strokeWidth={2.2}
                 strokeDasharray="5 3"
                 dot={{ r: 2.5 }}
@@ -386,13 +399,13 @@ export function VitalsChartsGrid({
           <div role="img" aria-label={radAriaLabel} className="h-full w-full">
             <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 12, left: -12, bottom: 0 }}>
-              <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
-              <XAxis dataKey="missionDay" stroke="#94A3B8" fontSize={11} />
-              <YAxis yAxisId="left" stroke="#F97316" fontSize={11} domain={[0, 'auto']} />
+              <CartesianGrid stroke="#E2E8F0" vertical={false} />
+              <XAxis dataKey="missionDay" stroke="#64748B" fontSize={11} />
+              <YAxis yAxisId="left" stroke="#C2410C" fontSize={11} domain={[0, 'auto']} />
               <YAxis
                 yAxisId="right"
                 orientation="right"
-                stroke="#94A3B8"
+                stroke="#64748B"
                 fontSize={11}
                 domain={[0, 'auto']}
               />
@@ -401,16 +414,16 @@ export function VitalsChartsGrid({
               <ReferenceLine
                 yAxisId="left"
                 y={CLINICAL_THRESHOLDS.dailyRadiationWatchMsv}
-                stroke="#EAB308"
+                stroke="#A16207"
                 strokeDasharray="4 4"
-                label={{ value: '1.20 mSv/d Watch', position: 'insideTopRight', fill: '#FACC15', fontSize: 10 }}
+                label={{ value: '1.20 mSv/d Watch', position: 'insideTopRight', fill: '#B45309', fontSize: 10 }}
               />
               <Line
                 yAxisId="left"
                 type="monotone"
                 dataKey="dailyRadiationMsv"
                 name="Daily Dose (mSv/d)"
-                stroke="#F97316"
+                stroke="#C2410C"
                 strokeWidth={2.2}
                 dot={{ r: 2.5 }}
                 connectNulls={false}
@@ -420,7 +433,7 @@ export function VitalsChartsGrid({
                 type="monotone"
                 dataKey="cumulativeRadiationMsv"
                 name="Cumulative Dose (mSv)"
-                stroke="#94A3B8"
+                stroke="#64748B"
                 strokeWidth={2}
                 strokeDasharray="5 3"
                 dot={{ r: 2 }}

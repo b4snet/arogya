@@ -113,7 +113,7 @@ function scoreToPainLevel(score?: number): PainLevel {
 function WhyMatters({ text }: { text: string }) {
   return (
     <p className="mt-1 flex items-start gap-1.5 text-[11px] leading-relaxed text-[var(--arogya-text-secondary)]">
-      <Info className="mt-0.5 h-3 w-3 shrink-0 text-[#38BDF8]" aria-hidden="true" />
+      <Info className="mt-0.5 h-3 w-3 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
       <span>
         <strong className="font-medium text-[var(--arogya-text-primary)]">Why this matters:</strong>{' '}
         {text}
@@ -125,7 +125,7 @@ function WhyMatters({ text }: { text: string }) {
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} role="alert" className="mt-1 text-xs font-medium text-[#F87171]">
+    <p id={id} role="alert" className="mt-1 text-xs font-medium text-[var(--arogya-critical-text)]">
       {message}
     </p>
   );
@@ -545,7 +545,7 @@ export function CheckInPage() {
         <Card variant="elevated" padding="lg" className="space-y-5">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[#22C55E]/40 bg-[#22C55E]/15 text-[#4ADE80]">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)] text-[var(--arogya-success-text)]">
                 <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>
@@ -553,7 +553,7 @@ export function CheckInPage() {
                   Mission Day {submittedState.missionDay} Check-In Recorded
                 </h2>
                 <p className="mt-1 text-sm text-[var(--arogya-text-secondary)]">
-                  Dashboard, Vitals, 3D Health Atlas, and Reports have been updated for{' '}
+                  Dashboard, Vitals, and Reports have been updated for{' '}
                   <strong className="text-[var(--arogya-text-primary)]">{astronaut.fullName}</strong>.
                 </p>
               </div>
@@ -582,18 +582,18 @@ export function CheckInPage() {
           {submittedState.escalationRequired && (
             <div
               role="alert"
-              className="flex flex-col gap-2.5 rounded-xl border border-[#EF4444]/50 bg-[#EF4444]/12 p-3.5 text-xs text-[#FCA5A5] sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-2.5 rounded-xl border border-[var(--arogya-critical-border)] bg-[var(--arogya-critical-soft)] p-3.5 text-xs text-[var(--arogya-critical-text)] sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-start gap-2.5">
                 <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#EF4444]" aria-hidden="true" />
                 <span>
-                  <strong className="font-semibold text-[#F87171]">Urgent Medical Escalation:</strong>{' '}
+                  <strong className="font-semibold text-[var(--arogya-critical-text)]">Urgent Medical Escalation:</strong>{' '}
                   Based on today’s inputs, contact the Crew Medical Officer or Ground Flight Surgeon immediately.
                 </span>
               </div>
               <Link
                 to="/reports?escalate=1"
-                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#EF4444] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#DC2626]"
+                className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#DC2626] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#B91C1C]"
               >
                 <span>Open Urgent SBAR Brief</span>
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -604,25 +604,25 @@ export function CheckInPage() {
           <div className="flex flex-wrap gap-2.5 pt-2">
             <Link
               to="/"
-              className="inline-flex h-10 items-center rounded-lg bg-[#22D3EE] px-4 text-xs font-semibold text-[#060B14] hover:bg-[#38BDF8]"
+              className="inline-flex h-10 items-center rounded-lg bg-[#1E3A5F] px-4 text-xs font-semibold text-white hover:bg-[#2D4A6F]"
             >
               View Dashboard
             </Link>
             <Link
-              to="/atlas"
-              className="inline-flex h-10 items-center rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-white/10"
+              to="/vitals"
+              className="inline-flex h-10 items-center rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-bg)]"
             >
-              Open 3D Health Atlas
+              View Vitals
             </Link>
             <Link
               to="/vitals"
-              className="inline-flex h-10 items-center rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-white/10"
+              className="inline-flex h-10 items-center rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-bg)]"
             >
-              Inspect Vitals
+              Vitals Analytics
             </Link>
             <Link
               to="/reports"
-              className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-white/10"
+              className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-bg)]"
             >
               <FileText className="h-3.5 w-3.5" aria-hidden="true" />
               <span>View Reports</span>
@@ -646,7 +646,7 @@ export function CheckInPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs text-[#22D3EE]">
+          <div className="flex items-center gap-2 text-xs text-[var(--arogya-info)]">
             <Clock className="h-3.5 w-3.5" aria-hidden="true" />
             <span className="font-mono-tabular uppercase tracking-wider">
               60–90 Second Guided Check-In · Sol {mission.currentDay}
@@ -675,7 +675,7 @@ export function CheckInPage() {
             <button
               type="button"
               onClick={handleDiscardDraft}
-              className="inline-flex items-center gap-1 rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-2.5 py-1.5 text-[11px] text-[var(--arogya-text-secondary)] hover:text-white"
+              className="inline-flex items-center gap-1 rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-2.5 py-1.5 text-[11px] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]"
             >
               <RotateCcw className="h-3 w-3" aria-hidden="true" />
               <span>Reset Draft</span>
@@ -697,10 +697,10 @@ export function CheckInPage() {
               onClick={() => handleGoStep(item.step)}
               className={`rounded-xl border px-3 py-2.5 text-left transition-colors ${
                 active
-                  ? 'border-[#22D3EE] bg-[#121C2B] text-white'
+                  ? 'border-[#1E3A5F] bg-[var(--arogya-selected-bg)] text-[#1E3A5F]'
                   : completed
-                  ? 'border-[#22C55E]/40 bg-[#0D1522] text-[#E6EDF6]'
-                  : 'border-[var(--arogya-border)] bg-[var(--arogya-surface)] text-[var(--arogya-text-secondary)] hover:text-white'
+                  ? 'border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)] text-[var(--arogya-success-text)]'
+                  : 'border-[var(--arogya-border)] bg-[var(--arogya-surface)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
               }`}
             >
               <p className="text-xs font-semibold">{item.title}</p>
@@ -768,8 +768,8 @@ export function CheckInPage() {
                           onClick={() => updateField(scale.key, n)}
                           className={`h-10 flex-1 rounded-lg border font-mono-tabular text-xs font-semibold transition-colors ${
                             scale.val === n
-                              ? 'border-[#22D3EE] bg-[#0B3D91] text-white'
-                              : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
+                              ? 'border-[#1E3A5F] bg-[#1E3A5F] text-white'
+                              : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                           }`}
                         >
                           {n}
@@ -797,9 +797,9 @@ export function CheckInPage() {
                         className={`h-10 rounded-lg border text-xs font-medium capitalize transition-colors ${
                           draft.painLevel === lvl
                             ? lvl === 'severe'
-                              ? 'border-[#EF4444] bg-[#EF4444]/20 text-[#FCA5A5]'
-                              : 'border-[#22D3EE] bg-[#0B3D91] text-white'
-                            : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
+                              ? 'border-[var(--arogya-critical)] bg-[var(--arogya-critical-soft)] text-[var(--arogya-critical-text)]'
+                              : 'border-[#1E3A5F] bg-[#1E3A5F] text-white'
+                            : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                         }`}
                       >
                         {lvl}
@@ -822,8 +822,8 @@ export function CheckInPage() {
                         onClick={() => updateField('appetite', app)}
                         className={`h-10 rounded-lg border text-xs font-medium capitalize transition-colors ${
                           draft.appetite === app
-                            ? 'border-[#22D3EE] bg-[#0B3D91] text-white'
-                            : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
+                            ? 'border-[#1E3A5F] bg-[#1E3A5F] text-white'
+                            : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                         }`}
                       >
                         {app}
@@ -875,7 +875,7 @@ export function CheckInPage() {
                           onClick={() => handleHydrationUnitSwitch(unit)}
                           className={`min-h-[36px] rounded px-2.5 capitalize ${
                             draft.hydrationUnit === unit
-                              ? 'bg-[#22D3EE] font-semibold text-[#060B14]'
+                              ? 'bg-[#1E3A5F] font-semibold text-white'
                               : 'text-[var(--arogya-text-secondary)]'
                           }`}
                         >
@@ -900,7 +900,7 @@ export function CheckInPage() {
                       {draft.hydrationUnit === 'liters' ? 'L' : 'cups'}
                     </span>
                   </div>
-                  <p className="mt-1 font-mono-tabular text-[11px] text-[#38BDF8]">
+                  <p className="mt-1 font-mono-tabular text-[11px] text-[var(--arogya-info)]">
                     Converted: {normalizedHydrationLiters.toFixed(2)} L (
                     {litersToCups(normalizedHydrationLiters)} US cups)
                   </p>
@@ -976,8 +976,8 @@ export function CheckInPage() {
                   onClick={() => toggleSymptom('none')}
                   className={`min-h-[40px] rounded-lg border px-3.5 py-2 text-xs font-medium transition-colors ${
                     draft.symptoms.includes('none')
-                      ? 'border-[#22C55E] bg-[#22C55E]/15 text-[#4ADE80]'
-                      : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
+                      ? 'border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)] text-[var(--arogya-success-text)]'
+                      : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                   }`}
                 >
                   None today
@@ -994,9 +994,9 @@ export function CheckInPage() {
                       className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border px-3.5 py-2 text-xs font-medium transition-colors ${
                         selected
                           ? chip.caution
-                            ? 'border-[#EF4444] bg-[#EF4444]/20 text-[#FCA5A5]'
-                            : 'border-[#F97316] bg-[#F97316]/18 text-[#FDBA74]'
-                          : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
+                            ? 'border-[var(--arogya-critical)] bg-[var(--arogya-critical-soft)] text-[var(--arogya-critical-text)]'
+                            : 'border-[var(--arogya-caution-border)] bg-[var(--arogya-caution-soft)] text-[var(--arogya-caution-text)]'
+                          : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                       }`}
                     >
                       <span>{chip.label}</span>
@@ -1018,12 +1018,12 @@ export function CheckInPage() {
                 draft.symptoms.includes('rapidly_worsening')) && (
                 <div
                   role="alert"
-                  className="flex flex-col gap-3 rounded-xl border border-[#EF4444]/50 bg-[#EF4444]/12 p-4 text-xs text-[#FCA5A5] sm:flex-row sm:items-center sm:justify-between"
+                  className="flex flex-col gap-3 rounded-xl border border-[var(--arogya-critical-border)] bg-[var(--arogya-critical-soft)] p-4 text-xs text-[var(--arogya-critical-text)] sm:flex-row sm:items-center sm:justify-between"
                 >
                   <div className="flex items-start gap-2.5">
                     <ShieldAlert className="mt-0.5 h-4 w-4 shrink-0 text-[#EF4444]" aria-hidden="true" />
                     <div className="space-y-1">
-                      <p className="font-semibold text-[#F87171]">
+                      <p className="font-semibold text-[var(--arogya-critical-text)]">
                         Urgent Escalation Required — Contact Crew Medical Lead / Flight Surgeon Now
                       </p>
                       <p className="leading-relaxed text-[var(--arogya-text-primary)]">
@@ -1033,7 +1033,7 @@ export function CheckInPage() {
                   </div>
                   <Link
                     to="/reports?escalate=1"
-                    className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#EF4444] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#DC2626]"
+                    className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-lg bg-[#DC2626] px-3.5 text-xs font-semibold text-white transition-colors hover:bg-[#B91C1C]"
                   >
                     <span>Prepare Urgent Medical Brief</span>
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
@@ -1051,14 +1051,14 @@ export function CheckInPage() {
                   Step 3 — Optional Measurements
                 </h3>
                 <p className="mt-0.5 text-xs text-[var(--arogya-text-secondary)]">
-                  All fields below are <strong className="text-[#22D3EE]">Optional</strong>. Leave blank if not measured today—blank values remain marked missing and are never assumed normal.
+                  All fields below are <strong className="text-[var(--arogya-info)]">Optional</strong>. Leave blank if not measured today—blank values remain marked missing and are never assumed normal.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
                   <label htmlFor="opt-hr" className="block text-xs font-medium text-[var(--arogya-text-primary)]">
-                    Resting Heart Rate (bpm) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                    Resting Heart Rate (bpm) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                   </label>
                   <input
                     id="opt-hr"
@@ -1076,7 +1076,7 @@ export function CheckInPage() {
 
                 <div>
                   <label htmlFor="opt-spo2" className="block text-xs font-medium text-[var(--arogya-text-primary)]">
-                    Oxygen Saturation SpO₂ (%) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                    Oxygen Saturation SpO₂ (%) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                   </label>
                   <input
                     id="opt-spo2"
@@ -1094,7 +1094,7 @@ export function CheckInPage() {
 
                 <div>
                   <label htmlFor="opt-sys" className="block text-xs font-medium text-[var(--arogya-text-primary)]">
-                    Systolic Blood Pressure (mmHg) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                    Systolic Blood Pressure (mmHg) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                   </label>
                   <input
                     id="opt-sys"
@@ -1112,7 +1112,7 @@ export function CheckInPage() {
 
                 <div>
                   <label htmlFor="opt-dia" className="block text-xs font-medium text-[var(--arogya-text-primary)]">
-                    Diastolic Blood Pressure (mmHg) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                    Diastolic Blood Pressure (mmHg) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                   </label>
                   <input
                     id="opt-dia"
@@ -1131,7 +1131,7 @@ export function CheckInPage() {
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <label htmlFor="opt-temp" className="text-xs font-medium text-[var(--arogya-text-primary)]">
-                      Body Temperature ({draft.tempUnit === 'C' ? '°C' : '°F'}) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                      Body Temperature ({draft.tempUnit === 'C' ? '°C' : '°F'}) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                     </label>
                     <div className="inline-flex rounded-md border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] p-0.5 text-[11px]">
                       {(['C', 'F'] as const).map((u) => (
@@ -1141,7 +1141,7 @@ export function CheckInPage() {
                           onClick={() => handleTempUnitSwitch(u)}
                           className={`min-h-[36px] rounded px-2.5 ${
                             draft.tempUnit === u
-                              ? 'bg-[#22D3EE] font-semibold text-[#060B14]'
+                              ? 'bg-[#1E3A5F] font-semibold text-white'
                               : 'text-[var(--arogya-text-secondary)]'
                           }`}
                         >
@@ -1168,7 +1168,7 @@ export function CheckInPage() {
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <label htmlFor="opt-glucose" className="text-xs font-medium text-[var(--arogya-text-primary)]">
-                      Blood Glucose ({draft.glucoseUnit}) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                      Blood Glucose ({draft.glucoseUnit}) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                     </label>
                     <div className="inline-flex rounded-md border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] p-0.5 text-[11px]">
                       {(['mg/dL', 'mmol/L'] as const).map((u) => (
@@ -1178,7 +1178,7 @@ export function CheckInPage() {
                           onClick={() => handleGlucoseUnitSwitch(u)}
                           className={`min-h-[36px] rounded px-2.5 ${
                             draft.glucoseUnit === u
-                              ? 'bg-[#22D3EE] font-semibold text-[#060B14]'
+                              ? 'bg-[#1E3A5F] font-semibold text-white'
                               : 'text-[var(--arogya-text-secondary)]'
                           }`}
                         >
@@ -1205,7 +1205,7 @@ export function CheckInPage() {
                 <div>
                   <div className="flex items-center justify-between gap-2">
                     <label htmlFor="opt-mass" className="text-xs font-medium text-[var(--arogya-text-primary)]">
-                      Body Mass ({draft.massUnit}) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                      Body Mass ({draft.massUnit}) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                     </label>
                     <div className="inline-flex rounded-md border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] p-0.5 text-[11px]">
                       {(['kg', 'lb'] as const).map((u) => (
@@ -1215,7 +1215,7 @@ export function CheckInPage() {
                           onClick={() => handleMassUnitSwitch(u)}
                           className={`min-h-[36px] rounded px-2.5 ${
                             draft.massUnit === u
-                              ? 'bg-[#22D3EE] font-semibold text-[#060B14]'
+                              ? 'bg-[#1E3A5F] font-semibold text-white'
                               : 'text-[var(--arogya-text-secondary)]'
                           }`}
                         >
@@ -1241,7 +1241,7 @@ export function CheckInPage() {
 
                 <div>
                   <label htmlFor="opt-rad" className="block text-xs font-medium text-[var(--arogya-text-primary)]">
-                    Radiation Dose (mSv) <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                    Radiation Dose (mSv) <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                   </label>
                   <input
                     id="opt-rad"
@@ -1278,7 +1278,7 @@ export function CheckInPage() {
                   htmlFor="ci-notes"
                   className="block text-xs font-medium text-[var(--arogya-text-primary)]"
                 >
-                  Free-Text Crew Note <span className="text-[11px] text-[#38BDF8]">· Optional</span>
+                  Free-Text Crew Note <span className="text-[11px] text-[var(--arogya-info)]">· Optional</span>
                 </label>
                 <textarea
                   id="ci-notes"
@@ -1286,7 +1286,7 @@ export function CheckInPage() {
                   value={draft.crewNotes}
                   onChange={(e) => updateField('crewNotes', e.target.value)}
                   placeholder="Note sleep interruptions, suit discomfort, hydration shifts, or cabin observations..."
-                  className="mt-1.5 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] p-3 text-sm text-white placeholder:text-[var(--arogya-text-muted)]"
+                  className="mt-1.5 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] p-3 text-sm text-[var(--arogya-text-primary)] placeholder:text-[var(--arogya-text-muted)]"
                 />
                 <WhyMatters text="Plain-language context explains why a metric shifted (for example, delayed sleep due to EVA prep) when reviewed later." />
               </div>
@@ -1294,7 +1294,7 @@ export function CheckInPage() {
               <div className="rounded-xl border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] p-4">
                 <label className="flex cursor-pointer items-start justify-between gap-4">
                   <div className="flex items-start gap-2.5">
-                    <Share2 className="mt-0.5 h-4 w-4 shrink-0 text-[#22D3EE]" aria-hidden="true" />
+                    <Share2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
                     <div>
                       <span className="block text-sm font-medium text-[var(--arogya-text-primary)]">
                         Share summary with crew medical lead?
@@ -1308,7 +1308,7 @@ export function CheckInPage() {
                     type="checkbox"
                     checked={draft.shareWithMedicalLead}
                     onChange={(e) => updateField('shareWithMedicalLead', e.target.checked)}
-                    className="mt-1 h-5 w-5 shrink-0 rounded border-[var(--arogya-border-strong)] bg-[var(--arogya-surface)] accent-[#22D3EE]"
+                    className="mt-1 h-5 w-5 shrink-0 rounded border-[var(--arogya-border-strong)] bg-[var(--arogya-surface)] accent-[#1E3A5F]"
                   />
                 </label>
                 <WhyMatters text="Structured crew-approved sharing prepares factual SBAR summaries across light-time communication delays." />
@@ -1364,7 +1364,7 @@ export function CheckInPage() {
               Recent self-reported mission days ({checkIns14d.length} logs recorded)
             </p>
           </div>
-          <span className="font-mono-tabular text-xs text-[#22D3EE]">{astronaut.callSign}</span>
+          <span className="font-mono-tabular text-xs text-[var(--arogya-info)]">{astronaut.callSign}</span>
         </div>
 
         {checkIns14d.length === 0 ? (
@@ -1399,7 +1399,7 @@ export function CheckInPage() {
                   >
                     <div className="space-y-0.5">
                       <p className="font-semibold text-[var(--arogya-text-primary)]">
-                        <span className="font-mono-tabular text-[#22D3EE]">
+                        <span className="font-mono-tabular text-[var(--arogya-info)]">
                           Sol {entry.missionDay}
                         </span>{' '}
                         · Sleep {entry.sleepHours.toFixed(1)}h · Mood {entry.moodScore}/5 · Stress{' '}

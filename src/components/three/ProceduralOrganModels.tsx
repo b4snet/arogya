@@ -25,6 +25,20 @@ interface OrganModelProps {
   onHoverChange?: (hovered: boolean) => void;
 }
 
+interface HeartModelProps extends OrganModelProps {
+  /** Beat frequency in Hz. When omitted the original fixed demonstration cadence is used. */
+  beatHz?: number;
+  /** Freeze the cycle on a still frame (pause control, reduced motion). */
+  paused?: boolean;
+}
+
+interface LungsModelProps extends OrganModelProps {
+  /** Breathing frequency in Hz. When omitted the original fixed cadence is used. */
+  breathHz?: number;
+  /** Freeze the cycle on a still frame (pause control, reduced motion). */
+  paused?: boolean;
+}
+
 export function ProceduralBrainModel({
   status,
   selected = false,
@@ -143,15 +157,23 @@ export function ProceduralHeartModel({
   reducedMotion = false,
   onSelect,
   onHoverChange,
-}: OrganModelProps) {
+  beatHz,
+  paused = false,
+}: HeartModelProps) {
   const groupRef = useRef<THREE.Group>(null);
   const accent = statusEmissiveColor(status);
   const emissiveIntensity = selected ? 0.36 : hovered ? 0.24 : status === 'green' ? 0.08 : 0.16;
 
   useFrame((state) => {
-    if (!groupRef.current || reducedMotion) return;
+    if (!groupRef.current) return;
+    if (reducedMotion || paused) {
+      groupRef.current.scale.setScalar(1);
+      return;
+    }
     const t = state.clock.getElapsedTime();
-    const beat = 1 + Math.pow(Math.max(0, Math.sin(t * 3.8)), 4) * 0.045;
+    // A gentle contraction/relaxation pulse: a stylized proxy, not cardiac mechanics.
+    const phase = beatHz != null && beatHz > 0 ? t * Math.PI * 2 * beatHz : t * 3.8;
+    const beat = 1 + Math.pow(Math.max(0, Math.sin(phase)), 4) * 0.045;
     groupRef.current.scale.setScalar(beat);
   });
 
@@ -233,16 +255,23 @@ export function ProceduralLungsModel({
   reducedMotion = false,
   onSelect,
   onHoverChange,
-}: OrganModelProps) {
+  breathHz,
+  paused = false,
+}: LungsModelProps) {
   const leftRef = useRef<THREE.Mesh>(null);
   const rightRef = useRef<THREE.Mesh>(null);
   const accent = statusEmissiveColor(status);
   const emissiveIntensity = selected ? 0.34 : hovered ? 0.22 : status === 'green' ? 0.08 : 0.15;
 
   useFrame((state) => {
-    if (reducedMotion) return;
+    if (reducedMotion || paused) {
+      if (leftRef.current) leftRef.current.scale.set(0.82, 1.35, 0.72);
+      if (rightRef.current) rightRef.current.scale.set(0.86, 1.4, 0.74);
+      return;
+    }
     const t = state.clock.getElapsedTime();
-    const breath = 1 + Math.sin(t * 1.5) * 0.035;
+    const phase = breathHz != null && breathHz > 0 ? t * Math.PI * 2 * breathHz : t * 1.5;
+    const breath = 1 + Math.sin(phase) * 0.035;
     if (leftRef.current) leftRef.current.scale.set(0.82 * breath, 1.35, 0.72 * breath);
     if (rightRef.current) rightRef.current.scale.set(0.86 * breath, 1.4, 0.74 * breath);
   });

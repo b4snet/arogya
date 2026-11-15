@@ -14,9 +14,10 @@ import type {
   VitalReading,
 } from '../types';
 import { CLINICAL_THRESHOLDS, SAFETY_DISCLAIMER, STATUS_META } from './thresholds';
+import { STATUS_GUIDANCE_COPY } from './atlasPanelBuilder';
 
 export const REPORTS_EXACT_DISCLAIMER =
-  `${SAFETY_DISCLAIMER} Reference ranges are educational and may not reflect individual baselines, spaceflight conditions, or clinical standards. Contact qualified medical personnel for interpretation and care.`;
+  'This report is an educational decision-support summary generated from self-reported and optional device data. It is not a medical diagnosis. Reference ranges are general educational ranges and may not reflect individual baselines, spaceflight conditions, or clinical standards. Contact qualified medical personnel for interpretation and care.';
 
 export const REPORT_PERIOD_LABELS: Record<ReportPeriod, string> = {
   today: 'Today (Current Mission Day)',
@@ -522,6 +523,7 @@ export function buildStructuredReport(params: {
       status: sys.status,
       score: sys.score,
       summary: sys.plainLanguageSummary,
+      statusMessage: STATUS_GUIDANCE_COPY[sys.status],
     };
   });
 
@@ -588,6 +590,9 @@ export function buildStructuredReport(params: {
     dataCompletenessPercent: assessment.dataQuality.completenessPercent,
     includePrivateNotes,
     conciseMedicalMode,
+    // Immutable copies keep a printed report stable while the mission record keeps growing.
+    snapshotVitals: sortedVitals.map((reading) => ({ ...reading })),
+    snapshotCheckIns: sortedCheckIns.map((checkIn) => ({ ...checkIn })),
   };
 }
 
@@ -627,7 +632,7 @@ export function reportToMarkdown(report: Report, astronautNameFallback: string):
     lines.push('## Body-System Status Overview');
     report.systemSnapshots.forEach((sys) => {
       lines.push(
-        `- **${sys.label}** — [${STATUS_META[sys.status].shortLabel.toUpperCase()}] (${sys.score}/100): ${sys.summary}`
+        `- **${sys.label}** — [${STATUS_META[sys.status].shortLabel.toUpperCase()}] (${sys.score}/100): ${sys.summary} _Status Guidance:_ "${sys.statusMessage ?? STATUS_GUIDANCE_COPY[sys.status]}"`
       );
     });
     lines.push('');

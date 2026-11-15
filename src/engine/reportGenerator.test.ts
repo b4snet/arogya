@@ -74,6 +74,10 @@ test('buildStructuredReport and reportToMarkdown include all required sections a
   assert.ok((report.riskFactors?.length ?? 0) >= 1);
 
   const md = reportToMarkdown(report, astronaut.fullName);
+  assert.equal(
+    REPORTS_EXACT_DISCLAIMER,
+    'This report is an educational decision-support summary generated from self-reported and optional device data. It is not a medical diagnosis. Reference ranges are general educational ranges and may not reflect individual baselines, spaceflight conditions, or clinical standards. Contact qualified medical personnel for interpretation and care.'
+  );
   assert.ok(md.includes('## Body-System Status Overview'));
   assert.ok(md.includes('## Key Findings'));
   assert.ok(md.includes('## Trends'));

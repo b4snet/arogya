@@ -77,10 +77,10 @@ export function ActiveAlerts({ assessment }: ActiveAlertsProps) {
                 </p>
                 <div className="mt-1.5 flex justify-end">
                   <Link
-                    to={`/atlas?organ=${alert.organTarget}`}
+                    to="/vitals"
                     className="inline-flex min-h-[40px] items-center gap-1 rounded-md px-2 text-xs font-medium text-[#22D3EE] transition-colors hover:bg-white/5 hover:text-[#38BDF8]"
                   >
-                    <span>Inspect in 3D Atlas</span>
+                    <span>View Vitals</span>
                     <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                   </Link>
                 </div>

@@ -6,6 +6,10 @@ interface Small3DAstronautPreviewProps {
   astronautName: string;
 }
 
+/**
+ * Single responsive sizing contract for the dashboard hero: the section owns the
+ * height and the canvas fills it, so the parent never needs a competing min-height.
+ */
 export function Small3DAstronautPreview({
   status,
   astronautName,
@@ -13,7 +17,7 @@ export function Small3DAstronautPreview({
   return (
     <section
       aria-label="Interactive 3D astronaut preview"
-      className="h-[310px] sm:h-[340px] xl:h-[370px]"
+      className="h-[420px] w-full sm:h-[500px] xl:h-[560px]"
     >
       <AstronautPreviewCanvas status={status} astronautName={astronautName} />
     </section>

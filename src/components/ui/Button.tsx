@@ -13,13 +13,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#22D3EE] text-[#060B14] border border-transparent hover:bg-[#38BDF8] font-semibold',
+    'bg-[#1E3A5F] text-white border border-transparent hover:bg-[#2D4A6F] font-semibold shadow-sm',
   secondary:
-    'bg-[var(--arogya-surface-elevated)] text-[var(--arogya-text-primary)] border border-[var(--arogya-border-strong)] hover:bg-[#19263A]',
+    'bg-white text-[var(--arogya-text-primary)] border border-[var(--arogya-border)] hover:bg-[var(--arogya-bg)] shadow-sm font-medium',
   ghost:
-    'bg-transparent text-[var(--arogya-text-secondary)] border border-transparent hover:bg-white/5 hover:text-[var(--arogya-text-primary)]',
+    'bg-transparent text-[var(--arogya-text-secondary)] border border-transparent hover:bg-[var(--arogya-bg)] hover:text-[var(--arogya-text-primary)]',
   danger:
-    'bg-[#EF4444]/15 text-[#FCA5A5] border border-[#EF4444]/40 hover:bg-[#EF4444]/25',
+    'bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/30 hover:bg-[#DC2626]/20 font-medium',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {

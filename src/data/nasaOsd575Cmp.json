@@ -1,0 +1,2984 @@
+{
+  "provenance": {
+    "studyId": "OSD-575",
+    "title": "SpaceX Inspiration4 Blood Serum Metabolic Panel and Immune/Cardiac Cytokine Arrays (Comprehensive Metabolic Panel and Multiplex)",
+    "version": "3",
+    "doi": "10.26030/mc5d-p710",
+    "officialUrl": "https://osdr.nasa.gov/bio/repo/data/studies/OSD-575",
+    "metadataUrl": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/",
+    "manifestUrl": "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset/OSD-575/files/",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "licenseVerification": "Verified against the official OSDR OSD-575 Version 3 study page, which lists License: CC0-1.0. The direct HTML response did not expose the page content to the local fetcher.",
+    "downloadUrl": "https://osdr.nasa.gov/geode-py/ws/studies/OSD-575/download?source=datamanager&file=LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv",
+    "filename": "LSDS-8_Comprehensive_Metabolic_Panel_CMP_TRANSFORMED.csv",
+    "sha256": "5eb1e7f025dd8443a9e70111e62bc32afae3432753024489c5c013e401d709d9",
+    "retrievedAt": "2026-11-15T06:53:23.576Z",
+    "transformDescription": "Parsed the NASA OSDR transformed CSV into sample records and analyte result objects; source NA/N/A/blank tokens become null. No interpolation, normalization, unit conversion, or diagnostic classification is performed.",
+    "sourceSampleRows": 28,
+    "importedMeasurements": 532,
+    "unitsAndNormalization": "Values retain the physical units encoded in the source headers. The CMP protocol describes Quest Diagnostics laboratory results; this transformed CMP file does not specify a log or cross-sample normalization. The file is transformed to a reusable table schema.",
+    "limitations": [
+      "Study IDs C001–C004 are shown as source pseudonyms and are not linked to Arogya demo astronauts or re-identified.",
+      "This is archived serum laboratory research data, not live telemetry, a medical device reading, or a diagnosis.",
+      "The study overview description lists L-92, L-44, L-3, R+1, R+45, and R+82; the official study sample table and CMP file also include R+194 samples. All source timepoint labels are preserved as supplied.",
+      "No exact collection dates or daily observations are inferred from relative timepoints.",
+      "Per-result ranges are displayed only as source-reported laboratory intervals and are not used to assign flags."
+    ]
+  },
+  "analytes": [
+    {
+      "id": "albumin",
+      "label": "Albumin",
+      "unit": "g/dL"
+    },
+    {
+      "id": "albumin_to_globulin_ratio",
+      "label": "Albumin To Globulin Ratio",
+      "unit": "ratio"
+    },
+    {
+      "id": "alkaline_phosphatase",
+      "label": "Alkaline Phosphatase",
+      "unit": "U/L"
+    },
+    {
+      "id": "alt",
+      "label": "ALT",
+      "unit": "U/L"
+    },
+    {
+      "id": "ast",
+      "label": "AST",
+      "unit": "U/L"
+    },
+    {
+      "id": "total_bilirubin",
+      "label": "Total Bilirubin",
+      "unit": "mg/dL"
+    },
+    {
+      "id": "bun_to_creatinine_ratio",
+      "label": "BUN/creatinine ratio",
+      "unit": "ratio"
+    },
+    {
+      "id": "calcium",
+      "label": "Calcium",
+      "unit": "mg/dL"
+    },
+    {
+      "id": "carbon_dioxide",
+      "label": "Carbon Dioxide",
+      "unit": "mmol/L"
+    },
+    {
+      "id": "chloride",
+      "label": "Chloride",
+      "unit": "mmol/L"
+    },
+    {
+      "id": "creatinine",
+      "label": "Creatinine",
+      "unit": "mg/dL"
+    },
+    {
+      "id": "egfr_african_american",
+      "label": "eGFR (African American equation)",
+      "unit": "mL/min/1.73 m²"
+    },
+    {
+      "id": "egfr_non_african_american",
+      "label": "eGFR (non-African American equation)",
+      "unit": "mL/min/1.73 m²"
+    },
+    {
+      "id": "globulin",
+      "label": "Globulin",
+      "unit": "g/dL"
+    },
+    {
+      "id": "glucose",
+      "label": "Glucose",
+      "unit": "mg/dL"
+    },
+    {
+      "id": "potassium",
+      "label": "Potassium",
+      "unit": "mmol/L"
+    },
+    {
+      "id": "total_protein",
+      "label": "Total Protein",
+      "unit": "g/dL"
+    },
+    {
+      "id": "sodium",
+      "label": "Sodium",
+      "unit": "mmol/L"
+    },
+    {
+      "id": "urea_nitrogen_bun",
+      "label": "Urea Nitrogen Bun",
+      "unit": "mg/dL"
+    }
+  ],
+  "samples": [
+    {
+      "sampleName": "C001_serum_L-3",
+      "subjectId": "C001",
+      "timepoint": "L-3",
+      "results": {
+        "albumin": {
+          "value": 4.9,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 2,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 45,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 13,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 15,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 1,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": 15,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.6,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 26,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.37,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 75,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 65,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.5,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 69,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.9,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.4,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 142,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 20,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C001_serum_L-44",
+      "subjectId": "C001",
+      "timepoint": "L-44",
+      "results": {
+        "albumin": {
+          "value": 5,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.9,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 46,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 16,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 18,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.9,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 26,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 101,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.1,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 98,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 85,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.7,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 80,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.2,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.7,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 139,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 19,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C001_serum_L-92",
+      "subjectId": "C001",
+      "timepoint": "L-92",
+      "results": {
+        "albumin": {
+          "value": 5,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 2.2,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 51,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 15,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 15,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.7,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.7,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 104,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.24,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 85,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 73,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.3,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 83,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.6,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 141,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 25,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C001_serum_R+1",
+      "subjectId": "C001",
+      "timepoint": "R+1",
+      "results": {
+        "albumin": {
+          "value": 4.9,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.9,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 52,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 9,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 16,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 1.2,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.7,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 24,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.12,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 96,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 83,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.6,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 90,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.4,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.5,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 138,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 18,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C001_serum_R+194",
+      "subjectId": "C001",
+      "timepoint": "R+194",
+      "results": {
+        "albumin": {
+          "value": 4.6,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.9,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 50,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 15,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 12,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.8,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": 22,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.4,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.29,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 80,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 69,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.4,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 87,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.3,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 137,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 28,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C001_serum_R+45",
+      "subjectId": "C001",
+      "timepoint": "R+45",
+      "results": {
+        "albumin": {
+          "value": 4.9,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 2.1,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 46,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 11,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 13,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": null,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.6,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 28,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 100,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.11,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 97,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 84,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.3,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 84,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.2,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 138,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 15,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C001_serum_R+82",
+      "subjectId": "C001",
+      "timepoint": "R+82",
+      "results": {
+        "albumin": {
+          "value": 5.1,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.9,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 49,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 15,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 16,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 1.2,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10.1,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 27,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 101,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.25,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 84,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 73,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.7,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 91,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.3,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.8,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 140,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 22,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_L-3",
+      "subjectId": "C002",
+      "timepoint": "L-3",
+      "results": {
+        "albumin": {
+          "value": 4.3,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 68,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 19,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 40,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.3,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.3,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 24,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 106,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.96,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 79,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 68,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.7,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 78,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.8,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 143,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 17,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_L-44",
+      "subjectId": "C002",
+      "timepoint": "L-44",
+      "results": {
+        "albumin": {
+          "value": 4.6,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.5,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 78,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 24,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 31,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.4,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.7,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 26,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.88,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 88,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 76,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 3,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 72,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.6,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 141,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 16,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_L-92",
+      "subjectId": "C002",
+      "timepoint": "L-92",
+      "results": {
+        "albumin": {
+          "value": 4.9,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 73,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 16,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 19,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.5,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10.2,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.83,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 95,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 82,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 3,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 69,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.9,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.9,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 142,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 14,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_R+1",
+      "subjectId": "C002",
+      "timepoint": "R+1",
+      "results": {
+        "albumin": {
+          "value": 4.4,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.5,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 71,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 16,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 23,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.4,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.2,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 22,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.95,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 80,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 69,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 3,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 83,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.5,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.4,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 137,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 20,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_R+194",
+      "subjectId": "C002",
+      "timepoint": "R+194",
+      "results": {
+        "albumin": {
+          "value": 4.3,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.4,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 66,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 17,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 24,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.3,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.5,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 20,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 104,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.02,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 73,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 63,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 3,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 84,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.4,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 138,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 18,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_R+45",
+      "subjectId": "C002",
+      "timepoint": "R+45",
+      "results": {
+        "albumin": {
+          "value": 4.2,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 65,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 14,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 17,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.5,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.3,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 21,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 104,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.02,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 74,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 64,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.6,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 44,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.1,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 6.8,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 140,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 19,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C002_serum_R+82",
+      "subjectId": "C002",
+      "timepoint": "R+82",
+      "results": {
+        "albumin": {
+          "value": 4.5,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 65,
+          "referenceMin": 37,
+          "referenceMax": 153
+        },
+        "alt": {
+          "value": 17,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 21,
+          "referenceMin": 10,
+          "referenceMax": 35
+        },
+        "total_bilirubin": {
+          "value": 0.5,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": null,
+          "referenceMax": null
+        },
+        "calcium": {
+          "value": 9.7,
+          "referenceMin": 8.6,
+          "referenceMax": 10.4
+        },
+        "carbon_dioxide": {
+          "value": 25,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 105,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.82,
+          "referenceMin": 0.5,
+          "referenceMax": 1.05
+        },
+        "egfr_african_american": {
+          "value": 96,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 83,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.8,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 77,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.7,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 141,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 16,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_L-3",
+      "subjectId": "C003",
+      "timepoint": "L-3",
+      "results": {
+        "albumin": {
+          "value": 4.2,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 31,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 13,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 13,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.2,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": 24,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.5,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 101,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.08,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 80,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 69,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.6,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 75,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.3,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 6.8,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 138,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 26,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_L-44",
+      "subjectId": "C003",
+      "timepoint": "L-44",
+      "results": {
+        "albumin": {
+          "value": 4.9,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.3,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 41,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 13,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 17,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.4,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10.3,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 21,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 99,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.03,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 85,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 73,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 3.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 62,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.5,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 8.8,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 139,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 19,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_L-92",
+      "subjectId": "C003",
+      "timepoint": "L-92",
+      "results": {
+        "albumin": {
+          "value": 4.4,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 33,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 12,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 15,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.3,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.3,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 20,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 88,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 76,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.7,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 77,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.7,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.1,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 139,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 17,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_R+1",
+      "subjectId": "C003",
+      "timepoint": "R+1",
+      "results": {
+        "albumin": {
+          "value": 4.2,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.4,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 41,
+          "referenceMin": 31,
+          "referenceMax": 125
+        },
+        "alt": {
+          "value": 19,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 18,
+          "referenceMin": 10,
+          "referenceMax": 30
+        },
+        "total_bilirubin": {
+          "value": 0.3,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.4,
+          "referenceMin": 8.6,
+          "referenceMax": 10.2
+        },
+        "carbon_dioxide": {
+          "value": 20,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.89,
+          "referenceMin": 0.5,
+          "referenceMax": 1.1
+        },
+        "egfr_african_american": {
+          "value": 102,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 88,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 103,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.1,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 137,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 21,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_R+194",
+      "subjectId": "C003",
+      "timepoint": "R+194",
+      "results": {
+        "albumin": {
+          "value": 4.4,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.5,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 43,
+          "referenceMin": 31,
+          "referenceMax": 125
+        },
+        "alt": {
+          "value": 10,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 15,
+          "referenceMin": 10,
+          "referenceMax": 30
+        },
+        "total_bilirubin": {
+          "value": 0.3,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": 25,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.6,
+          "referenceMin": 8.6,
+          "referenceMax": 10.2
+        },
+        "carbon_dioxide": {
+          "value": 22,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 101,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.1,
+          "referenceMin": 0.5,
+          "referenceMax": 1.1
+        },
+        "egfr_african_american": {
+          "value": 78,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 67,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 73,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.8,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 137,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 28,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_R+45",
+      "subjectId": "C003",
+      "timepoint": "R+45",
+      "results": {
+        "albumin": {
+          "value": 4.5,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 51,
+          "referenceMin": 31,
+          "referenceMax": 125
+        },
+        "alt": {
+          "value": 17,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 19,
+          "referenceMin": 10,
+          "referenceMax": 30
+        },
+        "total_bilirubin": {
+          "value": 0.7,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.6,
+          "referenceMin": 8.6,
+          "referenceMax": 10.2
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 97,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.94,
+          "referenceMin": 0.5,
+          "referenceMax": 1.1
+        },
+        "egfr_african_american": {
+          "value": 95,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 82,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 36,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.4,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.4,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 136,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 19,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C003_serum_R+82",
+      "subjectId": "C003",
+      "timepoint": "R+82",
+      "results": {
+        "albumin": {
+          "value": 4.8,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.8,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 50,
+          "referenceMin": 31,
+          "referenceMax": 125
+        },
+        "alt": {
+          "value": 12,
+          "referenceMin": 6,
+          "referenceMax": 29
+        },
+        "ast": {
+          "value": 15,
+          "referenceMin": 10,
+          "referenceMax": 30
+        },
+        "total_bilirubin": {
+          "value": 0.5,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10,
+          "referenceMin": 8.6,
+          "referenceMax": 10.2
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 0.89,
+          "referenceMin": 0.5,
+          "referenceMax": 1.1
+        },
+        "egfr_african_american": {
+          "value": 101,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 87,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.7,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 80,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.7,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.5,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 138,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 23,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_L-3",
+      "subjectId": "C004",
+      "timepoint": "L-3",
+      "results": {
+        "albumin": {
+          "value": 4.6,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.7,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 55,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 37,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 39,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.5,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10.2,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 24,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.13,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 92,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 80,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.7,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 56,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.7,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 141,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 19,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_L-44",
+      "subjectId": "C004",
+      "timepoint": "L-44",
+      "results": {
+        "albumin": {
+          "value": 4.4,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.5,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 56,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 35,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 44,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.7,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10.1,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 24,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.08,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 98,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 85,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 83,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.2,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 140,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 19,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_L-92",
+      "subjectId": "C004",
+      "timepoint": "L-92",
+      "results": {
+        "albumin": {
+          "value": 4.6,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 58,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 37,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 36,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.7,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.14,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 92,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 79,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.8,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 100,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.2,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.4,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 138,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 22,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_R+1",
+      "subjectId": "C004",
+      "timepoint": "R+1",
+      "results": {
+        "albumin": {
+          "value": 4.5,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 62,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 40,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 48,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.4,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": 23,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.8,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 23,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 105,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.15,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 90,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 78,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 97,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.4,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 140,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 26,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_R+194",
+      "subjectId": "C004",
+      "timepoint": "R+194",
+      "results": {
+        "albumin": {
+          "value": 4.3,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.5,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 57,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 43,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 38,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.5,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": 21,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.8,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 19,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 105,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.31,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 77,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 67,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.9,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 84,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 3.8,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.2,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 141,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 27,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_R+45",
+      "subjectId": "C004",
+      "timepoint": "R+45",
+      "results": {
+        "albumin": {
+          "value": 4.5,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 60,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 32,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 33,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 0.7,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 9.8,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 24,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 102,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.08,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 98,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 84,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.8,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 43,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 5.9,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.3,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 139,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 21,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    },
+    {
+      "sampleName": "C004_serum_R+82",
+      "subjectId": "C004",
+      "timepoint": "R+82",
+      "results": {
+        "albumin": {
+          "value": 4.6,
+          "referenceMin": 3.6,
+          "referenceMax": 5.1
+        },
+        "albumin_to_globulin_ratio": {
+          "value": 1.6,
+          "referenceMin": 1,
+          "referenceMax": 2.5
+        },
+        "alkaline_phosphatase": {
+          "value": 54,
+          "referenceMin": 36,
+          "referenceMax": 130
+        },
+        "alt": {
+          "value": 23,
+          "referenceMin": 9,
+          "referenceMax": 46
+        },
+        "ast": {
+          "value": 25,
+          "referenceMin": 10,
+          "referenceMax": 40
+        },
+        "total_bilirubin": {
+          "value": 1,
+          "referenceMin": 0.2,
+          "referenceMax": 1.2
+        },
+        "bun_to_creatinine_ratio": {
+          "value": null,
+          "referenceMin": 6,
+          "referenceMax": 22
+        },
+        "calcium": {
+          "value": 10,
+          "referenceMin": 8.6,
+          "referenceMax": 10.3
+        },
+        "carbon_dioxide": {
+          "value": 24,
+          "referenceMin": 20,
+          "referenceMax": 32
+        },
+        "chloride": {
+          "value": 103,
+          "referenceMin": 98,
+          "referenceMax": 110
+        },
+        "creatinine": {
+          "value": 1.11,
+          "referenceMin": 0.6,
+          "referenceMax": 1.35
+        },
+        "egfr_african_american": {
+          "value": 94,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "egfr_non_african_american": {
+          "value": 81,
+          "referenceMin": 60,
+          "referenceMax": null
+        },
+        "globulin": {
+          "value": 2.8,
+          "referenceMin": 1.9,
+          "referenceMax": 3.7
+        },
+        "glucose": {
+          "value": 80,
+          "referenceMin": 65,
+          "referenceMax": 99
+        },
+        "potassium": {
+          "value": 4.2,
+          "referenceMin": 3.5,
+          "referenceMax": 5.3
+        },
+        "total_protein": {
+          "value": 7.4,
+          "referenceMin": 6.1,
+          "referenceMax": 8.1
+        },
+        "sodium": {
+          "value": 140,
+          "referenceMin": 135,
+          "referenceMax": 146
+        },
+        "urea_nitrogen_bun": {
+          "value": 16,
+          "referenceMin": 7,
+          "referenceMax": 25
+        }
+      }
+    }
+  ]
+}

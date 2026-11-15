@@ -23,28 +23,48 @@
 
 @layer base {
   :root {
-    /* Core Dark-First Aerospace Palette */
-    --arogya-bg: #060b14;
-    --arogya-surface: #0d1522;
-    --arogya-surface-elevated: #121c2b;
-    --arogya-border: rgba(255, 255, 255, 0.08);
-    --arogya-border-strong: rgba(255, 255, 255, 0.16);
+    /* White-First Clinical Palette */
+    --arogya-bg: #F7F9FC;
+    --arogya-surface: #FFFFFF;
+    --arogya-surface-elevated: #FFFFFF;
+    --arogya-border: #E2E8F0;
+    --arogya-border-strong: #CBD5E1;
 
-    /* Typography (WCAG AA >= 5.2:1 even on elevated #121c2b surfaces) */
-    --arogya-text-primary: #eef4fb;
-    --arogya-text-secondary: #b0c0d4;
-    --arogya-text-muted: #93a5bc;
+    /* Typography — Navy headings, secondary gray (WCAG AA on white) */
+    --arogya-text-primary: #0F172A;
+    --arogya-text-secondary: #526477;
+    --arogya-text-muted: #64748B;
 
-    /* Calibrated Telemetry Accents */
-    --arogya-accent-primary: #22d3ee;
-    --arogya-accent-secondary: #38bdf8;
-    --arogya-focus-ring: #22d3ee;
+    /* Clinical Accents — Navy primary, red accent */
+    --arogya-accent-primary: #1E3A5F;
+    --arogya-accent-secondary: #C73546;
+    --arogya-focus-ring: #1E3A5F;
 
-    /* Semantic Status Colors */
-    --arogya-success: #22c55e;
-    --arogya-warning: #eab308;
-    --arogya-caution: #f97316;
-    --arogya-critical: #ef4444;
+    /* Semantic Status Colors (accessible on white) */
+    --arogya-success: #16A34A;
+    --arogya-warning: #CA8A04;
+    --arogya-caution: #EA580C;
+    --arogya-critical: #DC2626;
+
+    /* Semantic surfaces, borders and text weights readable on white cards */
+    --arogya-success-soft: #DCFCE7;
+    --arogya-success-border: #86EFAC;
+    --arogya-success-text: #15803D;
+    --arogya-warning-soft: #FEF9C3;
+    --arogya-warning-border: #FDE68A;
+    --arogya-warning-text: #92400E;
+    --arogya-caution-soft: #FFEDD5;
+    --arogya-caution-border: #FDBA74;
+    --arogya-caution-text: #9A3412;
+    --arogya-critical-soft: #FEE2E2;
+    --arogya-critical-border: #FCA5A5;
+    --arogya-critical-text: #B91C1C;
+
+    /* Informational accent (links, inline icons) and selected-control surface */
+    --arogya-info: #1D4ED8;
+    --arogya-info-soft: #EFF6FF;
+    --arogya-info-border: #BFDBFE;
+    --arogya-selected-bg: #E2ECF7;
 
     /* 4px / 8px Spacing Scale */
     --space-1: 0.25rem; /* 4px */
@@ -63,25 +83,25 @@
     --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
-  /* High-Contrast Mode for Low-Light / High-Stress Readability */
+  /* High-Contrast Mode */
   :root[data-contrast='high'] {
-    --arogya-bg: #02050a;
-    --arogya-surface: #090f1a;
-    --arogya-surface-elevated: #0f1929;
-    --arogya-border: rgba(255, 255, 255, 0.28);
-    --arogya-border-strong: rgba(255, 255, 255, 0.46);
-    --arogya-text-primary: #ffffff;
-    --arogya-text-secondary: #cbd5e1;
-    --arogya-text-muted: #94a3b8;
-    --arogya-accent-primary: #67e8f9;
-    --arogya-focus-ring: #fde047;
+    --arogya-bg: #F1F5F9;
+    --arogya-surface: #FFFFFF;
+    --arogya-surface-elevated: #FFFFFF;
+    --arogya-border: #94A3B8;
+    --arogya-border-strong: #64748B;
+    --arogya-text-primary: #020617;
+    --arogya-text-secondary: #334155;
+    --arogya-text-muted: #475569;
+    --arogya-accent-primary: #0F172A;
+    --arogya-focus-ring: #0F172A;
   }
 
   html {
     font-family: var(--font-sans);
     background-color: var(--arogya-bg);
     color: var(--arogya-text-primary);
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   /* Accessible Visible Focus Ring across all interactive elements */
@@ -212,18 +232,19 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.45);
+  background: rgba(100, 116, 139, 0.5);
 }
 
 @media print {
+  /* A4-friendly medical report */
   @page {
-    size: letter;
-    margin: 0.5in;
+    size: A4;
+    margin: 14mm;
   }
   html,
   body {
@@ -231,25 +252,68 @@
     color: #0f172a !important;
     color-scheme: light !important;
   }
-  .no-print {
+  /* Printed output is the report only: navigation, page chrome and app buttons are hidden. */
+  .no-print,
+  button:not(.print-keep-button) {
     display: none !important;
+  }
+  main {
+    padding: 0 !important;
+    overflow: visible !important;
   }
   .print-report-sheet {
     background: #ffffff !important;
     color: #0f172a !important;
-    border-color: #cbd5e1 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
+    padding: 0 !important;
+    max-width: none !important;
   }
   .print-report-sheet * {
-    color: inherit;
-    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+    border-color: #94a3b8 !important;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .print-report-card {
     background: #f8fafc !important;
     border: 1px solid #cbd5e1 !important;
     break-inside: avoid;
   }
+  /* Tables repeat their header on every printed page and never split a row. */
+  .report-table-scroll {
+    overflow: visible !important;
+  }
+  .report-table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 8.5pt !important;
+  }
+  .report-table thead {
+    display: table-header-group;
+  }
+  .report-table tr,
+  .report-table td,
+  .report-table th {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Charts keep their card, axis labels and caption on one page. */
+  .report-chart,
+  figure.report-chart,
+  svg,
+  .recharts-wrapper {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
   .print-avoid-break {
     break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  a[href]::after {
+    content: '';
   }
 }

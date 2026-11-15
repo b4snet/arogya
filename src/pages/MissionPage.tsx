@@ -37,6 +37,7 @@ import {
   healthStatusToTone,
 } from '../components/ui';
 import { MarsTrajectoryMap } from '../components/mission/MarsTrajectoryMap';
+import { MissionFlightScene } from '../components/mission/MissionFlightScene';
 
 function formatDateShort(iso: string): string {
   const d = new Date(iso);
@@ -173,9 +174,9 @@ export function MissionPage() {
       {/* Explicit Simulation Disclosure Banner */}
       <div
         role="note"
-        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#22D3EE]/35 bg-[#0D1522] px-4 py-2.5 text-xs text-[var(--arogya-text-secondary)]"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--arogya-info-border)] bg-[var(--arogya-bg)] px-4 py-2.5 text-xs text-[var(--arogya-text-secondary)]"
       >
-        <span className="flex items-center gap-2 font-medium text-[#22D3EE]">
+        <span className="flex items-center gap-2 font-medium text-[var(--arogya-info)]">
           <Compass className="h-4 w-4 shrink-0" aria-hidden="true" />
           <span>{MISSION_SIMULATION_DISCLOSURE}</span>
         </span>
@@ -202,7 +203,7 @@ export function MissionPage() {
             <span aria-hidden="true">·</span>
             <span className="font-mono-tabular">{mission.vehicleName}</span>
             <span aria-hidden="true">·</span>
-            <span className="font-semibold text-[#22D3EE]">Phase: {telemetry.phase}</span>
+            <span className="font-semibold text-[var(--arogya-info)]">Phase: {telemetry.phase}</span>
           </div>
           <h1 className="arogya-display text-[var(--arogya-text-primary)]">
             {mission.name}
@@ -274,6 +275,9 @@ export function MissionPage() {
         </div>
       </header>
 
+      {/* Primary mission visualization: full-width flight scene below the heading */}
+      <MissionFlightScene telemetry={telemetry} vehicleName={mission.vehicleName} />
+
       {/* Mission Phase Timeline */}
       <Card padding="md" className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -283,7 +287,7 @@ export function MissionPage() {
               Simulated mission telemetry · {telemetry.totalDurationDays}-day transfer schedule from Earth departure to Mars surface
             </p>
           </div>
-          <span className="rounded-md border border-[#22D3EE]/35 bg-[#22D3EE]/10 px-2.5 py-1 font-mono-tabular text-xs font-semibold text-[#22D3EE]">
+          <span className="rounded-md border border-[var(--arogya-info-border)] bg-[var(--arogya-info-soft)] px-2.5 py-1 font-mono-tabular text-xs font-semibold text-[var(--arogya-info)]">
             Current Phase: {telemetry.phase}
           </span>
         </div>
@@ -298,9 +302,9 @@ export function MissionPage() {
                 aria-current={isActive ? 'step' : undefined}
                 className={`rounded-lg border p-3 transition-colors ${
                   isActive
-                    ? 'border-[#22D3EE] bg-[#121C2B]'
+                    ? 'border-[#1E3A5F] bg-[var(--arogya-selected-bg)]'
                     : isDone
-                    ? 'border-[#22C55E]/35 bg-[#22C55E]/10'
+                    ? 'border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)]'
                     : 'border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)]'
                 }`}
               >
@@ -309,10 +313,10 @@ export function MissionPage() {
                     {step.label}
                   </span>
                   {isDone ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[#4ADE80]" aria-hidden="true" />
+                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[var(--arogya-success-text)]" aria-hidden="true" />
                   ) : isActive ? (
                     <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#22D3EE] motion-safe:animate-pulse"
+                      className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse"
                       aria-hidden="true"
                     />
                   ) : (
@@ -330,25 +334,26 @@ export function MissionPage() {
         </ol>
       </Card>
 
-      {/* Primary Split: Orbital Trajectory Map + Simulated Mission Telemetry */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-        <Card padding="md" className="lg:col-span-5">
-          <CardHeader
-            title="Heliocentric Transfer View"
-            subtitle="Simulated mission telemetry · Sun-centered 2D ecliptic projection"
-          />
-          <div className="mt-4">
-            <MarsTrajectoryMap telemetry={telemetry} vehicleName={mission.vehicleName} />
-          </div>
-        </Card>
+      {/* Transfer geometry (simplified model, not ephemeris) */}
+      <Card padding="md">
+        <CardHeader
+          title="Transfer Geometry (simplified model)"
+          subtitle="Sun-centered 2D projection of the simulated transfer ellipse — simplified geometry, not ephemeris state vectors"
+        />
+        <div className="mt-4">
+          <MarsTrajectoryMap telemetry={telemetry} vehicleName={mission.vehicleName} />
+        </div>
+      </Card>
 
-        <Card padding="md" className="flex flex-col justify-between lg:col-span-7">
+      {/* Simulated mission telemetry + planner controls */}
+      <div className="grid grid-cols-1 gap-6">
+        <Card padding="md" className="flex flex-col justify-between">
           <div>
             <CardHeader
               title="Transit Progress & Orbital Telemetry"
               subtitle={`Simulated mission telemetry · Phase: ${telemetry.phase}`}
               action={
-                <span className="font-mono-tabular text-sm font-semibold text-[#22D3EE]">
+                <span className="font-mono-tabular text-sm font-semibold text-[var(--arogya-info)]">
                   {telemetry.progressPercent}% Complete
                 </span>
               }
@@ -372,7 +377,7 @@ export function MissionPage() {
                 className="h-2.5 w-full overflow-hidden rounded-full bg-white/10"
               >
                 <div
-                  className="h-full rounded-full bg-[#22D3EE] transition-all duration-200"
+                  className="h-full rounded-full bg-[#1E3A5F] transition-all duration-200"
                   style={{ width: `${telemetry.progressPercent}%` }}
                 />
               </div>
@@ -393,7 +398,7 @@ export function MissionPage() {
 
               <div className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
                 <p className="text-xs text-[var(--arogya-text-secondary)]">Mars Distance Widget</p>
-                <p className="mt-1 font-mono-tabular text-xl font-semibold text-[#FB923C]">
+                <p className="mt-1 font-mono-tabular text-xl font-semibold text-[var(--arogya-caution-text)]">
                   {(telemetry.currentDistanceToMarsKm / 1_000_000).toFixed(2)}{' '}
                   <span className="text-xs font-normal text-[var(--arogya-text-muted)]">M km</span>
                 </p>
@@ -404,7 +409,7 @@ export function MissionPage() {
 
               <div className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
                 <p className="flex items-center gap-1.5 text-xs text-[var(--arogya-text-secondary)]">
-                  <Calendar className="h-3.5 w-3.5 text-[#22D3EE]" aria-hidden="true" />
+                  <Calendar className="h-3.5 w-3.5 text-[var(--arogya-info)]" aria-hidden="true" />
                   <span>Arrival Countdown</span>
                 </p>
                 <p className="mt-1 font-mono-tabular text-xl font-semibold text-[var(--arogya-text-primary)]">
@@ -418,7 +423,7 @@ export function MissionPage() {
 
               <div className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
                 <p className="flex items-center gap-1.5 text-xs text-[var(--arogya-text-secondary)]">
-                  <Gauge className="h-3.5 w-3.5 text-[#38BDF8]" aria-hidden="true" />
+                  <Gauge className="h-3.5 w-3.5 text-[var(--arogya-info)]" aria-hidden="true" />
                   <span>Spacecraft Velocity</span>
                 </p>
                 <p className="mt-1 font-mono-tabular text-xl font-semibold text-[var(--arogya-text-primary)]">
@@ -432,10 +437,10 @@ export function MissionPage() {
 
               <div className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
                 <p className="flex items-center gap-1.5 text-xs text-[var(--arogya-text-secondary)]">
-                  <Radio className="h-3.5 w-3.5 text-[#22D3EE]" aria-hidden="true" />
+                  <Radio className="h-3.5 w-3.5 text-[var(--arogya-info)]" aria-hidden="true" />
                   <span>One-Way Comms Delay</span>
                 </p>
-                <p className="mt-1 font-mono-tabular text-xl font-semibold text-[#22D3EE]">
+                <p className="mt-1 font-mono-tabular text-xl font-semibold text-[var(--arogya-info)]">
                   {formatDurationMmSs(telemetry.oneWayLightDelaySec)}
                 </p>
                 <p className="mt-0.5 font-mono-tabular text-[11px] text-[var(--arogya-text-secondary)]">
@@ -445,7 +450,7 @@ export function MissionPage() {
 
               <div className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
                 <p className="flex items-center gap-1.5 text-xs text-[var(--arogya-text-secondary)]">
-                  <Compass className="h-3.5 w-3.5 text-[#38BDF8]" aria-hidden="true" />
+                  <Compass className="h-3.5 w-3.5 text-[var(--arogya-info)]" aria-hidden="true" />
                   <span>Round-Trip Comms Delay</span>
                 </p>
                 <p className="mt-1 font-mono-tabular text-xl font-semibold text-[var(--arogya-text-primary)]">
@@ -550,7 +555,7 @@ export function MissionPage() {
                       currentDay: Number(e.target.value),
                     })
                   }
-                  className="mt-2.5 w-full accent-[#22D3EE]"
+                  className="mt-2.5 w-full accent-[#1E3A5F]"
                 />
               </div>
             </div>
@@ -582,7 +587,7 @@ export function MissionPage() {
               <p className="text-[11px] text-[var(--arogya-text-secondary)]">Projected Transit Total</p>
               <p
                 className={`mt-1 font-mono-tabular text-xl font-semibold ${
-                  projectedBudgetPct >= 85 ? 'text-[#FB923C]' : 'text-[#4ADE80]'
+                  projectedBudgetPct >= 85 ? 'text-[var(--arogya-caution-text)]' : 'text-[var(--arogya-success-text)]'
                 }`}
               >
                 {projectedTotalRadMsv.toFixed(1)}{' '}
@@ -605,7 +610,7 @@ export function MissionPage() {
                 style={{ width: `${Math.min(100, projectedBudgetPct)}%` }}
               />
               <div
-                className="relative h-full rounded-full bg-[#22D3EE]"
+                className="relative h-full rounded-full bg-[#1E3A5F]"
                 style={{ width: `${currentBudgetPct}%` }}
               />
             </div>
@@ -623,7 +628,7 @@ export function MissionPage() {
             subtitle="Live decision-support status across all onboard astronauts (click to focus)"
             action={
               <span className="inline-flex items-center gap-1.5 text-xs text-[var(--arogya-text-secondary)]">
-                <Users className="h-4 w-4 text-[#38BDF8]" aria-hidden="true" />
+                <Users className="h-4 w-4 text-[var(--arogya-info)]" aria-hidden="true" />
                 <span>{crewOverview.length} Crew</span>
               </span>
             }
@@ -651,7 +656,7 @@ export function MissionPage() {
                     onClick={() => setActiveAstronaut(member.id)}
                     className={`flex flex-col justify-between rounded-xl border p-3.5 text-left transition-colors ${
                       isSelected
-                        ? 'border-[#22D3EE]/50 bg-[#121C2B]'
+                        ? 'border-[#1E3A5F] bg-[var(--arogya-selected-bg)]'
                         : 'border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] hover:border-white/25'
                     }`}
                   >
@@ -665,7 +670,7 @@ export function MissionPage() {
                             size="sm"
                             active={isSelected}
                           />
-                          <span className="font-mono-tabular text-[11px] font-semibold text-[#38BDF8]">
+                          <span className="font-mono-tabular text-[11px] font-semibold text-[var(--arogya-info)]">
                             {member.callSign}
                           </span>
                         </div>
@@ -686,7 +691,7 @@ export function MissionPage() {
                       <span
                         className={
                           memberAssessment.alerts.length > 0
-                            ? 'text-[#FB923C]'
+                            ? 'text-[var(--arogya-caution-text)]'
                             : 'text-[var(--arogya-text-muted)]'
                         }
                       >
@@ -707,7 +712,7 @@ export function MissionPage() {
         <Card padding="md" className="space-y-4">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-start gap-3">
-              <Wind className="mt-0.5 h-5 w-5 shrink-0 text-[#38BDF8]" aria-hidden="true" />
+              <Wind className="mt-0.5 h-5 w-5 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
               <div>
                 <h2 className="arogya-h2 text-[var(--arogya-text-primary)]">
                   Habitat Environmental Status & Simulation Controls
@@ -734,8 +739,8 @@ export function MissionPage() {
                     className={`rounded-lg border px-3 py-1.5 text-xs font-medium capitalize transition-colors ${
                       active
                         ? level === 'quiet'
-                          ? 'border-[#22C55E]/45 bg-[#22C55E]/15 text-[#4ADE80]'
-                          : 'border-[#F97316]/50 bg-[#F97316]/15 text-[#FB923C]'
+                          ? 'border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)] text-[var(--arogya-success-text)]'
+                          : 'border-[var(--arogya-caution-border)] bg-[var(--arogya-caution-soft)] text-[var(--arogya-caution-text)]'
                         : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
                     }`}
                   >
@@ -764,7 +769,7 @@ export function MissionPage() {
               <p className="text-[11px] text-[var(--arogya-text-secondary)]">Cabin pCO₂</p>
               <p
                 className={`mt-1 font-mono-tabular text-base font-semibold ${
-                  mission.environment.cabinCo2MmHg > 3.0 ? 'text-[#FACC15]' : 'text-[var(--arogya-text-primary)]'
+                  mission.environment.cabinCo2MmHg > 3.0 ? 'text-[var(--arogya-warning-text)]' : 'text-[var(--arogya-text-primary)]'
                 }`}
               >
                 {mission.environment.cabinCo2MmHg.toFixed(1)} mmHg
@@ -808,12 +813,12 @@ export function MissionPage() {
                 onChange={(e) =>
                   updateMissionEnvironment({ cabinCo2MmHg: Number(e.target.value) })
                 }
-                className="max-w-xs flex-1 accent-[#22D3EE]"
+                className="max-w-xs flex-1 accent-[#1E3A5F]"
               />
             </div>
 
             {mission.environment.solarParticleAlert !== 'quiet' && (
-              <div className="flex items-center gap-2 text-xs text-[#FB923C]">
+              <div className="flex items-center gap-2 text-xs text-[var(--arogya-caution-text)]">
                 <ShieldAlert className="h-4 w-4 shrink-0" aria-hidden="true" />
                 <span>
                   SPE status {mission.environment.solarParticleAlert.replace('_', ' ')} active in health-assessment engine.
@@ -887,7 +892,7 @@ export function MissionPage() {
                         <a
                           href={file.objectUrl}
                           download={file.name}
-                          className="text-xs font-medium text-[#22D3EE] hover:underline"
+                          className="text-xs font-medium text-[var(--arogya-info)] hover:underline"
                         >
                           Download
                         </a>

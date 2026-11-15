@@ -1,4 +1,6 @@
 import type { BodySystemId, HealthStatusLevel } from './healthAssessment';
+import type { CheckIn } from './checkIn';
+import type { VitalReading } from './vitals';
 
 export type ReportFormat = 'flight_surgeon_sbar' | 'daily_summary' | 'anomaly_brief';
 export type ReportPeriod = 'today' | '7d' | '14d' | 'full_mission';
@@ -9,6 +11,7 @@ export interface ReportSystemSnapshot {
   status: HealthStatusLevel;
   score: number;
   summary: string;
+  statusMessage?: string;
 }
 
 export interface ReportTrendItem {
@@ -61,4 +64,11 @@ export interface Report {
   dataCompletenessPercent?: number;
   includePrivateNotes?: boolean;
   conciseMedicalMode?: boolean;
+  /**
+   * Immutable copies of the observations captured when the report was generated. They keep
+   * a printed report stable even if new readings arrive while it is being printed, and they
+   * are not snapshot-management data.
+   */
+  snapshotVitals?: VitalReading[];
+  snapshotCheckIns?: CheckIn[];
 }
