@@ -12,7 +12,7 @@ import { SAFETY_DISCLAIMER } from './thresholds';
 test('buildVitalReferenceRows returns all 8 required vital signs with cautious non-diagnostic phrasing', () => {
   const astronaut = SEED_ASTRONAUTS[1]; // Maya Patel (includes elevated BP & missing values in history)
   const readings = SEED_VITALS_BY_ASTRONAUT[astronaut.id];
-  const rows = buildVitalReferenceRows(astronaut, readings, readings, 'metric');
+  const rows = buildVitalReferenceRows(astronaut, readings, readings);
 
   assert.equal(rows.length, 8);
   const expectedNames = [
@@ -52,6 +52,22 @@ test('buildVitalReferenceRows returns all 8 required vital signs with cautious n
   );
 });
 
+test('vital summaries use biological measurement units only', () => {
+  const astronaut = SEED_ASTRONAUTS[0];
+  const readings = SEED_VITALS_BY_ASTRONAUT[astronaut.id];
+  const rows = buildVitalReferenceRows(astronaut, readings, readings);
+  const units = new Set(rows.map((row) => row.unit));
+
+  assert.deepEqual(
+    [...units].sort(),
+    ['%', '°C', 'bpm', 'kg', 'mmHg', 'mmol/L', 'mSv/d'].sort()
+  );
+  const serialized = JSON.stringify(rows);
+  assert.equal(serialized.includes('°F'), false);
+  assert.equal(serialized.includes(' lb'), false);
+  assert.equal(serialized.includes('mg/dL'), false);
+});
+
 test('Missing vital channels are explicitly marked MISSING and missing status rather than nominal', () => {
   const astronaut = SEED_ASTRONAUTS[0];
   const readings = [
@@ -62,7 +78,7 @@ test('Missing vital channels are explicitly marked MISSING and missing status ra
       bodyMassKg: null,
     },
   ];
-  const rows = buildVitalReferenceRows(astronaut, readings, readings, 'metric');
+  const rows = buildVitalReferenceRows(astronaut, readings, readings);
   const glucose = rows.find((r) => r.id === 'blood_glucose');
   const spo2 = rows.find((r) => r.id === 'spo2');
   const mass = rows.find((r) => r.id === 'body_mass');

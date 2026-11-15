@@ -73,7 +73,7 @@ export function AstronautSelector({
           id={id}
           value={activeAstronautId}
           onChange={(e) => setActiveAstronaut(e.target.value)}
-          className="h-9 max-w-[205px] rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface)] px-2.5 text-xs font-medium text-[var(--arogya-text-primary)] transition-colors hover:border-[#1E3A5F]/60 focus-visible:outline-2 focus-visible:outline-[#1E3A5F]"
+          className="h-11 max-w-[190px] rounded-[var(--radius-md)] border border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-2.5 text-xs font-medium text-[var(--arogya-text-primary)] transition-colors hover:border-[var(--arogya-border-strong)] focus:border-[var(--arogya-accent-primary)] sm:h-9 sm:max-w-[205px]"
         >
           {crewSnapshots.map(({ member }) => (
             <option key={member.id} value={member.id}>

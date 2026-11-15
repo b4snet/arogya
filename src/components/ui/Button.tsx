@@ -13,13 +13,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#1E3A5F] text-white border border-transparent hover:bg-[#2D4A6F] font-semibold shadow-sm',
+    'bg-[var(--arogya-accent-primary)] text-white border border-transparent hover:bg-[var(--arogya-accent-primary-hover)] font-semibold',
   secondary:
-    'bg-white text-[var(--arogya-text-primary)] border border-[var(--arogya-border)] hover:bg-[var(--arogya-bg)] shadow-sm font-medium',
+    'bg-[var(--arogya-surface)] text-[var(--arogya-text-primary)] border border-[var(--arogya-border)] hover:border-[var(--arogya-border-strong)] hover:bg-[var(--arogya-surface-subtle)] font-medium',
   ghost:
-    'bg-transparent text-[var(--arogya-text-secondary)] border border-transparent hover:bg-[var(--arogya-bg)] hover:text-[var(--arogya-text-primary)]',
+    'bg-transparent text-[var(--arogya-text-secondary)] border border-transparent hover:bg-[var(--arogya-surface-subtle)] hover:text-[var(--arogya-text-primary)]',
   danger:
-    'bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/30 hover:bg-[#DC2626]/20 font-medium',
+    'bg-[var(--arogya-critical-soft)] text-[var(--arogya-critical-text)] border border-[var(--arogya-critical-border)] hover:bg-[#FECACA] font-medium',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -44,11 +44,11 @@ export function Button({
     <button
       type={type}
       disabled={disabled || loading}
-      className={`inline-flex shrink-0 items-center justify-center whitespace-nowrap rounded-lg font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
+      className={`inline-flex shrink-0 select-none items-center justify-center whitespace-nowrap rounded-[var(--radius-md)] font-medium transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-50 ${VARIANT_CLASSES[variant]} ${SIZE_CLASSES[size]} ${className}`}
       {...rest}
     >
       {leftIcon && <span className="shrink-0" aria-hidden="true">{leftIcon}</span>}
-      <span>{loading ? 'Processing...' : children}</span>
+      <span>{loading ? 'Processing…' : children}</span>
       {rightIcon && <span className="shrink-0" aria-hidden="true">{rightIcon}</span>}
     </button>
   );

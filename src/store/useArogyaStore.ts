@@ -29,7 +29,6 @@ export interface AtlasLayerState {
 }
 
 export interface PreferencesState {
-  units: 'metric' | 'imperial';
   highContrast: boolean;
   reducedMotionOverride: boolean;
   enableVideoBackdrop: boolean;
@@ -104,7 +103,6 @@ export const useArogyaStore = create<ArogyaStore>()(
         cameraPreset: 'overview',
       },
       preferences: {
-        units: 'metric',
         highContrast: false,
         reducedMotionOverride: false,
         enableVideoBackdrop: true,

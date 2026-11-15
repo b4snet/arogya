@@ -15,6 +15,9 @@ import { Button, EmptyState } from '../components/ui';
 import { DashboardMissionStrip } from '../components/dashboard/DashboardMissionStrip';
 import { DashboardProfileTodayCard } from '../components/dashboard/DashboardProfileTodayCard';
 import { LiveMonitorPanel } from '../components/monitor/LiveMonitorPanel';
+import { CountermeasureCoachPanel } from '../components/recovery/CountermeasureCoachPanel';
+import { RecoveryReadinessPanel } from '../components/recovery/RecoveryReadinessPanel';
+import { RecoveryReadinessSummary } from '../components/recovery/RecoveryReadinessSummary';
 import { MissionMonitorScene } from '../components/three/MissionMonitorScene';
 
 export function DashboardPage() {
@@ -28,6 +31,17 @@ export function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-[1680px] space-y-4 p-3.5 sm:p-5 lg:p-6">
+      <header className="min-w-0">
+        <p className="arogya-overline text-[var(--arogya-text-muted)]">Live mission monitor</p>
+        <h1 className="arogya-display mt-1 text-[var(--arogya-text-primary)]">
+          Mission Health Dashboard
+        </h1>
+        <p className="mt-1 max-w-3xl text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
+          {astronaut.fullName} · {mission.name} · Sol {mission.currentDay} — today’s recovery
+          readiness is derived from recorded check-ins and vitals.
+        </p>
+      </header>
+
       {assessment.escalationRequired && (
         <div
           role="alert"
@@ -127,16 +141,26 @@ export function DashboardPage() {
         </div>
       )}
 
-      {/* Hero: floating astronaut paired with the live monitor */}
-      <div className="grid grid-cols-1 items-stretch gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-7">
+      {/* Hero: floating astronaut paired with the live monitor and today's readiness */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="order-1 lg:col-span-7">
           <MissionMonitorScene
             status={assessment.overallStatus}
             astronautName={astronaut.fullName}
           />
         </div>
 
-        <div className="min-w-0 lg:col-span-5">
+        <RecoveryReadinessSummary
+          astronaut={astronaut}
+          missionDay={mission.currentDay}
+          checkIns={checkIns14d}
+          vitals={vitals14d}
+          escalationRequired={assessment.escalationRequired}
+          escalationReasons={assessment.escalationReasons}
+          className="order-2 lg:order-3 lg:col-span-12"
+        />
+
+        <div className="order-3 min-w-0 lg:order-2 lg:col-span-5">
           <LiveMonitorPanel astronaut={astronaut} latestCheckIn={latestCheckIn} />
         </div>
       </div>
@@ -154,6 +178,21 @@ export function DashboardPage() {
           />
         </div>
       </div>
+
+      <RecoveryReadinessPanel
+        astronaut={astronaut}
+        missionDay={mission.currentDay}
+        checkIns={checkIns14d}
+        vitals={vitals14d}
+        escalationRequired={assessment.escalationRequired}
+        escalationReasons={assessment.escalationReasons}
+      />
+
+      <CountermeasureCoachPanel
+        astronaut={astronaut}
+        missionDay={mission.currentDay}
+        checkIns={checkIns14d}
+      />
 
       <p className="text-[11px] leading-relaxed text-[var(--arogya-text-muted)]">
         The monitor above is a seeded demonstration stream: heart rate, oxygen saturation and

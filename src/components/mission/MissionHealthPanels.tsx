@@ -799,8 +799,8 @@ export function MissionHealthPanels({
 
           <p className="break-words text-[10px] leading-relaxed text-[var(--arogya-text-muted)]">
             Bundled NASA OSDR source data is reviewed in Research Context with provenance,
-            source intervals, and relative sample labels. No live NASA connection is used and no
-            participant linkage is attempted.
+            source intervals, and relative sample labels. This OSD-575 view is bundled, not live
+            telemetry, and no participant linkage is attempted.
           </p>
         </Card>
       </div>

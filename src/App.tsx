@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { ErrorBoundary } from './components/ui';
@@ -40,25 +40,45 @@ const ROUTE_TITLES: Record<string, string> = {
   '/about': 'About, Sources & Licenses',
 };
 
+function PageLoadingSkeleton() {
+  return (
+    <div className="mx-auto max-w-[1680px] space-y-4 p-3.5 sm:p-5 lg:p-6" role="status" aria-live="polite">
+      <span className="sr-only">Loading mission page…</span>
+      <div aria-hidden="true" className="space-y-2">
+        <div className="h-3 w-36 animate-pulse rounded bg-[var(--arogya-surface-subtle)]" />
+        <div className="h-6 w-64 max-w-full animate-pulse rounded bg-[var(--arogya-surface-subtle)]" />
+      </div>
+      <div aria-hidden="true" className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        <div className="h-64 animate-pulse rounded-xl border border-[var(--arogya-border)] bg-[var(--arogya-surface-subtle)] lg:col-span-7" />
+        <div className="h-64 animate-pulse rounded-xl border border-[var(--arogya-border)] bg-[var(--arogya-surface-subtle)] lg:col-span-5" />
+      </div>
+      <div
+        aria-hidden="true"
+        className="h-20 animate-pulse rounded-xl border border-[var(--arogya-border)] bg-[var(--arogya-surface-subtle)]"
+      />
+    </div>
+  );
+}
+
 function RoutedContent() {
   const location = useLocation();
   const resetDemoData = useArogyaStore((s) => s.resetDemoData);
   const pageTitle = ROUTE_TITLES[location.pathname] ?? 'Arogya Console';
+  const isInitialRoute = useRef(true);
+
+  useEffect(() => {
+    if (isInitialRoute.current) {
+      isInitialRoute.current = false;
+      return;
+    }
+    window.scrollTo({ top: 0, left: 0 });
+    document.getElementById('main-content')?.focus({ preventScroll: true });
+  }, [location.pathname]);
 
   return (
     <AppShell pageTitle={pageTitle}>
       <ErrorBoundary resetKey={location.pathname} onLoadDemo={resetDemoData}>
-        <Suspense
-          fallback={
-            <div
-              className="p-6 text-sm text-[var(--arogya-text-secondary)]"
-              role="status"
-              aria-live="polite"
-            >
-              Loading mission page…
-            </div>
-          }
-        >
+        <Suspense fallback={<PageLoadingSkeleton />}>
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/atlas" element={<Navigate to="/vitals" replace />} />

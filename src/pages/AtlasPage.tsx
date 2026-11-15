@@ -151,7 +151,7 @@ export function AtlasPage() {
                   aria-pressed={active}
                   className={`inline-flex min-h-[40px] items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-medium transition-colors ${active
                       ? 'border-[#22D3EE]/50 bg-[#121C2B] text-white'
-                      : 'border-[var(--arogya-border)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:text-white'
+                      : 'border-[var(--arogya-border)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)] hover:border-[var(--arogya-border-strong)] hover:text-[var(--arogya-text-primary)]'
                     }`}
                 >
                   <Icon className="h-3.5 w-3.5 text-[#22D3EE]" aria-hidden="true" />

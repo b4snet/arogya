@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   AlertCircle,
   ArrowRight,
@@ -13,6 +13,7 @@ import {
   Users,
 } from 'lucide-react';
 import { Card, CardHeader } from '../components/ui';
+import { NasaOpenDataCatalog } from '../components/research/NasaOpenDataCatalog';
 import { NasaCmpAnalyteExplorer } from '../components/research/NasaCmpAnalyteExplorer';
 import {
   NASA_CMP_DATASET,
@@ -38,6 +39,16 @@ export function ResearchPage() {
   const dataset = NASA_CMP_DATASET;
   const provenance = dataset.provenance;
   const [analyteQuery, setAnalyteQuery] = useState('');
+  const { hash } = useLocation();
+
+  // Context cards deep-link to sections that render after the initial route paint.
+  useEffect(() => {
+    if (!hash) return;
+    const target = document.getElementById(hash.slice(1));
+    if (!target) return;
+    const frame = window.requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [hash]);
 
   const summary = useMemo(() => summarizeNasaCmpDataset(dataset), [dataset]);
   const catalog = useMemo(() => buildResearchLibraryCatalog(dataset), [dataset]);
@@ -71,8 +82,10 @@ export function ResearchPage() {
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--arogya-text-secondary)]">
           A secondary reference view of the bundled OSD-575 Inspiration4 serum comprehensive
           metabolic panel and the NASA references that frame Arogya&apos;s monitoring questions.
-          This dataset provides context and reference ranges only; no model is trained on it. Data
-          is bundled at build time; no live NASA connection is used.
+          The OSD-575 dataset provides context and reference ranges only; no model is trained on
+          it. Its files are bundled at build time, while the open-data catalog below fetches
+          metadata from data.nasa.gov through Arogya&apos;s backend; no dataset files are downloaded
+          or used for training.
         </p>
       </header>
 
@@ -115,7 +128,7 @@ export function ResearchPage() {
         ))}
       </section>
 
-      <Card padding="md" className="space-y-4">
+      <Card id="nasa-osd575" padding="md" className="scroll-mt-24 space-y-4">
         <CardHeader
           title="OSD-575 · Inspiration4 serum CMP"
           subtitle={summary.shortTitle}
@@ -305,7 +318,9 @@ export function ResearchPage() {
         </Card>
       </div>
 
-      <Card padding="md" className="space-y-4">
+      <NasaOpenDataCatalog />
+
+      <Card id="nasa-reference-library" padding="md" className="scroll-mt-24 space-y-4">
         <CardHeader
           title="NASA reference library"
           subtitle="Sources that frame monitoring questions; separate from the OSD-575 observations"

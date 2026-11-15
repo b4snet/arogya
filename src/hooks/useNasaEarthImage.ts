@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchLatestNasaEarthImage, type NasaEarthImage } from '../engine/nasaEarth';
+import type { NasaEarthImage } from '../../shared/nasa';
+import { fetchEarthImage } from '../services/nasaApi';
 
 export function useNasaEarthImage(): NasaEarthImage | null {
   const [image, setImage] = useState<NasaEarthImage | null>(null);
@@ -9,7 +10,7 @@ export function useNasaEarthImage(): NasaEarthImage | null {
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), 8000);
 
-    fetchLatestNasaEarthImage(controller.signal)
+    fetchEarthImage(controller.signal)
       .then((result) => {
         if (!controller.signal.aborted) setImage(result);
       })

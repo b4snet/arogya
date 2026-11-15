@@ -38,8 +38,10 @@ import { MarsTrajectoryMap } from '../components/mission/MarsTrajectoryMap';
 import { MissionFlightScene } from '../components/mission/MissionFlightScene';
 import { MissionPhaseTimeline } from '../components/mission/MissionPhaseTimeline';
 import { CrewMissionStatusPanel } from '../components/mission/CrewMissionStatusPanel';
+import { CrewReadinessOverview } from '../components/crew/CrewReadinessOverview';
 import { MissionEventFeed } from '../components/mission/MissionEventFeed';
 import { MissionHealthPanels } from '../components/mission/MissionHealthPanels';
+import { ResearchContextSection } from '../components/research/ResearchContextSection';
 import { buildMissionPhaseTimeline } from '../engine/missionPhases';
 
 function formatDateShort(iso: string): string {
@@ -302,6 +304,15 @@ export function MissionPage() {
         transitDurationDays={telemetry.totalDurationDays}
       />
 
+      <CrewReadinessOverview
+        astronauts={astronauts}
+        checkInsByAstronaut={checkInsByAstronaut}
+        vitalsByAstronaut={vitalsByAstronaut}
+        mission={mission}
+        activeAstronautId={astronaut.id}
+        onFocusAstronaut={setActiveAstronaut}
+      />
+
       <div className="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-12">
         <div className="min-w-0 xl:col-span-7">
           <CrewMissionStatusPanel
@@ -328,6 +339,12 @@ export function MissionPage() {
         missionDay={telemetry.missionDay}
         vitals={vitals14d}
         checkIns={activeCheckIns}
+      />
+
+      <ResearchContextSection
+        surface="mission"
+        headingId="mission-research-context-heading"
+        title="Research context for mission hazards"
       />
 
       {/* Transfer geometry (simplified model, not ephemeris) */}

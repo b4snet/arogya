@@ -22,7 +22,7 @@ export function MissionSceneFallback({
     <div
       role="status"
       aria-live="polite"
-      className="flex h-full w-full flex-col justify-center gap-4 overflow-auto bg-[#08111f] p-4 text-slate-100 sm:p-6"
+      className="flex h-full w-full flex-col justify-start gap-4 overflow-auto bg-[#08111f] p-4 text-slate-100 sm:p-6"
     >
       <div>
         <h3 className="text-sm font-semibold">3D mission view unavailable</h3>

@@ -10,7 +10,11 @@ test('mission operations stay primary while research and system pages are second
     createElement(
       MemoryRouter,
       null,
-      createElement(SidebarNav, { mobileOpen: false, onCloseMobile: () => {} })
+      createElement(SidebarNav, {
+        mobileOpen: false,
+        onCloseMobile: () => {},
+        onOpenMobileMenu: () => {},
+      })
     )
   );
 
@@ -31,9 +35,15 @@ test('mission operations stay primary while research and system pages are second
   assert.match(secondary, /Settings/);
   assert.match(secondary, /About &amp; Sources/);
 
-  // The mobile quick bar mirrors the five primary destinations only.
+  // The mobile quick bar mirrors the five primary destinations and adds a More entry.
   const quickStart = html.indexOf('aria-label="Mobile Quick Navigation"');
   assert.ok(quickStart > secondaryStart);
-  assert.doesNotMatch(html.slice(quickStart), /href="\/research"/);
+  const quickBar = html.slice(quickStart);
+  assert.doesNotMatch(quickBar, /href="\/research"/);
   assert.equal(html.split('href="/research"').length - 1, 1);
+  assert.match(
+    quickBar,
+    /aria-label="More navigation: research, settings, and about"/
+  );
+  assert.match(quickBar, />More</);
 });

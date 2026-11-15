@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { HardDriveDownload, Menu, Radio, ShieldAlert, Wifi, WifiOff, Wind } from 'lucide-react';
 import { useArogyaStore } from '../../store/useArogyaStore';
 import { useActiveAssessment } from '../../hooks/useActiveAssessment';
@@ -9,17 +9,17 @@ import { useDriveExportState } from '../../services/driveExportStore';
 
 interface TopTelemetryBarProps {
   pageTitle: string;
+  mobileMenuOpen: boolean;
   onOpenMobileMenu: () => void;
   onOpenDriveModal: () => void;
 }
 
 export function TopTelemetryBar({
   pageTitle,
+  mobileMenuOpen,
   onOpenMobileMenu,
   onOpenDriveModal,
 }: TopTelemetryBarProps) {
-  const location = useLocation();
-  const isDashboard = location.pathname === '/';
   const driveAssets = useArogyaStore((s) => s.driveAssets);
   const driveSyncStatus = useArogyaStore((s) => s.driveSyncStatus);
   const { mission } = useActiveAssessment();
@@ -35,80 +35,79 @@ export function TopTelemetryBar({
       ? 'SPE Elevated'
       : 'SPE Shelter';
 
+  const driveLabel =
+    driveExport.status === 'connecting'
+      ? 'Connecting…'
+      : driveExport.status === 'connected'
+      ? 'Drive connected'
+      : driveSyncStatus === 'syncing'
+      ? 'Syncing…'
+      : driveAssets.length > 0
+      ? `Drive (${driveAssets.length})`
+      : 'Connect Drive';
+
   return (
-    <header className="no-print border-b border-[var(--arogya-border)] bg-white px-4 py-3 sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* Left: Mobile Drawer Trigger, Arogya Mark & Page Context */}
-        <div className="flex min-w-0 items-center gap-3">
+    <header className="no-print sticky top-0 z-30 border-b border-[var(--arogya-border)] bg-[var(--arogya-surface)]/95 backdrop-blur-sm">
+      <div className="flex min-h-[60px] flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2.5 sm:px-6">
+        <div className="flex w-full min-w-0 flex-1 items-center gap-2.5 sm:w-auto">
           <button
             type="button"
             onClick={onOpenMobileMenu}
-            className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-bg)] text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-border)] lg:hidden"
             aria-label="Open navigation menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation-drawer"
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-md)] border border-[var(--arogya-border)] bg-[var(--arogya-surface-subtle)] text-[var(--arogya-text-primary)] transition-colors hover:border-[var(--arogya-border-strong)] hover:bg-[var(--arogya-surface)] sm:h-9 sm:w-9 lg:hidden"
           >
             <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
 
           <Link
             to="/"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--arogya-border)] bg-[#1E3A5F] text-sm font-bold text-white lg:hidden"
-            aria-label="Arogya Home"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-md)] bg-[var(--arogya-accent-primary)] font-mono-tabular text-sm font-semibold text-white sm:h-9 sm:w-9 lg:hidden"
+            aria-label="Arogya home"
           >
-            <span className="font-mono-tabular">A</span>
+            A
           </Link>
 
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="hidden font-mono-tabular text-[11px] font-semibold uppercase tracking-widest text-[#1E3A5F] sm:inline">
-                AROGYA
+            <p className="truncate text-sm font-semibold tracking-tight text-[var(--arogya-text-primary)] sm:text-base">
+              {pageTitle}
+            </p>
+            <p className="mt-0.5 flex items-center gap-1.5 text-[11px] text-[var(--arogya-text-muted)]">
+              <span className="font-mono-tabular font-medium text-[var(--arogya-text-secondary)]">
+                Sol {mission.currentDay}/{mission.totalPlannedDays}
               </span>
-              <span className="hidden text-[var(--arogya-text-muted)] sm:inline" aria-hidden="true">
-                /
+              <span aria-hidden="true" className="text-[var(--arogya-border-strong)]">
+                ·
               </span>
-              <h1 className="truncate text-base font-semibold tracking-tight text-[var(--arogya-text-primary)] sm:text-lg">
-                {pageTitle}
-              </h1>
-            </div>
-            <p className="flex flex-wrap items-center gap-x-2 text-xs text-[var(--arogya-text-secondary)]">
-              {isDashboard ? (
-                <>
-                  <span className="text-[var(--arogya-text-muted)]">Arogya · Crew Health Console</span>
-                  <span aria-hidden="true" className="text-[var(--arogya-border-strong)]">·</span>
-                  <span className="font-mono-tabular text-[#1E3A5F]">
-                    Sol {mission.currentDay} / {mission.totalPlannedDays}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <span className="font-mono-tabular font-medium text-[var(--arogya-text-primary)]">
-                    Sol {mission.currentDay}/{mission.totalPlannedDays}
-                  </span>
-                  <span aria-hidden="true">·</span>
-                  <span className="truncate">{mission.name}</span>
-                </>
-              )}
+              <span className="truncate">{mission.name}</span>
             </p>
           </div>
         </div>
 
-        {/* Center/Right: Environment, Comms Status, Crew Selector & Drive Sync */}
-        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+        <div className="flex w-full items-center justify-between gap-2 sm:ml-auto sm:w-auto sm:justify-end sm:gap-3">
           <div
-            className="hidden items-center gap-2 rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-bg)] px-2.5 py-1.5 font-mono-tabular text-[11px] text-[var(--arogya-text-secondary)] xl:flex"
+            className="hidden items-center gap-2.5 border-l border-[var(--arogya-border-subtle)] pl-4 font-mono-tabular text-[11px] text-[var(--arogya-text-secondary)] xl:flex"
             aria-label="Cabin environment telemetry"
           >
-            <Wind className="h-3.5 w-3.5 text-[#1E3A5F]" aria-hidden="true" />
+            <Wind className="h-3.5 w-3.5 text-[var(--arogya-accent-primary)]" aria-hidden="true" />
             <span>{mission.environment.cabinPressureKpa} kPa</span>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="text-[var(--arogya-border-strong)]">
+              ·
+            </span>
             <span>{mission.environment.cabinOxygenPercent}% O₂</span>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="text-[var(--arogya-border-strong)]">
+              ·
+            </span>
             <span>CO₂ {mission.environment.cabinCo2MmHg}</span>
-            <span aria-hidden="true">·</span>
+            <span aria-hidden="true" className="text-[var(--arogya-border-strong)]">
+              ·
+            </span>
             <span
               className={
                 mission.environment.solarParticleAlert === 'quiet'
-                  ? 'text-[#16A34A]'
-                  : 'text-[#CA8A04]'
+                  ? 'text-[var(--arogya-success-text)]'
+                  : 'text-[var(--arogya-warning-text)]'
               }
             >
               {speLabel}
@@ -116,20 +115,21 @@ export function TopTelemetryBar({
           </div>
 
           <div
-            className={`hidden items-center gap-1.5 rounded-lg border px-2.5 py-1.5 font-mono-tabular text-[11px] md:flex ${
+            className={`hidden items-center gap-1.5 font-mono-tabular text-[11px] 2xl:flex ${
               isOnline
-                ? 'border-[var(--arogya-border)] bg-[var(--arogya-bg)] text-[var(--arogya-text-secondary)]'
-                : 'border-[#CA8A04]/45 bg-[#CA8A04]/8 text-[#92400E]'
+                ? 'text-[var(--arogya-text-muted)]'
+                : 'rounded-[var(--radius-sm)] bg-[var(--arogya-warning-soft)] px-2 py-1 text-[var(--arogya-warning-text)]'
             }`}
             aria-label="Network and Earth communication link status"
           >
             {isOnline ? (
-              <Radio className="h-3.5 w-3.5 text-[#1E3A5F]" aria-hidden="true" />
+              <Radio className="h-3.5 w-3.5 text-[var(--arogya-accent-primary)]" aria-hidden="true" />
             ) : (
-              <WifiOff className="h-3.5 w-3.5 text-[#92400E]" aria-hidden="true" />
+              <WifiOff className="h-3.5 w-3.5" aria-hidden="true" />
             )}
             <span>
-              {isOnline ? 'Local' : 'Offline'} · {delayMin}m {String(delaySec).padStart(2, '0')}s lag
+              {isOnline ? 'Comms local' : 'Offline'} · {delayMin}m{' '}
+              {String(delaySec).padStart(2, '0')}s lag
             </span>
           </div>
 
@@ -138,20 +138,12 @@ export function TopTelemetryBar({
           <button
             type="button"
             onClick={onOpenDriveModal}
-            className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-lg border border-[#1E3A5F]/30 bg-[#1E3A5F] px-3 text-xs font-medium text-white transition-colors hover:bg-[#2D4A6F] focus-visible:outline-2 focus-visible:outline-[#1E3A5F]"
+            aria-label={driveLabel}
+            title={driveLabel}
+            className="inline-flex h-11 w-11 items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] bg-[var(--arogya-accent-primary)] text-xs font-medium text-white transition-colors hover:bg-[var(--arogya-accent-primary-hover)] sm:h-9 sm:w-auto sm:justify-start sm:px-3"
           >
             <HardDriveDownload className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-            <span>
-              {driveExport.status === 'connecting'
-                ? 'Connecting…'
-                : driveExport.status === 'connected'
-                ? 'Drive connected'
-                : driveSyncStatus === 'syncing'
-                ? 'Syncing...'
-                : driveAssets.length > 0
-                ? `Drive (${driveAssets.length})`
-                : 'Connect Drive'}
-            </span>
+            <span className="hidden sm:inline">{driveLabel}</span>
           </button>
         </div>
       </div>
@@ -163,25 +155,28 @@ export function SafetyDisclaimerFooter() {
   const isOnline = useOnlineStatus();
 
   return (
-    <footer className="no-print border-t border-[var(--arogya-border)] bg-white px-4 py-2.5 text-xs text-[var(--arogya-text-secondary)] sm:px-6">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="flex items-center gap-2">
-          <ShieldAlert className="h-3.5 w-3.5 shrink-0 text-[#CA8A04]" aria-hidden="true" />
-          <span>
-            {SAFETY_DISCLAIMER}
-          </span>
+    <footer className="no-print border-t border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-4 pb-[calc(4.5rem+env(safe-area-inset-bottom))] pt-2.5 text-xs text-[var(--arogya-text-secondary)] sm:px-6 lg:pb-2.5">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <p className="flex items-start gap-2 leading-relaxed">
+          <ShieldAlert
+            className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--arogya-warning)]"
+            aria-hidden="true"
+          />
+          <span>{SAFETY_DISCLAIMER}</span>
         </p>
         <span
-          className={`inline-flex items-center gap-1.5 font-mono-tabular text-[11px] ${
-            isOnline ? 'text-[var(--arogya-text-muted)]' : 'text-[#92400E]'
+          className={`inline-flex shrink-0 items-center gap-1.5 font-mono-tabular text-[11px] ${
+            isOnline ? 'text-[var(--arogya-text-muted)]' : 'text-[var(--arogya-warning-text)]'
           }`}
         >
           {isOnline ? (
-            <Wifi className="h-3 w-3 text-[#16A34A]" aria-hidden="true" />
+            <Wifi className="h-3 w-3 text-[var(--arogya-success)]" aria-hidden="true" />
           ) : (
-            <WifiOff className="h-3 w-3 text-[#92400E]" aria-hidden="true" />
+            <WifiOff className="h-3 w-3" aria-hidden="true" />
           )}
-          {isOnline ? 'Online · Offline-First Local Cache Active' : 'Offline Mode · Local Telemetry Active'}
+          {isOnline
+            ? 'Online · Offline-First Local Cache Active'
+            : 'Offline Mode · Local Telemetry Active'}
         </span>
       </div>
     </footer>

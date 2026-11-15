@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 import type { HealthAssessment, HealthStatusLevel, OrganTarget } from '../../types';
 import { ErrorState } from '../ui';
-import { StudioLightingRig, detectSoftwareWebGL } from './StudioLightingRig';
+import { StudioLightingRig, detectWebGLCapability } from './StudioLightingRig';
 import {
   ProceduralAstronautSuit,
   ProceduralBrainModel,
@@ -180,7 +180,8 @@ export function HealthAtlasCanvas({
   const { astronautModelUrl, brainModelUrl, heartModelUrl, lungsModelUrl } =
     useDriveMedia();
   const reducedMotion = useReducedMotion();
-  const isSoftwareGl = useMemo(() => detectSoftwareWebGL(), []);
+  const webglCapability = useMemo(() => detectWebGLCapability(), []);
+  const isSoftwareGl = webglCapability !== 'hardware';
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [hoveredOrgan, setHoveredOrgan] = useState<OrganTarget | null>(null);
@@ -250,7 +251,10 @@ export function HealthAtlasCanvas({
   const cfgLungs = ATLAS_ANATOMY_CONFIG.lungs;
 
   const errorFallback = (
-    <div className="flex h-full min-h-[520px] items-center justify-center rounded-xl border border-white/10 bg-[#070B16] p-6">
+    <div
+      data-webgl-fallback="atlas"
+      className="flex h-full min-h-[520px] items-center justify-center rounded-xl border border-white/10 bg-[#070B16] p-6"
+    >
       <ErrorState
         title="3D Health Atlas Viewport Unavailable"
         description="Your browser or graphics context could not initialize the 3D scene. All system health panels remain fully accessible using the Brain, Heart, Lungs, and Full Body buttons above."
@@ -272,7 +276,7 @@ export function HealthAtlasCanvas({
     </div>
   );
 
-  if (contextLost) return errorFallback;
+  if (contextLost || webglCapability === 'unavailable') return errorFallback;
 
   return (
     <SceneErrorBoundary fallback={errorFallback}>

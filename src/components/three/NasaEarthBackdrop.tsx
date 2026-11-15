@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import type { NasaEarthImage } from '../../engine/nasaEarth';
+import { useEffect, useRef, useState } from 'react';
+import type { NasaEarthImage } from '../../../shared/nasa';
 
 interface NasaEarthBackdropProps {
   image: NasaEarthImage | null;
@@ -8,6 +8,13 @@ interface NasaEarthBackdropProps {
 
 export function NasaEarthBackdrop({ image, animate }: NasaEarthBackdropProps) {
   const [loadedUrl, setLoadedUrl] = useState<string | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const imageUrl = image?.imageUrl ?? null;
+
+  useEffect(() => {
+    const img = imageRef.current;
+    if (imageUrl && img?.complete && img.naturalWidth > 0) setLoadedUrl(imageUrl);
+  }, [imageUrl]);
 
   if (!image) return null;
   const loaded = loadedUrl === image.imageUrl;
@@ -19,6 +26,7 @@ export function NasaEarthBackdrop({ image, animate }: NasaEarthBackdropProps) {
         aria-hidden="true"
       >
         <img
+          ref={imageRef}
           src={image.imageUrl}
           alt=""
           decoding="async"

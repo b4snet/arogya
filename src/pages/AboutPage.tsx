@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
   BookOpen,
   Code2,
@@ -117,6 +118,71 @@ export function AboutPage() {
           </ul>
         </Card>
       </div>
+
+      {/* Demo Narrative */}
+      <Card padding="md" className="space-y-4">
+        <CardHeader
+          title="Suggested Demo Walkthrough"
+          subtitle="One continuous storyline: monitor, decide, log, review, and brief."
+        />
+        <ol className="grid grid-cols-1 gap-2.5 text-xs leading-relaxed text-[var(--arogya-text-secondary)] sm:grid-cols-2">
+          {[
+            {
+              to: '/',
+              title: 'Dashboard',
+              detail: 'Start on the simulated live monitor beside today’s recovery readiness band.',
+            },
+            {
+              to: '/#recovery-readiness',
+              title: 'Recovery readiness',
+              detail: 'Inspect contributing factors, evidence coverage, and the escalation pathway.',
+            },
+            {
+              to: '/check-in',
+              title: 'Daily Check-In',
+              detail: 'Log sleep, symptoms, and optional measurements in the four-step form.',
+            },
+            {
+              to: '/vitals',
+              title: 'Vitals & organ context',
+              detail: 'Review recorded trends, organ context, and missing-data labels.',
+            },
+            {
+              to: '/mission',
+              title: 'Mission command',
+              detail: 'Check crew readiness and the simulated flight scene in mission context.',
+            },
+            {
+              to: '/reports',
+              title: 'Mission Health Brief',
+              detail: 'Generate, print, or export the review document with provenance intact.',
+            },
+            {
+              to: '/research',
+              title: 'Research Context',
+              detail: 'Read NASA OSD-575 references as labelled background, never as crew data.',
+            },
+          ].map((step, index) => (
+            <li
+              key={step.title}
+              className="flex items-start gap-3 rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3"
+            >
+              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#1E3A5F] font-mono-tabular text-[10px] font-semibold text-white">
+                {index + 1}
+              </span>
+              <span>
+                <Link
+                  to={step.to}
+                  className="font-semibold text-[var(--arogya-text-primary)] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2"
+                >
+                  {step.title}
+                </Link>
+                <span className="mt-0.5 block">{step.detail}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </Card>
 
       {/* Team Members, Demo Video & GitHub Repository */}
       <Card padding="md" className="space-y-4">
@@ -280,7 +346,7 @@ export function AboutPage() {
           />
           <ul className="list-disc space-y-2 pl-5 text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
             <li>
-              <strong className="text-[var(--arogya-text-primary)]">On-Device Persistence:</strong> Crew check-ins, vital entries, personal baselines, and generated SBAR reports remain strictly inside your browser’s localStorage (<span className="font-mono-tabular">arogya-mission-store-v2</span>) and local draft storage.
+              <strong className="text-[var(--arogya-text-primary)]">On-Device Persistence:</strong> Crew check-ins, vital entries, personal baselines, and generated SBAR reports remain strictly inside your browser’s IndexedDB (<span className="font-mono-tabular">arogya-mission-store-v2</span>); in-progress check-in drafts use localStorage.
             </li>
             <li>
               <strong className="text-[var(--arogya-text-primary)]">No Unsolicited Cloud Uploads:</strong> Arogya does not transmit personal health logs to external analytics trackers or third-party servers.
@@ -315,10 +381,10 @@ export function AboutPage() {
             action={<Database className="h-4 w-4 text-[var(--arogya-info)]" aria-hidden="true" />}
           />
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
-            The Vitals research view and the secondary Research Context page include 28 archived sample rows from NASA OSDR study OSD-575 (Version 3, DOI 10.26030/mc5d-p710), covering 19 CMP analytes and four source pseudonyms. OSD-575 is a SpaceX Inspiration4 pre-flight and post-flight serum metabolic-panel and cytokine study; it is bundled for context and reference tables only. Arogya is not trained on this dataset and makes no model, diagnostic, or live-telemetry claim from it. Research Context adds cohort coverage, analyte search, and NASA reference background. These research results remain separate from fictional crew records and simulated telemetry; the application does not link or re-identify participants.
+            The Vitals research view and the secondary Research Context page include 28 archived sample rows from NASA OSDR study OSD-575 (Version 3, DOI 10.26030/mc5d-p710), covering 19 CMP analytes and four source pseudonyms. OSD-575 is a SpaceX Inspiration4 pre-flight and post-flight serum metabolic-panel and cytokine study; it is bundled for context and reference tables only. Arogya is not trained on this dataset and makes no model, diagnostic, or live-telemetry claim from it. Research Context adds cohort coverage, analyte search, NASA reference background, and a live metadata catalog of related data.nasa.gov datasets fetched through the app's backend; that catalog links to open data without downloading or training on it. These research results remain separate from fictional crew records and simulated telemetry; the application does not link or re-identify participants.
           </p>
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
-            The selected transformed CSV and import provenance are bundled locally; page loading does not depend on NASA availability. Source units and relative timepoint labels are retained, missing values remain missing, and no diagnostic interpretation is applied. The official OSDR OSD-575 Version 3 study page lists CC0-1.0; this license was verified against the official study listing.
+            The selected transformed CSV and import provenance are bundled locally, so the OSD-575 view loads without NASA availability; only the separate open-data catalog needs the backend route and shows a retry state if it is unavailable. Source units and relative timepoint labels are retained, missing values remain missing, and no diagnostic interpretation is applied. The official OSDR OSD-575 Version 3 study page lists CC0-1.0; this license was verified against the official study listing.
           </p>
         </Card>
       </div>

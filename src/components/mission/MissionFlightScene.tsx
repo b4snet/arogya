@@ -18,6 +18,7 @@ import {
   type VehicleModelSource,
 } from '../../engine/missionScene';
 import { VehicleGltfModel, type VehicleModelResult } from '../three/VehicleGltfModel';
+import { detectWebGLCapability } from '../three/StudioLightingRig';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import {
   MissionSceneFallback,
@@ -228,7 +229,9 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
   const [modelDetail, setModelDetail] = useState<string | null>(null);
   const [modelProgress, setModelProgress] = useState<number | null>(null);
   const [modelRadius, setModelRadius] = useState(3.3);
-  const [webglFailure, setWebglFailure] = useState<MissionSceneFailure | null>(null);
+  const [webglFailure, setWebglFailure] = useState<MissionSceneFailure | null>(() =>
+    detectWebGLCapability() === 'unavailable' ? 'webgl-unavailable' : null
+  );
   const [canvasAttempt, setCanvasAttempt] = useState(0);
   const [renderRevision, setRenderRevision] = useState(0);
 

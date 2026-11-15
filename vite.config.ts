@@ -2,14 +2,19 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {defineConfig} from 'vite';
+import { defineConfig, loadEnv } from 'vite';
+import { nasaApiPlugin } from './vite/nasaApiPlugin.ts';
 
 const projectRoot = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig(({ mode }) => {
   const releaseBuild = mode === 'release';
+  const env = loadEnv(mode, projectRoot, '');
+  if (!process.env.NASA_API_KEY && env.NASA_API_KEY) {
+    process.env.NASA_API_KEY = env.NASA_API_KEY;
+  }
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), nasaApiPlugin()],
     assetsInclude: ['**/*.glb'],
     resolve: {
       alias: [

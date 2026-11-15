@@ -549,9 +549,9 @@ export function CheckInPage() {
                 <CheckCircle2 className="h-6 w-6" aria-hidden="true" />
               </div>
               <div>
-                <h2 className="arogya-h1 text-[var(--arogya-text-primary)]">
+                <h1 className="arogya-display text-[var(--arogya-text-primary)]">
                   Mission Day {submittedState.missionDay} Check-In Recorded
-                </h2>
+                </h1>
                 <p className="mt-1 text-sm text-[var(--arogya-text-secondary)]">
                   Dashboard, Vitals, and Reports have been updated for{' '}
                   <strong className="text-[var(--arogya-text-primary)]">{astronaut.fullName}</strong>.
@@ -615,12 +615,6 @@ export function CheckInPage() {
               View Vitals
             </Link>
             <Link
-              to="/vitals"
-              className="inline-flex h-10 items-center rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-bg)]"
-            >
-              Vitals Analytics
-            </Link>
-            <Link
               to="/reports"
               className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-elevated)] px-4 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-bg)]"
             >
@@ -652,17 +646,24 @@ export function CheckInPage() {
               60–90 Second Guided Check-In · Sol {mission.currentDay}
             </span>
           </div>
-          <div className="mt-1 flex items-center gap-2.5">
-            <AstronautAvatar
-              astronautId={astronaut.id}
-              fullName={astronaut.fullName}
-              status={assessment.overallStatus}
-              size="md"
-              active
-            />
-            <h2 className="arogya-h1 text-[var(--arogya-text-primary)]">
-              Daily Crew Check-In — {astronaut.fullName}
-            </h2>
+          <div className="mt-1 flex items-start gap-2.5">
+            <span className="mt-0.5 shrink-0">
+              <AstronautAvatar
+                astronautId={astronaut.id}
+                fullName={astronaut.fullName}
+                status={assessment.overallStatus}
+                size="md"
+                active
+              />
+            </span>
+            <div className="min-w-0">
+              <h1 className="arogya-display text-[var(--arogya-text-primary)]">
+                Daily Crew Check-In
+              </h1>
+              <p className="mt-0.5 text-sm font-medium text-[var(--arogya-text-secondary)]">
+                {astronaut.fullName}
+              </p>
+            </div>
           </div>
           <p className="mt-1 text-xs text-[var(--arogya-text-secondary)]">
             {SAFETY_DISCLAIMER}
@@ -853,7 +854,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('sleepHours', e.target.value)}
                     aria-invalid={Boolean(errors.sleepHours)}
                     aria-describedby={errors.sleepHours ? 'err-sleepHours' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-sleepHours" message={errors.sleepHours} />
                   <WhyMatters text="Cumulative sleep debt degrades reaction time, mood stability, and neuro-ocular recovery." />
@@ -894,7 +895,7 @@ export function CheckInPage() {
                       onChange={(e) => updateField('hydrationValue', e.target.value)}
                       aria-invalid={Boolean(errors.hydrationValue)}
                       aria-describedby={errors.hydrationValue ? 'err-hydration' : undefined}
-                      className="h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 pr-16 font-mono-tabular text-sm text-white"
+                      className="h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 pr-16 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                     />
                     <span className="pointer-events-none absolute right-3 top-2.5 font-mono-tabular text-xs text-[var(--arogya-text-secondary)]">
                       {draft.hydrationUnit === 'liters' ? 'L' : 'cups'}
@@ -924,7 +925,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('exerciseMinutes', e.target.value)}
                     aria-invalid={Boolean(errors.exerciseMinutes)}
                     aria-describedby={errors.exerciseMinutes ? 'err-exercise' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-exercise" message={errors.exerciseMinutes} />
                   <WhyMatters text="Daily aerobic loading preserves plasma volume, cardiovascular capacity, and circadian rhythm." />
@@ -946,7 +947,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('resistanceMinutes', e.target.value)}
                     aria-invalid={Boolean(errors.resistanceMinutes)}
                     aria-describedby={errors.resistanceMinutes ? 'err-resistance' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-resistance" message={errors.resistanceMinutes} />
                   <WhyMatters text="Resistive loading is the primary defense against microgravity bone loss and muscle atrophy." />
@@ -1068,7 +1069,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('heartRateBpm', e.target.value)}
                     aria-invalid={Boolean(errors.heartRateBpm)}
                     aria-describedby={errors.heartRateBpm ? 'err-hr' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-hr" message={errors.heartRateBpm} />
                   <WhyMatters text="Elevated resting HR vs. personal baseline can indicate dehydration, stress, or illness onset." />
@@ -1086,7 +1087,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('spo2Percent', e.target.value)}
                     aria-invalid={Boolean(errors.spo2Percent)}
                     aria-describedby={errors.spo2Percent ? 'err-spo2' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-spo2" message={errors.spo2Percent} />
                   <WhyMatters text="Confirms healthy oxygen delivery alongside closed-loop cabin O₂ and CO₂ levels." />
@@ -1104,7 +1105,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('systolicBpMmHg', e.target.value)}
                     aria-invalid={Boolean(errors.systolicBpMmHg)}
                     aria-describedby={errors.systolicBpMmHg ? 'err-sys' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-sys" message={errors.systolicBpMmHg} />
                   <WhyMatters text="Tracks vascular load and cephalad fluid-shift pressure across consecutive mission days." />
@@ -1122,7 +1123,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('diastolicBpMmHg', e.target.value)}
                     aria-invalid={Boolean(errors.diastolicBpMmHg)}
                     aria-describedby={errors.diastolicBpMmHg ? 'err-dia' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-dia" message={errors.diastolicBpMmHg} />
                   <WhyMatters text="Helps spot sustained resting vascular resistance trends alongside systolic pressure." />
@@ -1159,7 +1160,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('bodyTempValue', e.target.value)}
                     aria-invalid={Boolean(errors.bodyTempValue)}
                     aria-describedby={errors.bodyTempValue ? 'err-temp' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-temp" message={errors.bodyTempValue} />
                   <WhyMatters text="Fever paired with systemic symptoms warrants prompt infection isolation and medical officer guidance." />
@@ -1196,7 +1197,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('bloodGlucoseValue', e.target.value)}
                     aria-invalid={Boolean(errors.bloodGlucoseValue)}
                     aria-describedby={errors.bloodGlucoseValue ? 'err-glucose' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-glucose" message={errors.bloodGlucoseValue} />
                   <WhyMatters text="Sleep debt and stress hormones can alter glucose regulation and metabolic stability." />
@@ -1233,7 +1234,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('bodyMassValue', e.target.value)}
                     aria-invalid={Boolean(errors.bodyMassValue)}
                     aria-describedby={errors.bodyMassValue ? 'err-mass' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-mass" message={errors.bodyMassValue} />
                   <WhyMatters text="Tracks gradual nutritional lean-mass loss or rapid fluid-shift changes." />
@@ -1252,7 +1253,7 @@ export function CheckInPage() {
                     onChange={(e) => updateField('dailyRadiationMsv', e.target.value)}
                     aria-invalid={Boolean(errors.dailyRadiationMsv)}
                     aria-describedby={errors.dailyRadiationMsv ? 'err-rad' : undefined}
-                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-white"
+                    className="mt-1.5 h-10 w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 font-mono-tabular text-sm text-[var(--arogya-text-primary)]"
                   />
                   <FieldError id="err-rad" message={errors.dailyRadiationMsv} />
                   <WhyMatters text="Monitors daily ionizing exposure against the mission ALARA budget and storm-shelter alerts." />

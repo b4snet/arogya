@@ -3,11 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Activity,
   CheckCircle2,
-  Clock,
   Database,
   Download,
   FileText,
-  HelpCircle,
   Plus,
   RotateCcw,
   ShieldAlert,
@@ -21,7 +19,6 @@ import {
   buildVitalsCsv,
 } from '../engine/vitalsReference';
 import {
-  AstronautAvatar,
   Button,
   Card,
   EmptyState,
@@ -31,30 +28,17 @@ import {
 import { VitalsChartsGrid, type VitalsTimeWindow } from '../components/vitals/VitalsChartsGrid';
 import { VitalsReferenceTable } from '../components/vitals/VitalsReferenceTable';
 import { ManualVitalsPanel } from '../components/vitals/ManualVitalsPanel';
-import { OrganMotionPanel } from '../components/vitals/OrganMotionPanel';
+import { VitalsSnapshotGrid } from '../components/vitals/VitalsSnapshotGrid';
 import { NasaResearchDataPanel } from '../components/vitals/NasaResearchDataPanel';
-import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../utils/unitConversions';
+import { OrganContextCard } from '../components/vitals/OrganContextCard';
+import { ResearchContextSection } from '../components/research/ResearchContextSection';
+import { mgDlToMmolL } from '../utils/unitConversions';
 import {
   computeObservationWindow,
   countObservedDays,
   describeWindowCoverage,
   filterByObservationWindow,
 } from '../utils/observationWindow';
-
-function formatSourceLabel(source: string): string {
-  switch (source) {
-    case 'manual_entry':
-      return 'Manual Crew Entry';
-    case 'device_ble':
-      return 'BLE Medical Device';
-    case 'spacecraft_bus':
-      return 'Spacecraft Telemetry Bus';
-    case 'cabin_sensor_mock':
-      return 'Cabin Environmental Sensor';
-    default:
-      return 'Wearable Biometric Suite';
-  }
-}
 
 function downloadFile(content: string, filename: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -72,8 +56,6 @@ export function VitalsPage() {
   const addVitals = useArogyaStore((s) => s.addVitals);
   const addReport = useArogyaStore((s) => s.addReport);
   const resetDemoData = useArogyaStore((s) => s.resetDemoData);
-  const units = useArogyaStore((s) => s.preferences.units);
-  const setPreferences = useArogyaStore((s) => s.setPreferences);
 
   const [timeWindow, setTimeWindow] = useState<VitalsTimeWindow>(14);
   const [showManualForm, setShowManualForm] = useState(false);
@@ -121,8 +103,8 @@ export function VitalsPage() {
   const latest = sortedVitals[sortedVitals.length - 1];
 
   const referenceRows = useMemo(
-    () => buildVitalReferenceRows(astronaut, windowVitals, sortedVitals, units),
-    [astronaut, windowVitals, sortedVitals, units]
+    () => buildVitalReferenceRows(astronaut, windowVitals, sortedVitals),
+    [astronaut, windowVitals, sortedVitals]
   );
 
   const windowMissingCount = useMemo(() => {
@@ -211,7 +193,6 @@ export function VitalsPage() {
     });
   };
 
-  const isImperial = units === 'imperial';
   const latestTimestampLabel = latest
     ? new Date(latest.timestampIso).toLocaleString(undefined, {
         month: 'short',
@@ -220,6 +201,9 @@ export function VitalsPage() {
         minute: '2-digit',
       })
     : 'No measurements logged';
+  const latestSampleLabel = latest
+    ? `Mission Day ${latest.missionDay} · ${latestTimestampLabel}`
+    : 'None logged';
 
   const qualityTone =
     assessment.dataQuality.qualityTier === 'complete'
@@ -232,69 +216,11 @@ export function VitalsPage() {
     <div className="mx-auto max-w-7xl space-y-6 p-4 sm:p-6">
       {/* Page Header & Actions */}
       <header className="flex flex-col justify-between gap-4 border-b border-[var(--arogya-border)] pb-5 lg:flex-row lg:items-end">
-        <div className="space-y-1.5">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--arogya-text-secondary)]">
-            <AstronautAvatar
-              astronautId={astronaut.id}
-              fullName={astronaut.fullName}
-              status={assessment.overallStatus}
-              size="xs"
-              active
-            />
-            <span className="font-semibold text-[var(--arogya-text-primary)]">{astronaut.fullName}</span>
-            <span aria-hidden="true">·</span>
-            <span className="font-mono-tabular">{astronaut.callSign}</span>
-            <span aria-hidden="true">·</span>
-            <span className="font-mono-tabular">Mission Day {mission.currentDay}</span>
-            <span aria-hidden="true">·</span>
-            <span className="inline-flex items-center gap-1 font-mono-tabular">
-              <Clock className="h-3.5 w-3.5 text-[var(--arogya-info)]" aria-hidden="true" />
-              Latest reading: {latest ? `Day ${latest.missionDay} (${latestTimestampLabel})` : 'None'}
-            </span>
-            {latest && (
-              <>
-                <span aria-hidden="true">·</span>
-                <span>{formatSourceLabel(latest.source)}</span>
-              </>
-            )}
-          </div>
-          <h1 className="arogya-display text-[var(--arogya-text-primary)]">
-            Vitals Monitor
-          </h1>
-        </div>
+        <h1 className="arogya-display text-[var(--arogya-text-primary)]">
+          Vitals Monitor
+        </h1>
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-          <div
-            role="group"
-            aria-label="Measurement display units"
-            className="inline-flex items-center gap-1 rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-surface)] p-1"
-          >
-            <button
-              type="button"
-              onClick={() => setPreferences({ units: 'metric' })}
-              aria-pressed={!isImperial}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-colors ${
-                !isImperial
-                  ? 'bg-[var(--arogya-surface-elevated)] text-[var(--arogya-text-primary)]'
-                  : 'text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
-              }`}
-            >
-              Metric
-            </button>
-            <button
-              type="button"
-              onClick={() => setPreferences({ units: 'imperial' })}
-              aria-pressed={isImperial}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-colors ${
-                isImperial
-                  ? 'bg-[var(--arogya-surface-elevated)] text-[var(--arogya-text-primary)]'
-                  : 'text-[var(--arogya-text-secondary)] hover:text-[var(--arogya-text-primary)]'
-              }`}
-            >
-              US Units
-            </button>
-          </div>
-
           <Button
             type="button"
             variant="secondary"
@@ -365,7 +291,6 @@ export function VitalsPage() {
           astronaut={astronaut}
           currentMissionDay={mission.currentDay}
           latestReading={latest}
-          units={units}
           onSave={handleSaveManualReading}
           onClose={() => setShowManualForm(false)}
         />
@@ -472,14 +397,6 @@ export function VitalsPage() {
         </Card>
       </div>
 
-      {/* Large procedural organ monitor with readouts */}
-      <OrganMotionPanel
-        astronaut={astronaut}
-        latestVital={latest ?? null}
-        latestCheckIn={checkIns14d[checkIns14d.length - 1] ?? null}
-        rows={referenceRows}
-      />
-
       {/* No-Vitals-Yet Empty State */}
       {sortedVitals.length === 0 ? (
         <EmptyState
@@ -511,100 +428,25 @@ export function VitalsPage() {
         />
       ) : (
         <>
-          {/* Current 8 Vital Signs Snapshot */}
-          <section aria-labelledby="current-vitals-heading" className="space-y-3">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h2 id="current-vitals-heading" className="arogya-h2 text-[var(--arogya-text-primary)]">
-                Current Vital Signs Snapshot
-              </h2>
-              <span className="font-mono-tabular text-xs text-[var(--arogya-text-secondary)]">
-                Latest sample: {latest ? `Mission Day ${latest.missionDay} · ${latestTimestampLabel}` : 'None logged'}
-              </span>
-            </div>
+          <VitalsSnapshotGrid
+            rows={referenceRows}
+            timeWindow={timeWindow}
+            latestSampleLabel={latestSampleLabel}
+          />
 
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {referenceRows.map((row) => {
-            const isMissing = row.latestNumeric === null;
-            return (
-              <Card key={row.id} padding="md" className="flex flex-col justify-between">
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="text-xs font-medium text-[var(--arogya-text-secondary)]">
-                      {row.name}
-                    </span>
-                    {row.status === 'missing' ? (
-                      <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-md border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-2 py-0.5 text-xs font-medium text-[var(--arogya-text-secondary)]">
-                        <HelpCircle className="h-3 w-3" aria-hidden="true" />
-                        <span>Missing</span>
-                      </span>
-                    ) : (
-                      <StatusPill tone={healthStatusToTone(row.status)} label={row.statusLabel} />
-                    )}
-                  </div>
+          <OrganContextCard assessment={assessment} />
 
-                  <div className="mt-2.5 flex items-baseline gap-1.5">
-                    <span
-                      className={`font-mono-tabular text-2xl font-semibold ${
-                        isMissing ? 'text-[var(--arogya-warning-text)]' : 'text-[var(--arogya-text-primary)]'
-                      }`}
-                    >
-                      {isMissing
-                        ? 'MISSING'
-                        : row.id === 'radiation'
-                        ? latest?.dailyRadiationMsv?.toFixed(2) ?? 'MISSING'
-                        : row.latestFormatted.replace(` ${row.unit}`, '').replace('%', '')}
-                    </span>
-                    {!isMissing && (
-                      <span className="font-mono-tabular text-xs text-[var(--arogya-text-secondary)]">
-                        {row.id === 'radiation' ? 'mSv/d' : row.unit}
-                      </span>
-                    )}
-                  </div>
-                  {row.id === 'radiation' && latest?.cumulativeRadiationMsv != null && (
-                    <p className="mt-0.5 font-mono-tabular text-[11px] text-[var(--arogya-text-secondary)]">
-                      Cumulative: {latest.cumulativeRadiationMsv.toFixed(2)} mSv
-                    </p>
-                  )}
-                </div>
+          {/* 7D / 14D / 30D Recharts Visualizations */}
+          <VitalsChartsGrid
+            astronaut={astronaut}
+            allReadings={sortedVitals}
+            currentMissionDay={mission.currentDay}
+            timeWindow={timeWindow}
+            onTimeWindowChange={setTimeWindow}
+          />
 
-                <div className="mt-3 space-y-1 border-t border-[var(--arogya-border)] pt-2.5 text-[11px]">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[var(--arogya-text-muted)]">Personal Baseline</span>
-                    <span className="font-mono-tabular text-[var(--arogya-info)] text-right">
-                      {row.personalBaseline}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[var(--arogya-text-muted)]">General Ref</span>
-                    <span className="font-mono-tabular text-[var(--arogya-text-secondary)] text-right">
-                      {row.generalReferenceRange}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="text-[var(--arogya-text-muted)]">Trend ({timeWindow}d)</span>
-                    <span className="font-mono-tabular text-[var(--arogya-text-primary)] text-right">
-                      {row.trendLabel}
-                    </span>
-                  </div>
-                </div>
-              </Card>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 7D / 14D / 30D Recharts Visualizations */}
-      <VitalsChartsGrid
-        astronaut={astronaut}
-        allReadings={sortedVitals}
-        currentMissionDay={mission.currentDay}
-        timeWindow={timeWindow}
-        onTimeWindowChange={setTimeWindow}
-        units={units}
-      />
-
-      {/* Accessible Reference-Range Matrix + Mandatory Exact Safety Note */}
-      <VitalsReferenceTable rows={referenceRows} astronautName={astronaut.fullName} />
+          {/* Accessible Reference-Range Matrix + Mandatory Exact Safety Note */}
+          <VitalsReferenceTable rows={referenceRows} astronautName={astronaut.fullName} />
 
       {/* Daily Telemetry Log Table */}
       <Card padding="none" className="overflow-hidden">
@@ -618,7 +460,7 @@ export function VitalsPage() {
             </p>
           </div>
           <span className="font-mono-tabular text-xs text-[var(--arogya-text-muted)]">
-            Units: {isImperial ? 'US (°F, mmol/L, lb)' : 'Metric (°C, mg/dL, kg)'}
+            Units shown per column: bpm · mmHg · °C · mmol/L · kg · mSv
           </span>
         </div>
 
@@ -670,25 +512,15 @@ export function VitalsPage() {
                       : 'MISSING'}
                   </td>
                   <td className={`px-3 py-2.5 ${v.bodyTempC == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
-                    {v.bodyTempC != null
-                      ? isImperial
-                        ? `${celsiusToFahrenheit(v.bodyTempC).toFixed(1)} °F`
-                        : `${v.bodyTempC.toFixed(1)} °C`
-                      : 'MISSING'}
+                    {v.bodyTempC != null ? `${v.bodyTempC.toFixed(1)} °C` : 'MISSING'}
                   </td>
                   <td className={`px-3 py-2.5 ${v.bloodGlucoseMgDl == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.bloodGlucoseMgDl != null
-                      ? isImperial
-                        ? `${mgDlToMmolL(v.bloodGlucoseMgDl).toFixed(1)} mmol/L`
-                        : `${v.bloodGlucoseMgDl} mg/dL`
+                      ? `${mgDlToMmolL(v.bloodGlucoseMgDl).toFixed(1)} mmol/L`
                       : 'MISSING'}
                   </td>
                   <td className={`px-3 py-2.5 ${v.bodyMassKg == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
-                    {v.bodyMassKg != null
-                      ? isImperial
-                        ? `${kgToLb(v.bodyMassKg).toFixed(1)} lb`
-                        : `${v.bodyMassKg.toFixed(1)} kg`
-                      : 'MISSING'}
+                    {v.bodyMassKg != null ? `${v.bodyMassKg.toFixed(1)} kg` : 'MISSING'}
                   </td>
                   <td className={`px-3 py-2.5 ${v.dailyRadiationMsv == null ? 'text-[var(--arogya-warning-text)]' : ''}`}>
                     {v.dailyRadiationMsv != null ? `${v.dailyRadiationMsv.toFixed(2)} mSv` : 'MISSING'}
@@ -709,6 +541,11 @@ export function VitalsPage() {
       </Card>
         </>
       )}
+      <ResearchContextSection
+        surface="vitals"
+        headingId="vitals-research-context-heading"
+        title="Research context for recorded vitals"
+      />
       <NasaResearchDataPanel />
     </div>
   );

@@ -2,20 +2,12 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Save, X } from 'lucide-react';
 import { Button, Card, FormField, NumberInput } from '../ui';
 import type { Astronaut, VitalReading } from '../../types';
-import {
-  celsiusToFahrenheit,
-  fahrenheitToCelsius,
-  kgToLb,
-  lbToKg,
-  mgDlToMmolL,
-  mmolLToMgDl,
-} from '../../utils/unitConversions';
+import { mgDlToMmolL, mmolLToMgDl } from '../../utils/unitConversions';
 
 interface ManualVitalsPanelProps {
   astronaut: Astronaut;
   currentMissionDay: number;
   latestReading?: VitalReading;
-  units: 'metric' | 'imperial';
   onSave: (reading: {
     missionDay: number;
     heartRateBpm: number | null;
@@ -57,12 +49,9 @@ export function ManualVitalsPanel({
   astronaut,
   currentMissionDay,
   latestReading,
-  units,
   onSave,
   onClose,
 }: ManualVitalsPanelProps) {
-  const isImperial = units === 'imperial';
-
   const buildInitial = (): FormState => ({
     missionDay: String(currentMissionDay),
     heartRateBpm:
@@ -72,19 +61,13 @@ export function ManualVitalsPanel({
     diastolicBpMmHg:
       latestReading?.diastolicBpMmHg != null ? String(latestReading.diastolicBpMmHg) : '',
     bodyTemp:
-      latestReading?.bodyTempC != null
-        ? String(isImperial ? celsiusToFahrenheit(latestReading.bodyTempC) : latestReading.bodyTempC)
-        : '',
+      latestReading?.bodyTempC != null ? String(latestReading.bodyTempC) : '',
     bloodGlucose:
       latestReading?.bloodGlucoseMgDl != null
-        ? String(
-            isImperial ? mgDlToMmolL(latestReading.bloodGlucoseMgDl) : latestReading.bloodGlucoseMgDl
-          )
+        ? mgDlToMmolL(latestReading.bloodGlucoseMgDl).toFixed(1)
         : '',
     bodyMass:
-      latestReading?.bodyMassKg != null
-        ? String(isImperial ? kgToLb(latestReading.bodyMassKg) : latestReading.bodyMassKg)
-        : '',
+      latestReading?.bodyMassKg != null ? String(latestReading.bodyMassKg) : '',
     dailyRadiationMsv:
       latestReading?.dailyRadiationMsv != null ? String(latestReading.dailyRadiationMsv) : '',
     spo2Percent:
@@ -101,7 +84,7 @@ export function ManualVitalsPanel({
     setForm(buildInitial());
     setErrors({});
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [astronaut.id, currentMissionDay, units]);
+  }, [astronaut.id, currentMissionDay]);
 
   const setField = (key: keyof FormState, val: string) => {
     setForm((prev) => ({ ...prev, [key]: val }));
@@ -141,18 +124,9 @@ export function ManualVitalsPanel({
     }
 
     const rawTemp = parseOptional(form.bodyTemp);
-    const bodyTempC =
-      rawTemp === null
-        ? null
-        : Number.isNaN(rawTemp)
-        ? Number.NaN
-        : isImperial
-        ? fahrenheitToCelsius(rawTemp)
-        : rawTemp;
+    const bodyTempC = rawTemp === null ? null : rawTemp;
     if (bodyTempC !== null && (Number.isNaN(bodyTempC) || bodyTempC < 33 || bodyTempC > 42.5)) {
-      nextErrors.bodyTemp = isImperial
-        ? 'Temperature must be between 91.4 and 108.5 °F (or leave blank).'
-        : 'Temperature must be between 33.0 and 42.5 °C (or leave blank).';
+      nextErrors.bodyTemp = 'Temperature must be between 33.0 and 42.5 °C (or leave blank).';
     }
 
     const rawGlucose = parseOptional(form.bloodGlucose);
@@ -161,31 +135,18 @@ export function ManualVitalsPanel({
         ? null
         : Number.isNaN(rawGlucose)
         ? Number.NaN
-        : isImperial
-        ? mmolLToMgDl(rawGlucose)
-        : Math.round(rawGlucose);
+        : Math.round(mmolLToMgDl(rawGlucose));
     if (
       bloodGlucoseMgDl !== null &&
       (Number.isNaN(bloodGlucoseMgDl) || bloodGlucoseMgDl < 25 || bloodGlucoseMgDl > 500)
     ) {
-      nextErrors.bloodGlucose = isImperial
-        ? 'Glucose must be between 1.4 and 27.8 mmol/L (or leave blank).'
-        : 'Glucose must be between 25 and 500 mg/dL (or leave blank).';
+      nextErrors.bloodGlucose = 'Glucose must be between 1.4 and 27.8 mmol/L (or leave blank).';
     }
 
     const rawMass = parseOptional(form.bodyMass);
-    const bodyMassKg =
-      rawMass === null
-        ? null
-        : Number.isNaN(rawMass)
-        ? Number.NaN
-        : isImperial
-        ? lbToKg(rawMass)
-        : rawMass;
+    const bodyMassKg = rawMass === null ? null : rawMass;
     if (bodyMassKg !== null && (Number.isNaN(bodyMassKg) || bodyMassKg < 35 || bodyMassKg > 160)) {
-      nextErrors.bodyMass = isImperial
-        ? 'Body mass must be between 77 and 352 lb (or leave blank).'
-        : 'Body mass must be between 35 and 160 kg (or leave blank).';
+      nextErrors.bodyMass = 'Body mass must be between 35 and 160 kg (or leave blank).';
     }
 
     const dailyRad = parseOptional(form.dailyRadiationMsv);
@@ -353,18 +314,14 @@ export function ManualVitalsPanel({
 
           <FormField
             id="vital-temp"
-            label={`Temperature (${isImperial ? '°F' : '°C'})`}
-            hint={`Personal baseline: ${
-              isImperial
-                ? `${celsiusToFahrenheit(astronaut.baseline.bodyTempC).toFixed(1)} °F`
-                : `${astronaut.baseline.bodyTempC.toFixed(1)} °C`
-            }`}
+            label="Temperature (°C)"
+            hint={`Personal baseline: ${astronaut.baseline.bodyTempC.toFixed(1)} °C`}
             error={errors.bodyTemp}
           >
             <NumberInput
               id="vital-temp"
               step={0.1}
-              placeholder={isImperial ? 'Optional (e.g. 98.1)' : 'Optional (e.g. 36.8)'}
+              placeholder="Optional (e.g. 36.8)"
               value={form.bodyTemp}
               aria-invalid={Boolean(errors.bodyTemp)}
               onChange={(e) => setField('bodyTemp', e.target.value)}
@@ -373,18 +330,14 @@ export function ManualVitalsPanel({
 
           <FormField
             id="vital-glucose"
-            label={`Blood Glucose (${isImperial ? 'mmol/L' : 'mg/dL'})`}
-            hint={`Personal fasting: ${
-              isImperial
-                ? `${mgDlToMmolL(astronaut.baseline.fastingGlucoseMgDl).toFixed(1)} mmol/L`
-                : `${astronaut.baseline.fastingGlucoseMgDl} mg/dL`
-            }`}
+            label="Blood Glucose (mmol/L)"
+            hint={`Personal fasting: ${mgDlToMmolL(astronaut.baseline.fastingGlucoseMgDl).toFixed(1)} mmol/L`}
             error={errors.bloodGlucose}
           >
             <NumberInput
               id="vital-glucose"
-              step={isImperial ? 0.1 : 1}
-              placeholder={isImperial ? 'Optional (e.g. 5.1)' : 'Optional (e.g. 92)'}
+              step={0.1}
+              placeholder="Optional (e.g. 5.1)"
               value={form.bloodGlucose}
               aria-invalid={Boolean(errors.bloodGlucose)}
               onChange={(e) => setField('bloodGlucose', e.target.value)}
@@ -393,14 +346,10 @@ export function ManualVitalsPanel({
 
           <FormField
             id="vital-mass"
-            label={`Body Mass (${isImperial ? 'lb' : 'kg'})`}
+            label="Body Mass (kg)"
             hint={
               astronaut.baseline.bodyMassKg != null
-                ? `Pre-flight: ${
-                    isImperial
-                      ? `${kgToLb(astronaut.baseline.bodyMassKg).toFixed(1)} lb`
-                      : `${astronaut.baseline.bodyMassKg.toFixed(1)} kg`
-                  }`
+                ? `Pre-flight: ${astronaut.baseline.bodyMassKg.toFixed(1)} kg`
                 : 'Optional inertial mass check'
             }
             error={errors.bodyMass}

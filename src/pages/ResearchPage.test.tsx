@@ -23,8 +23,16 @@ test('renders the secondary research context view, source boundaries, coverage, 
   assert.match(html, /C001/);
   assert.match(html, /BUN\/creatinine ratio/);
   assert.match(html, /NASA Human Research Program: 5 Hazards of Human Spaceflight/);
+  assert.match(html, /NASA Open Data catalog/);
+  assert.match(html, /Metadata only/);
+  assert.match(html, /Space radiation/);
+  assert.match(html, /does not download these/);
+  assert.match(html, /not a validation set/i);
+  assert.match(html, /Loading dataset metadata from data\.nasa\.gov/);
   assert.match(html, /Open Vitals view/);
   assert.match(html, /Source pseudonym/);
   assert.match(html, /Download filtered JSON \+ provenance/);
+  assert.match(html, /id="nasa-osd575"/);
+  assert.match(html, /id="nasa-reference-library"/);
   assert.doesNotMatch(html, /Commander Aarav Sharma/);
 });

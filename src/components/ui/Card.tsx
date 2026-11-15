@@ -10,14 +10,14 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
   default:
-    'bg-white border border-[var(--arogya-border)] shadow-sm',
+    'arogya-elevation-1 bg-[var(--arogya-surface)] border border-[var(--arogya-border)]',
   elevated:
-    'bg-white border border-[var(--arogya-border)] shadow-md',
+    'arogya-elevation-2 bg-[var(--arogya-surface)] border border-[var(--arogya-border)]',
   interactive:
-    'bg-white border border-[var(--arogya-border)] hover:border-[#1E3A5F]/40 hover:bg-[#F8FAFC] transition-colors duration-150 cursor-pointer shadow-sm',
+    'arogya-elevation-1 bg-[var(--arogya-surface)] border border-[var(--arogya-border)] hover:border-[var(--arogya-border-strong)] hover:bg-[var(--arogya-surface-subtle)] transition-colors duration-150 cursor-pointer',
   // Opaque alert surface: cards may sit over the Dashboard's backdrop video.
   alert:
-    'bg-[#FEF2F2] border border-[#DC2626]/30',
+    'bg-[var(--arogya-critical-soft)] border border-[var(--arogya-critical-border)]',
 };
 
 const PADDING_CLASSES: Record<'none' | 'sm' | 'md' | 'lg', string> = {
@@ -36,7 +36,7 @@ export function Card({
 }: CardProps) {
   return (
     <div
-      className={`rounded-xl ${VARIANT_CLASSES[variant]} ${PADDING_CLASSES[padding]} ${className}`}
+      className={`rounded-[var(--radius-lg)] ${VARIANT_CLASSES[variant]} ${PADDING_CLASSES[padding]} ${className}`}
       {...rest}
     >
       {children}

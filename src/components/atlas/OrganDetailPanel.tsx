@@ -187,7 +187,6 @@ export function OrganDetailPanel({
   const astronauts = useArogyaStore((s) => s.astronauts);
   const activeAstronautId = useArogyaStore((s) => s.activeAstronautId);
   const mission = useArogyaStore((s) => s.mission);
-  const units = useArogyaStore((s) => s.preferences.units);
   const storeSelectOrgan = useArogyaStore((s) => s.selectOrgan);
 
   const astronaut = useMemo(
@@ -204,9 +203,9 @@ export function OrganDetailPanel({
         mission,
         vitals14d,
         checkIns14d,
-        units,
+        units: 'metric',
       }),
-    [organ, astronaut, assessment, mission, vitals14d, checkIns14d, units]
+    [organ, astronaut, assessment, mission, vitals14d, checkIns14d]
   );
 
   useEffect(() => {

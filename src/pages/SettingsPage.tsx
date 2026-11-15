@@ -1,5 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { CheckCircle2, RotateCcw } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { CheckCircle2, Database, RotateCcw, ShieldCheck } from 'lucide-react';
 import { useActiveAssessment } from '../hooks/useActiveAssessment';
 import { useArogyaStore } from '../store/useArogyaStore';
 import {
@@ -58,11 +59,12 @@ export function SettingsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
       <div>
-        <h2 className="arogya-h1 text-[var(--arogya-text-primary)]">
+        <h1 className="arogya-display text-[var(--arogya-text-primary)]">
           Settings & Crew Profile
-        </h2>
+        </h1>
         <p className="mt-1 text-sm text-[var(--arogya-text-secondary)]">
-          Calibrate personal physiological baselines, high-contrast lighting mode, and offline storage.
+          Calibrate personal physiological baselines, review how data is stored, and adjust
+          accessibility preferences.
         </p>
       </div>
 
@@ -142,8 +144,8 @@ export function SettingsPage() {
 
       <Card padding="lg" className="space-y-4">
         <CardHeader
-          title="Display, High-Contrast & Accessibility"
-          subtitle="Optimized for high-stress operations and low-light cabin conditions"
+          title="Accessibility & Display"
+          subtitle="Preferences are stored on this device and applied immediately across the console."
         />
 
         <ToggleSwitch
@@ -177,6 +179,77 @@ export function SettingsPage() {
           checked={preferences.reducedMotionOverride}
           onChange={(checked) => setPreferences({ reducedMotionOverride: checked })}
         />
+
+        <dl className="grid grid-cols-1 gap-2 border-t border-[var(--arogya-border)] pt-3 text-xs sm:grid-cols-2">
+          <div className="flex items-center justify-between gap-2 rounded-lg bg-[var(--arogya-bg)] px-3 py-2">
+            <dt className="text-[var(--arogya-text-secondary)]">Contrast mode</dt>
+            <dd className="font-semibold text-[var(--arogya-text-primary)]">
+              {preferences.highContrast ? 'High contrast' : 'Standard'}
+            </dd>
+          </div>
+          <div className="flex items-center justify-between gap-2 rounded-lg bg-[var(--arogya-bg)] px-3 py-2">
+            <dt className="text-[var(--arogya-text-secondary)]">Motion</dt>
+            <dd className="font-semibold text-[var(--arogya-text-primary)]">
+              {preferences.reducedMotionOverride ? 'Reduced' : 'System default'}
+            </dd>
+          </div>
+        </dl>
+      </Card>
+
+      <Card padding="lg" className="space-y-4">
+        <CardHeader
+          title="Privacy & Data"
+          subtitle="What this console stores, what it never sends, and what leaves the device only when you ask it to."
+        />
+
+        <ul className="space-y-2.5 text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
+          <li className="flex items-start gap-2">
+            <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--arogya-success)]" aria-hidden="true" />
+            <span>
+              <strong className="font-semibold text-[var(--arogya-text-primary)]">Local-first.</strong>{' '}
+              Check-ins, recorded vitals, reports, and preferences are stored in this browser’s
+              IndexedDB. No account is required and no health data is uploaded to an Arogya
+              server.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Database className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
+            <span>
+              <strong className="font-semibold text-[var(--arogya-text-primary)]">Reports stay private by default.</strong>{' '}
+              Free-text crew notes are excluded unless you explicitly include private notes on the{' '}
+              <Link
+                to="/reports"
+                className="font-semibold text-[#1E3A5F] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2"
+              >
+                Reports
+              </Link>{' '}
+              page. Exports leave the device only when you start the download or Drive export.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--arogya-success)]" aria-hidden="true" />
+            <span>
+              <strong className="font-semibold text-[var(--arogya-text-primary)]">Separation is enforced.</strong>{' '}
+              Simulated monitor values stay in memory and never enter recorded vitals or reports.
+              NASA OSD-575 observations appear only as labelled research context, never as crew
+              data.
+            </span>
+          </li>
+          <li className="flex items-start gap-2">
+            <Database className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--arogya-info)]" aria-hidden="true" />
+            <span>
+              <strong className="font-semibold text-[var(--arogya-text-primary)]">No client credentials.</strong>{' '}
+              NASA data requests are proxied through a server-side endpoint, so no NASA key is
+              bundled with this client. Optional Google Drive export signs in only when you open
+              the Drive dialog.
+            </span>
+          </li>
+        </ul>
+
+        <p className="rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-bg)] p-3 text-[11px] leading-relaxed text-[var(--arogya-text-muted)]">
+          This is monitoring support, not a medical diagnosis or clinical clearance. Demonstration
+          decision support only.
+        </p>
       </Card>
 
       <Card padding="lg">

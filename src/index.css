@@ -23,22 +23,35 @@
 
 @layer base {
   :root {
-    /* White-First Clinical Palette */
-    --arogya-bg: #F7F9FC;
+    /* Clinical content palette — white-first, soft cool neutrals */
+    --arogya-bg: #F5F7FB;
     --arogya-surface: #FFFFFF;
+    --arogya-surface-subtle: #F8FAFD;
     --arogya-surface-elevated: #FFFFFF;
-    --arogya-border: #E2E8F0;
-    --arogya-border-strong: #CBD5E1;
+    --arogya-border-subtle: #EAEEF5;
+    --arogya-border: #DEE5EF;
+    --arogya-border-strong: #C4D0DE;
 
-    /* Typography — Navy headings, secondary gray (WCAG AA on white) */
-    --arogya-text-primary: #0F172A;
-    --arogya-text-secondary: #526477;
-    --arogya-text-muted: #64748B;
+    /* Typography — navy headings, cool gray hierarchy (WCAG AA on white) */
+    --arogya-text-primary: #0B1B2F;
+    --arogya-text-secondary: #4B5C72;
+    --arogya-text-muted: #627287;
 
-    /* Clinical Accents — Navy primary, red accent */
+    /* Clinical accents — mission navy primary, restrained red secondary */
     --arogya-accent-primary: #1E3A5F;
+    --arogya-accent-primary-hover: #2B4E78;
     --arogya-accent-secondary: #C73546;
     --arogya-focus-ring: #1E3A5F;
+
+    /* Mission chrome — deep navy shell, single controlled sky accent */
+    --arogya-chrome-bg: #0A1B2E;
+    --arogya-chrome-surface: #0F2439;
+    --arogya-chrome-border: rgba(148, 163, 184, 0.18);
+    --arogya-chrome-text: #E8EEF6;
+    --arogya-chrome-muted: #9AAEC4;
+    --arogya-chrome-hover: rgba(226, 232, 240, 0.06);
+    --arogya-chrome-active: rgba(125, 211, 252, 0.1);
+    --arogya-chrome-accent: #7DD3FC;
 
     /* Semantic Status Colors (accessible on white) */
     --arogya-success: #16A34A;
@@ -64,37 +77,70 @@
     --arogya-info: #1D4ED8;
     --arogya-info-soft: #EFF6FF;
     --arogya-info-border: #BFDBFE;
-    --arogya-selected-bg: #E2ECF7;
+    --arogya-selected-bg: #E4EDF7;
 
     /* 4px / 8px Spacing Scale */
     --space-1: 0.25rem; /* 4px */
     --space-2: 0.5rem;  /* 8px */
     --space-3: 0.75rem; /* 12px */
     --space-4: 1rem;    /* 16px */
+    --space-5: 1.25rem; /* 20px */
     --space-6: 1.5rem;  /* 24px */
+    --space-7: 1.75rem; /* 28px */
     --space-8: 2rem;    /* 32px */
+    --space-10: 2.5rem; /* 40px */
     --space-12: 3rem;   /* 48px */
+    --space-16: 4rem;   /* 64px */
 
-    /* Radii & Motion */
+    /* Restrained radii */
     --radius-sm: 0.375rem; /* 6px */
     --radius-md: 0.5rem;   /* 8px */
     --radius-lg: 0.75rem;  /* 12px */
+    --radius-xl: 1rem;     /* 16px */
+
+    /* Subtle elevation — separation comes from spacing and borders first */
+    --arogya-shadow-1: 0 1px 2px rgba(11, 27, 47, 0.05);
+    --arogya-shadow-2: 0 10px 28px -18px rgba(11, 27, 47, 0.28), 0 2px 6px rgba(11, 27, 47, 0.04);
+    --arogya-shadow-3: 0 28px 64px -28px rgba(2, 12, 27, 0.42);
+
+    /* Motion */
     --motion-fast: 140ms;
+    --motion-base: 220ms;
+    --motion-slow: 360ms;
     --motion-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Data visualization — one navy-led sequence, no decorative rainbows */
+    --arogya-chart-1: #1E3A5F;
+    --arogya-chart-2: #0E7490;
+    --arogya-chart-3: #B4233A;
+    --arogya-chart-4: #64748B;
+    --arogya-chart-5: #A16207;
+    --arogya-chart-6: #475569;
+    --arogya-chart-grid: #E6ECF4;
+    --arogya-chart-axis: #627287;
   }
 
   /* High-Contrast Mode */
   :root[data-contrast='high'] {
     --arogya-bg: #F1F5F9;
     --arogya-surface: #FFFFFF;
+    --arogya-surface-subtle: #F8FAFC;
     --arogya-surface-elevated: #FFFFFF;
+    --arogya-border-subtle: #CBD5E1;
     --arogya-border: #94A3B8;
     --arogya-border-strong: #64748B;
     --arogya-text-primary: #020617;
     --arogya-text-secondary: #334155;
     --arogya-text-muted: #475569;
     --arogya-accent-primary: #0F172A;
+    --arogya-accent-primary-hover: #1E293B;
     --arogya-focus-ring: #0F172A;
+    --arogya-chrome-bg: #020B16;
+    --arogya-chrome-surface: #071A2C;
+    --arogya-chrome-border: rgba(203, 213, 225, 0.32);
+    --arogya-chrome-muted: #C3D0DF;
+    --arogya-chart-grid: #CBD5E1;
+    --arogya-chart-axis: #475569;
   }
 
   html {
@@ -102,6 +148,28 @@
     background-color: var(--arogya-bg);
     color: var(--arogya-text-primary);
     color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    min-width: 320px;
+    background-color: var(--arogya-bg);
+  }
+
+  ::selection {
+    background: #CFE3F7;
+    color: var(--arogya-text-primary);
+  }
+
+  .arogya-chrome {
+    --arogya-focus-ring: var(--arogya-chrome-accent);
+  }
+
+  .arogya-chrome ::selection {
+    background: rgba(125, 211, 252, 0.28);
+    color: #FFFFFF;
   }
 
   /* Accessible Visible Focus Ring across all interactive elements */
@@ -151,6 +219,42 @@
     color: var(--arogya-text-secondary);
   }
 
+  .arogya-label {
+    font-size: 0.75rem; /* 12px */
+    line-height: 1.35;
+    font-weight: 600;
+    color: var(--arogya-text-secondary);
+  }
+
+  .arogya-overline {
+    font-size: 0.625rem; /* 10px */
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .arogya-data {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 1.5rem; /* 24px */
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .arogya-elevation-1 {
+    box-shadow: var(--arogya-shadow-1);
+  }
+
+  .arogya-elevation-2 {
+    box-shadow: var(--arogya-shadow-2);
+  }
+
+  .arogya-safe-bottom {
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  }
+
   .font-mono-tabular {
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
@@ -188,6 +292,26 @@
 
 @media (prefers-reduced-motion: reduce) {
   .earth-drift {
+    animation: none;
+  }
+}
+
+@keyframes astronaut-float {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(6px);
+  }
+}
+
+.astronaut-float {
+  animation: astronaut-float 6.5s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .astronaut-float {
     animation: none;
   }
 }
@@ -275,6 +399,23 @@
   background: rgba(100, 116, 139, 0.5);
 }
 
+.arogya-chrome ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.arogya-chrome ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.arogya-chrome ::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.26);
+  border-radius: 9999px;
+}
+
+.arogya-chrome ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.42);
+}
+
 @media print {
   /* A4-friendly medical report */
   @page {
@@ -345,6 +486,19 @@
     page-break-inside: avoid;
   }
   .print-avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+  /* Mission health brief: one scope per printed flow, cards kept whole where possible. */
+  .brief-scope-grid {
+    display: block !important;
+  }
+  .brief-scope {
+    margin-top: 4mm;
+    background: #ffffff !important;
+    border: 1px solid #94a3b8 !important;
+  }
+  .brief-scope > * {
     break-inside: avoid;
     page-break-inside: avoid;
   }

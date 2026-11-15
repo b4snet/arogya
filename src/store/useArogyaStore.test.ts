@@ -21,13 +21,12 @@ test('crew dataset includes the three required astronauts with accurate initials
 test('setActiveAstronaut switches crew without resetting unrelated preferences or atlas layers', () => {
   const store = useArogyaStore.getState();
   store.resetDemoData();
-  store.setPreferences({ units: 'imperial', highContrast: true });
+  store.setPreferences({ highContrast: true });
   store.setAtlasState({ showSkeleton: true, selectedOrgan: 'brain' });
 
   store.setActiveAstronaut('AST-02');
   let next = useArogyaStore.getState();
   assert.equal(next.activeAstronautId, 'AST-02');
-  assert.equal(next.preferences.units, 'imperial');
   assert.equal(next.preferences.highContrast, true);
   assert.equal(next.atlasState.showSkeleton, true);
   assert.equal(next.atlasState.selectedOrgan, 'brain');

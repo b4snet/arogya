@@ -13,7 +13,7 @@ import {
 import { ChartContainer } from '../ui';
 import type { Astronaut, VitalReading } from '../../types';
 import { CLINICAL_THRESHOLDS } from '../../engine/thresholds';
-import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../../utils/unitConversions';
+import { mgDlToMmolL } from '../../utils/unitConversions';
 import {
   OBSERVATION_WINDOW_OPTIONS,
   buildDailySeries,
@@ -32,7 +32,6 @@ interface VitalsChartsGridProps {
   currentMissionDay: number;
   timeWindow: VitalsTimeWindow;
   onTimeWindowChange: (win: VitalsTimeWindow) => void;
-  units: 'metric' | 'imperial';
 }
 
 const TOOLTIP_STYLE = {
@@ -49,21 +48,11 @@ export function VitalsChartsGrid({
   currentMissionDay,
   timeWindow,
   onTimeWindowChange,
-  units,
 }: VitalsChartsGridProps) {
-  const isImperial = units === 'imperial';
-
   // Real date window: the mission-day range the selector asks for, clamped to mission start.
   const window = computeObservationWindow(currentMissionDay, timeWindow);
   const windowData = filterByObservationWindow(allReadings, window);
   const coverageNotice = describeWindowCoverage(window, countObservedDays(windowData));
-
-  const toTemp = (c: number | null | undefined) =>
-    c != null ? (isImperial ? celsiusToFahrenheit(c) : c) : null;
-  const toGlucose = (mgDl: number | null | undefined) =>
-    mgDl != null ? (isImperial ? mgDlToMmolL(mgDl) : mgDl) : null;
-  const toMass = (kg: number | null | undefined) =>
-    kg != null ? (isImperial ? kgToLb(kg) : kg) : null;
 
   // One slot per day of the window keeps missing days visible as gaps (never interpolated).
   const chartData = buildDailySeries(windowData, window).map(({ missionDay, item }) => ({
@@ -72,42 +61,25 @@ export function VitalsChartsGrid({
     systolicBpMmHg: item?.systolicBpMmHg ?? null,
     diastolicBpMmHg: item?.diastolicBpMmHg ?? null,
     spo2Percent: item?.spo2Percent ?? null,
-    bodyTemp: toTemp(item?.bodyTempC),
-    bloodGlucose: toGlucose(item?.bloodGlucoseMgDl),
-    bodyMass: toMass(item?.bodyMassKg),
+    bodyTemp: item?.bodyTempC ?? null,
+    bloodGlucose: item?.bloodGlucoseMgDl != null ? mgDlToMmolL(item.bloodGlucoseMgDl) : null,
+    bodyMass: item?.bodyMassKg ?? null,
     dailyRadiationMsv: item?.dailyRadiationMsv ?? null,
     cumulativeRadiationMsv: item?.cumulativeRadiationMsv ?? null,
   }));
 
-  const tempUnit = isImperial ? '°F' : '°C';
-  const tempBaseline = isImperial
-    ? celsiusToFahrenheit(astronaut.baseline.bodyTempC)
-    : astronaut.baseline.bodyTempC;
-  const tempGenMin = isImperial
-    ? celsiusToFahrenheit(CLINICAL_THRESHOLDS.generalTempMinC)
-    : CLINICAL_THRESHOLDS.generalTempMinC;
-  const tempGenMax = isImperial
-    ? celsiusToFahrenheit(CLINICAL_THRESHOLDS.generalTempMaxC)
-    : CLINICAL_THRESHOLDS.generalTempMaxC;
+  const tempUnit = '°C';
+  const tempBaseline = astronaut.baseline.bodyTempC;
+  const tempGenMin = CLINICAL_THRESHOLDS.generalTempMinC;
+  const tempGenMax = CLINICAL_THRESHOLDS.generalTempMaxC;
 
-  const glucoseUnit = isImperial ? 'mmol/L' : 'mg/dL';
-  const glucoseBaseline = isImperial
-    ? mgDlToMmolL(astronaut.baseline.fastingGlucoseMgDl)
-    : astronaut.baseline.fastingGlucoseMgDl;
-  const glucoseGenMin = isImperial
-    ? mgDlToMmolL(CLINICAL_THRESHOLDS.generalGlucoseMinMgDl)
-    : CLINICAL_THRESHOLDS.generalGlucoseMinMgDl;
-  const glucoseGenMax = isImperial
-    ? mgDlToMmolL(CLINICAL_THRESHOLDS.generalGlucoseMaxMgDl)
-    : CLINICAL_THRESHOLDS.generalGlucoseMaxMgDl;
+  const glucoseUnit = 'mmol/L';
+  const glucoseBaseline = mgDlToMmolL(astronaut.baseline.fastingGlucoseMgDl);
+  const glucoseGenMin = mgDlToMmolL(CLINICAL_THRESHOLDS.generalGlucoseMinMgDl);
+  const glucoseGenMax = mgDlToMmolL(CLINICAL_THRESHOLDS.generalGlucoseMaxMgDl);
 
-  const massUnit = isImperial ? 'lb' : 'kg';
-  const massBaseline =
-    astronaut.baseline.bodyMassKg != null
-      ? isImperial
-        ? kgToLb(astronaut.baseline.bodyMassKg)
-        : astronaut.baseline.bodyMassKg
-      : null;
+  const massUnit = 'kg';
+  const massBaseline = astronaut.baseline.bodyMassKg ?? null;
 
   const latestChart = chartData[chartData.length - 1];
   const latestDay = latestChart?.missionDay ?? 'N/A';
@@ -256,7 +228,7 @@ export function VitalsChartsGrid({
                 yAxisId="left"
                 stroke="#B45309"
                 fontSize={11}
-                domain={isImperial ? [95, 103] : [35.5, 39.5]}
+                domain={[35.5, 39.5]}
               />
               <YAxis
                 yAxisId="right"
@@ -326,7 +298,7 @@ export function VitalsChartsGrid({
                 yAxisId="left"
                 stroke="#1D4ED8"
                 fontSize={11}
-                domain={isImperial ? [3, 11] : [60, 180]}
+                domain={[3, 11]}
               />
               <YAxis
                 yAxisId="right"

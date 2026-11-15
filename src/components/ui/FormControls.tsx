@@ -41,12 +41,12 @@ export function FormField({ id, label, hint, error, children }: FormFieldProps) 
       </label>
       {enhancedChild}
       {hint && !error && (
-        <p id={hintId} className="text-[11px] text-[var(--arogya-text-muted)]">
+        <p id={hintId} className="text-[11px] leading-relaxed text-[var(--arogya-text-muted)]">
           {hint}
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="text-[11px] font-medium text-[var(--arogya-critical-text)]">
+        <p id={errorId} role="alert" className="text-[11px] font-medium leading-relaxed text-[var(--arogya-critical-text)]">
           {error}
         </p>
       )}
@@ -55,7 +55,7 @@ export function FormField({ id, label, hint, error, children }: FormFieldProps) 
 }
 
 const INPUT_BASE =
-  'w-full rounded-lg border border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)] px-3 text-sm text-[var(--arogya-text-primary)] placeholder:text-[var(--arogya-text-muted)] transition-colors duration-150 hover:border-[var(--arogya-text-muted)] disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-[var(--arogya-critical)]';
+  'w-full rounded-[var(--radius-md)] border border-[var(--arogya-border)] bg-[var(--arogya-surface)] px-3 text-sm text-[var(--arogya-text-primary)] placeholder:text-[var(--arogya-text-muted)] transition-colors duration-150 hover:border-[var(--arogya-border-strong)] focus:border-[var(--arogya-accent-primary)] disabled:cursor-not-allowed disabled:opacity-50 aria-[invalid=true]:border-[var(--arogya-critical)]';
 
 export function TextInput({
   className = '',
@@ -119,13 +119,13 @@ export function ToggleSwitch({
   onChange,
 }: ToggleSwitchProps) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-lg border border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)] p-3.5">
+    <div className="flex items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-[var(--arogya-border)] bg-[var(--arogya-surface)] p-3.5">
       <label htmlFor={id} className="cursor-pointer">
         <span className="block text-sm font-medium text-[var(--arogya-text-primary)]">
           {label}
         </span>
         {description && (
-          <span className="mt-0.5 block text-xs text-[var(--arogya-text-secondary)]">
+          <span className="mt-0.5 block text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
             {description}
           </span>
         )}
@@ -138,13 +138,13 @@ export function ToggleSwitch({
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors duration-150 ${
           checked
-            ? 'border-[#1E3A5F] bg-[#1E3A5F]'
-            : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-bg)]'
+            ? 'border-[var(--arogya-accent-primary)] bg-[var(--arogya-accent-primary)]'
+            : 'border-[var(--arogya-border-strong)] bg-[var(--arogya-surface-subtle)]'
         }`}
       >
         <span
           className={`inline-block h-4 w-4 rounded-full transition-transform duration-150 ${
-            checked ? 'translate-x-6 bg-white' : 'translate-x-1 bg-[#94A3B8]'
+            checked ? 'translate-x-6 bg-white' : 'translate-x-1 bg-[var(--arogya-text-muted)]'
           }`}
         />
       </button>

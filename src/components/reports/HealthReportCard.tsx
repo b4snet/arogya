@@ -4,7 +4,7 @@ import {
   Lock,
   ShieldAlert,
 } from 'lucide-react';
-import type { Astronaut, Mission, Report, ReportTrendItem } from '../../types';
+import type { Astronaut, Mission, Report } from '../../types';
 import {
   MISSING_VALUE_TEXT,
   NOT_APPLICABLE_TEXT,
@@ -25,13 +25,16 @@ import { ReportBarcode } from './ReportBarcode';
 import { ReportReferenceMatrix } from './ReportReferenceMatrix';
 import { ReportVitalSignsTable } from './ReportVitalSignsTable';
 import { ReportTrendCharts } from './ReportTrendCharts';
-
-const TREND_LABEL: Record<ReportTrendItem['direction'], string> = {
-  improving: 'Improving',
-  worsening: 'Worsening',
-  stable: 'Stable',
-  insufficient: 'Insufficient data',
-};
+import { MissionHealthBriefSection } from './MissionHealthBriefSection';
+import {
+  ReportCountermeasureSection,
+  ReportDataGapsSection,
+  ReportExecutiveSummarySection,
+  ReportRecoverySection,
+  ReportTrendsReferenceSection,
+} from './ReportDecisionSupportSections';
+import { MissionSourceBadge } from '../mission/MissionSourceBadge';
+import { ResearchContextSection } from '../research/ResearchContextSection';
 
 function timezoneLabel(date: Date): string {
   const zone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? 'local time';
@@ -107,7 +110,6 @@ export function HealthReportCard({ report, astronaut, mission }: HealthReportCar
     ? `${generatedAt.toLocaleString()} · ${timezoneLabel(generatedAt)}`
     : NOT_PROVIDED_TEXT;
 
-  const missingRows = vitalRows.filter((row) => row.flag === 'unavailable');
   const flaggedRows = vitalRows.filter((row) => row.flag === 'above' || row.flag === 'below');
   const trends = report.trends ?? [];
   const keyFindings = report.keyFindings ?? [];
@@ -117,7 +119,7 @@ export function HealthReportCard({ report, astronaut, mission }: HealthReportCar
 
   return (
     <article
-      aria-label={`Observation report ${report.id} for ${astronautName}`}
+      aria-label={`Mission health report ${report.id} for ${astronautName}`}
       className="print-report-sheet report-sheet rounded-xl border border-[var(--arogya-border-strong)] bg-white p-5 sm:p-8"
     >
       {/* 1. LETTERHEAD */}
@@ -218,7 +220,31 @@ export function HealthReportCard({ report, astronaut, mission }: HealthReportCar
         </span>
       </div>
 
-      {/* 3. CURRENT VITAL SIGNS SNAPSHOT */}
+      <div className="print-avoid-break mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] text-[var(--arogya-text-secondary)]">
+        <MissionSourceBadge source="recorded" />
+        <span>check-ins and vitals</span>
+        <MissionSourceBadge source="simulated" />
+        <span>excluded from this report</span>
+        <MissionSourceBadge source="research" />
+        <span>background only, not crew data</span>
+      </div>
+
+      {/* 3. DECISION SUPPORT: SUMMARY, RECOVERY, COUNTERMEASURES, BRIEF */}
+      {report.executiveSummary && (
+        <ReportExecutiveSummarySection summary={report.executiveSummary} />
+      )}
+
+      {report.recoveryReadiness && (
+        <ReportRecoverySection recovery={report.recoveryReadiness} />
+      )}
+
+      {report.countermeasures && (
+        <ReportCountermeasureSection plan={report.countermeasures} />
+      )}
+
+      {report.healthBrief && <MissionHealthBriefSection brief={report.healthBrief} />}
+
+      {/* 4. CURRENT VITAL SIGNS SNAPSHOT */}
       <section aria-labelledby="vitals-snapshot-heading" className="mt-5 space-y-2">
         <SectionHeading id="vitals-snapshot-heading">
           Current vital signs snapshot
@@ -289,57 +315,6 @@ export function HealthReportCard({ report, astronaut, mission }: HealthReportCar
               ))}
             </ul>
           )}
-        </div>
-
-        {trends.length > 0 && (
-          <div className="print-avoid-break overflow-x-auto rounded-lg border border-[var(--arogya-border)]">
-            <table className="report-table w-full min-w-[520px] border-collapse text-left text-[11px]">
-              <caption className="sr-only">
-                Period trends compared with the crew member&apos;s personal baseline.
-              </caption>
-              <thead>
-                <tr className="bg-[var(--arogya-surface-elevated)] text-[10px] uppercase tracking-wider text-[var(--arogya-text-secondary)]">
-                  <th scope="col" className="px-2.5 py-1.5 font-semibold">Metric</th>
-                  <th scope="col" className="px-2.5 py-1.5 font-semibold">Period summary</th>
-                  <th scope="col" className="px-2.5 py-1.5 font-semibold">vs personal baseline</th>
-                  <th scope="col" className="px-2.5 py-1.5 font-semibold">Direction</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[var(--arogya-border)]">
-                {trends.map((trend) => (
-                  <tr key={trend.metric} className="align-top break-inside-avoid">
-                    <th scope="row" className="px-2.5 py-1.5 font-medium text-[var(--arogya-text-primary)]">
-                      {trend.metric}
-                    </th>
-                    <td className="px-2.5 py-1.5 text-[var(--arogya-text-secondary)]">
-                      {trend.periodSummary}
-                    </td>
-                    <td className="px-2.5 py-1.5 text-[var(--arogya-text-secondary)]">
-                      {trend.baselineComparison}
-                    </td>
-                    <td className="px-2.5 py-1.5 font-medium text-[var(--arogya-text-primary)]">
-                      {TREND_LABEL[trend.direction]}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        <div className="print-avoid-break space-y-1">
-          <h4 className="text-[10px] font-bold uppercase tracking-wider text-[var(--arogya-text-secondary)]">
-            Missing information
-          </h4>
-          <p className="text-[11px] leading-relaxed text-[var(--arogya-text-primary)]">
-            {missingRows.length > 0
-              ? `Not recorded in this window: ${missingRows.map((row) => row.test).join(', ')}.`
-              : 'All supported channels have a recorded value in this window.'}{' '}
-            {report.dataQualityNote}
-            {report.dataCompletenessPercent != null
-              ? ` Telemetry completeness: ${report.dataCompletenessPercent}%.`
-              : ''}
-          </p>
         </div>
 
         <div className="print-avoid-break space-y-1.5">
@@ -420,7 +395,33 @@ export function HealthReportCard({ report, astronaut, mission }: HealthReportCar
         )}
       </section>
 
-      {/* 6. GRAPHS */}
+      {/* 6. TRENDS AND REFERENCE CONTEXT */}
+      <ReportTrendsReferenceSection
+        trends={trends}
+        references={report.referenceContext ?? []}
+      />
+
+      {report.researchContext && report.researchContext.length > 0 && (
+        <ResearchContextSection
+          cards={report.researchContext}
+          compact
+          headingId="report-research-context-heading"
+          title="Research context for this report"
+          subtitle="NASA OSD-575 archived observations and NASA HRP references carried with this report. Research only — not this crew member’s data."
+          className="mt-5"
+        />
+      )}
+
+      {/* 7. DATA GAPS */}
+      {report.dataGaps && (
+        <ReportDataGapsSection
+          gaps={report.dataGaps}
+          completenessPercent={report.dataCompletenessPercent}
+          dataQualityNote={report.dataQualityNote}
+        />
+      )}
+
+      {/* 8. GRAPHS */}
       <section aria-labelledby="trend-graphs-heading" className="mt-5 space-y-2">
         <SectionHeading id="trend-graphs-heading">Recorded trend graphs</SectionHeading>
         <p className="text-[10px] leading-relaxed text-[var(--arogya-text-secondary)]">
@@ -430,14 +431,16 @@ export function HealthReportCard({ report, astronaut, mission }: HealthReportCar
         <ReportTrendCharts series={trendSeries} startDay={startDay} endDay={endDay} />
       </section>
 
-      {/* 7. SAFETY STATEMENT, PROVENANCE AND DISCLAIMER */}
+      {/* 9. SAFETY STATEMENT, PROVENANCE AND DISCLAIMER */}
       <footer className="print-avoid-break mt-5 space-y-2 border-t-2 border-[#1E3A5F] pt-3">
         <p className="text-[11px] font-semibold text-[var(--arogya-text-primary)]">
           {REPORT_SAFETY_STATEMENT}
         </p>
         <p className="text-[10px] leading-relaxed text-[var(--arogya-text-secondary)]">
           {REPORT_PROVENANCE_LABEL} · Report ID {report.id} · Generated {generatedLabel} · Authorising
-          clinician signature: {NOT_PROVIDED_TEXT} (automated decision-support output).
+          clinician signature: {NOT_PROVIDED_TEXT} (automated decision-support output). Simulated
+          demonstration telemetry is excluded from this report; research references are labelled
+          background only and are never treated as crew measurements.
         </p>
         <p className="text-[10px] leading-relaxed text-[var(--arogya-text-secondary)]">
           {REPORTS_EXACT_DISCLAIMER}

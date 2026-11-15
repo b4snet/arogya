@@ -4,17 +4,29 @@ import type {
   CheckIn,
   HealthAssessment,
   Mission,
+  MissionHealthBrief,
   Report,
+  ReportDecisionWindow,
   ReportFormat,
   ReportPeriod,
   ReportSymptomEntry,
   ReportSystemSnapshot,
   ReportTrendItem,
-  SymptomTag,
   VitalReading,
 } from '../types';
 import { CLINICAL_THRESHOLDS, SAFETY_DISCLAIMER, STATUS_META } from './thresholds';
 import { STATUS_GUIDANCE_COPY } from './atlasPanelBuilder';
+import { missionHealthBriefToMarkdown } from './missionHealthBrief';
+import {
+  REPORT_DECISION_DISCLAIMER,
+  REPORT_DECISION_SOURCE_NOTE,
+  buildReportDecisionSupport,
+} from './reportDecisionSupport';
+import {
+  buildResearchContextCardsForSurface,
+  researchContextCardsToMarkdown,
+} from './researchContext';
+import { SYMPTOM_LABELS } from '../data/symptomLabels';
 
 export const REPORTS_EXACT_DISCLAIMER =
   'This report is an educational decision-support summary generated from self-reported and optional device data. It is not a medical diagnosis. Reference ranges are general educational ranges and may not reflect individual baselines, spaceflight conditions, or clinical standards. Contact qualified medical personnel for interpretation and care.';
@@ -24,29 +36,6 @@ export const REPORT_PERIOD_LABELS: Record<ReportPeriod, string> = {
   '7d': 'Last 7 Days',
   '14d': 'Last 14 Days',
   full_mission: 'Full Mission',
-};
-
-const SYMPTOM_LABELS: Record<SymptomTag, string> = {
-  none: 'None',
-  chest_pain: 'Chest discomfort / pain',
-  shortness_of_breath: 'Shortness of breath',
-  severe_shortness_of_breath: 'Severe shortness of breath',
-  fainting: 'Fainting / loss of consciousness',
-  severe_allergic_reaction: 'Severe allergic reaction',
-  rapidly_worsening: 'Rapidly worsening symptoms',
-  fever_chills: 'Feverish feeling / chills',
-  headache: 'Headache',
-  visual_blur: 'Vision changes / blur',
-  nasal_congestion: 'Nasal / sinus congestion',
-  dizziness: 'Dizziness',
-  muscle_soreness: 'Muscle or joint pain',
-  sleep_fragmentation: 'Sleep fragmentation',
-  nausea: 'Nausea',
-  back_pain: 'Back pain',
-  skin_irritation: 'Skin irritation',
-  poor_concentration: 'Poor concentration',
-  anxiety: 'Anxiety',
-  low_mood: 'Low mood',
 };
 
 const SYSTEM_ORDER: BodySystemId[] = [
@@ -454,6 +443,9 @@ export function buildStructuredReport(params: {
   period?: ReportPeriod;
   includePrivateNotes?: boolean;
   conciseMedicalMode?: boolean;
+  healthBrief?: MissionHealthBrief;
+  /** Recorded 7/14-day window used for recovery and countermeasure context. */
+  decisionSupportData?: ReportDecisionWindow;
 }): Report {
   const {
     astronaut,
@@ -466,6 +458,8 @@ export function buildStructuredReport(params: {
     period = '14d',
     includePrivateNotes = false,
     conciseMedicalMode = false,
+    healthBrief,
+    decisionSupportData,
   } = params;
 
   const sortedVitals = [...vitalsWindow].sort((a, b) => a.missionDay - b.missionDay);
@@ -552,6 +546,18 @@ export function buildStructuredReport(params: {
     ? recommendations.slice(0, 4)
     : recommendations;
 
+  const decisionSupport = buildReportDecisionSupport({
+    astronaut,
+    assessment,
+    mission,
+    checkIns: decisionSupportData?.checkIns ?? sortedCheckIns,
+    vitals: decisionSupportData?.vitals ?? sortedVitals,
+    period,
+    windowDays: decisionSupportData?.windowDays,
+    healthBrief,
+  });
+  const researchContext = buildResearchContextCardsForSurface('report');
+
   return {
     id: `RPT-${astronaut.id}-D${mission.currentDay}-${Date.now()}`,
     astronautId: astronaut.id,
@@ -590,9 +596,23 @@ export function buildStructuredReport(params: {
     dataCompletenessPercent: assessment.dataQuality.completenessPercent,
     includePrivateNotes,
     conciseMedicalMode,
+    healthBrief,
+    executiveSummary: decisionSupport.executiveSummary,
+    recoveryReadiness: decisionSupport.recoveryReadiness,
+    countermeasures: decisionSupport.countermeasures,
+    dataGaps: decisionSupport.dataGaps,
+    referenceContext: decisionSupport.referenceContext,
+    researchContext,
     // Immutable copies keep a printed report stable while the mission record keeps growing.
     snapshotVitals: sortedVitals.map((reading) => ({ ...reading })),
-    snapshotCheckIns: sortedCheckIns.map((checkIn) => ({ ...checkIn })),
+    snapshotCheckIns: sortedCheckIns.map((checkIn) => {
+      const snapshot = { ...checkIn };
+      if (!includePrivateNotes) {
+        snapshot.crewNotes = '';
+        snapshot.shareWithMedicalLead = false;
+      }
+      return snapshot;
+    }),
   };
 }
 
@@ -623,10 +643,108 @@ export function reportToMarkdown(report: Report, astronautNameFallback: string):
         : 'Routine Monitoring — No automatic escalation triggered'
     }`,
     '',
-    '## Executive Summary (SBAR Situation)',
+    '## Situation (SBAR)',
     report.situation,
     '',
   ];
+
+  if (report.executiveSummary) {
+    const summary = report.executiveSummary;
+    lines.push(
+      '## Executive Summary (Recorded)',
+      `**${summary.headline}**`,
+      '',
+      summary.overview,
+      '',
+      '**Key points**',
+      ...summary.keyPoints.map((point) => `- ${point}`),
+      '',
+      `- **Data confidence:** ${summary.confidenceLine}`,
+      `- **Review timing:** ${summary.reviewPrompt}`,
+      `- **Escalation:** ${summary.escalationLine}`,
+      '',
+      `_${REPORT_DECISION_SOURCE_NOTE}_`,
+      '',
+      `_${REPORT_DECISION_DISCLAIMER}_`,
+      ''
+    );
+  }
+
+  if (report.recoveryReadiness) {
+    const readiness = report.recoveryReadiness;
+    const factorStatus =
+      readiness.factors.length > 0
+        ? readiness.factors.map((factor) => {
+            const status =
+              factor.status === 'scored'
+                ? 'Scored'
+                : factor.status === 'partial'
+                ? 'Partial'
+                : 'Missing';
+            return `| ${factor.label} | ${factor.score ?? '—'} | ${factor.weight} | ${
+              factor.points ?? '—'
+            } | ${status} |`;
+          })
+        : ['| No factors available | — | — | — | — |'];
+    lines.push(
+      '## Recovery Readiness (Recorded)',
+      `- **Band:** ${readiness.bandLabel}`,
+      `- **Score:** ${readiness.score == null ? 'Not scored' : `${readiness.score}/100`}`,
+      `- **Explanation:** ${readiness.bandReason}`,
+      `- **Recorded days:** ${readiness.window.recordedDays} of ${readiness.window.coveredDays} in the ${readiness.window.requestedDays}-day decision window`,
+      `- **Day coverage:** ${readiness.dayCoveragePercent}%`,
+      `- **Evidence coverage:** ${readiness.evidenceCoveragePercent}% of factor weight backed by recorded data`,
+      '',
+      '| Factor | Score | Weight | Points | Status |',
+      '| --- | ---: | ---: | ---: | --- |',
+      ...factorStatus,
+      '',
+      '**Factor explanations**',
+      ...readiness.factors.map((factor) => `- **${factor.label}:** ${factor.summary}`),
+      '',
+      `**Missing data:** ${readiness.missingDataNote}`,
+      '',
+      `**Recommendation:** ${readiness.recommendation}`,
+      '',
+      `**Escalation:** ${readiness.escalation.title}. ${readiness.escalation.detail}`,
+      ...readiness.escalation.reasons.map((reason) => `- ${reason}`),
+      '',
+      `_${readiness.disclaimer}_`,
+      '_Simulated demonstration streams are excluded from this section._',
+      ''
+    );
+  }
+
+  if (report.countermeasures) {
+    const plan = report.countermeasures;
+    const cell = (value: string) => value.replace(/\|/g, '\\|');
+    const focus = plan.items.find((item) => item.id === plan.focusItemId);
+    lines.push(
+      '## Countermeasure Adherence (Recorded)',
+      plan.summary,
+      '',
+      '| Area | Status | Recorded status | Planning reference | Today recorded |',
+      '| --- | --- | --- | --- | --- |',
+      ...plan.items.map(
+        (item) =>
+          `| ${cell(item.label)} | ${item.statusLabel} | ${cell(item.currentStatus)} | ${
+            item.plannedTarget ? cell(item.plannedTarget) : '—'
+          } | ${item.todayRecorded ? 'Yes' : 'No'} |`
+      ),
+      ''
+    );
+    if (focus) {
+      lines.push(
+        `**Suggested planning focus:** ${focus.label} — ${focus.suggestedAction}`,
+        ''
+      );
+    }
+    lines.push(`_${plan.disclaimer}_`, '');
+  }
+
+  if (report.healthBrief) {
+    lines.push(missionHealthBriefToMarkdown(report.healthBrief), '');
+  }
 
   if (report.systemSnapshots && report.systemSnapshots.length > 0) {
     lines.push('## Body-System Status Overview');
@@ -644,8 +762,8 @@ export function reportToMarkdown(report: Report, astronautNameFallback: string):
     lines.push('');
   }
 
+  lines.push('## Trends and Reference Context (Recorded)');
   if (report.trends && report.trends.length > 0) {
-    lines.push('## Trends');
     report.trends.forEach((t) => {
       const dirLabel =
         t.direction === 'improving'
@@ -657,7 +775,30 @@ export function reportToMarkdown(report: Report, astronautNameFallback: string):
           : 'STABLE';
       lines.push(`- **${t.metric}** [${dirLabel}]: ${t.periodSummary} (${t.baselineComparison})`);
     });
-    lines.push('');
+  } else {
+    lines.push('- No recorded trend series is available for this report window.');
+  }
+  lines.push(
+    '',
+    '**Reference context**',
+    '- Personal planning references and the biometric reference matrix above are recorded planning context, not clinical prescriptions.',
+    '- Recorded trends use this report snapshot; simulated demonstration streams are excluded.'
+  );
+  if (report.referenceContext && report.referenceContext.length > 0) {
+    report.referenceContext.forEach((reference) => {
+      lines.push(
+        `- ${reference.title} — ${reference.organization} _Research context, not crew data_ — used for ${reference.usedFor}. ${reference.url}`
+      );
+    });
+  } else {
+    lines.push(
+      '- No bundled research reference applies to the recorded countermeasure areas in this report.'
+    );
+  }
+  lines.push('');
+
+  if (report.researchContext && report.researchContext.length > 0) {
+    lines.push(researchContextCardsToMarkdown(report.researchContext), '');
   }
 
   if (report.actionTracking) {
@@ -703,6 +844,18 @@ export function reportToMarkdown(report: Report, astronautNameFallback: string):
   lines.push('## Recommendations');
   report.recommendations.forEach((r) => lines.push(`- ${r}`));
   lines.push('');
+
+  lines.push('## Data Gaps (Recorded)');
+  if (report.dataGaps && report.dataGaps.length > 0) {
+    report.dataGaps.forEach((gap) => lines.push(`- **${gap.label}:** ${gap.detail}`));
+  } else {
+    lines.push('- No recorded data gaps were identified in the report window.');
+  }
+  lines.push(
+    '',
+    '_Missing values are not imputed, treated as normal, or replaced with simulated data._',
+    ''
+  );
 
   lines.push('## Data-Quality Notes');
   lines.push(

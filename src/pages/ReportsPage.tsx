@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
+  AlertTriangle,
   Check,
   CloudUpload,
   Copy,
@@ -20,6 +21,7 @@ import {
   filterDataForReportPeriod,
   reportToMarkdown,
 } from '../engine/reportGenerator';
+import { buildMissionHealthBrief } from '../engine/missionHealthBrief';
 import type { Report, ReportFormat, ReportPeriod } from '../types';
 import { Button, EmptyState } from '../components/ui';
 import { HealthReportCard } from '../components/reports/HealthReportCard';
@@ -40,12 +42,13 @@ const PERIOD_OPTIONS: Array<{ id: ReportPeriod; label: string }> = [
 ];
 
 /**
- * Observation report page.
+ * Mission-health report page.
  *
- * The report is generated from the recorded mission data into a single immutable object (which
- * carries its own observation snapshot), so printing cannot be disturbed by incoming readings.
- * Previously stored reports stay in the store untouched; they are deliberately not surfaced as
- * snapshot-management UI any more.
+ * The report is generated from recorded mission data into a single immutable object (which
+ * carries its own observation snapshot and decision-support context), so printing cannot be
+ * disturbed by incoming readings. Recovery and countermeasure context uses a fixed 7/14-day
+ * recorded window, independent of the selected report period. Previously stored reports stay in
+ * the store untouched.
  */
 export function ReportsPage() {
   const { astronaut, mission, vitals14d, checkIns14d } = useActiveAssessment();
@@ -75,6 +78,37 @@ export function ReportsPage() {
 
   const hasAnyTelemetry = checkIns14d.length > 0 || vitals14d.length > 0;
 
+  // Brief snapshot: always the daily and last-7-day view, independent of the selected report period.
+  const healthBrief = useMemo(() => {
+    const { checkInsWindow, vitalsWindow } = filterDataForReportPeriod(
+      checkIns14d,
+      vitals14d,
+      mission.currentDay,
+      '7d'
+    );
+    const briefAssessment = evaluateHealthAssessment(
+      astronaut,
+      checkInsWindow,
+      vitalsWindow,
+      mission
+    );
+    return buildMissionHealthBrief({
+      astronaut,
+      checkIns: checkInsWindow,
+      vitals: vitalsWindow,
+      missionDay: mission.currentDay,
+      escalation: {
+        required: briefAssessment.escalationRequired,
+        reasons: briefAssessment.escalationReasons,
+      },
+    });
+  }, [astronaut, checkIns14d, vitals14d, mission]);
+
+  // Recovery and countermeasure context uses a 7/14-day recorded window, independent of the
+  // selected report period, so a one-day report still has enough recorded evidence to explain.
+  const decisionWindowDays: 7 | 14 =
+    period === 'today' || period === '7d' ? 7 : 14;
+
   // Internal, immutable report snapshot: regenerated only when report inputs change.
   const report: Report = useMemo(() => {
     const { checkInsWindow, vitalsWindow } = filterDataForReportPeriod(
@@ -82,6 +116,12 @@ export function ReportsPage() {
       vitals14d,
       mission.currentDay,
       period
+    );
+    const decisionData = filterDataForReportPeriod(
+      checkIns14d,
+      vitals14d,
+      mission.currentDay,
+      decisionWindowDays === 7 ? '7d' : '14d'
     );
     const periodAssessment = evaluateHealthAssessment(
       astronaut,
@@ -100,6 +140,12 @@ export function ReportsPage() {
       period,
       includePrivateNotes,
       conciseMedicalMode,
+      healthBrief,
+      decisionSupportData: {
+        checkIns: decisionData.checkInsWindow,
+        vitals: decisionData.vitalsWindow,
+        windowDays: decisionWindowDays,
+      },
     });
   }, [
     astronaut,
@@ -111,6 +157,8 @@ export function ReportsPage() {
     recipient,
     includePrivateNotes,
     conciseMedicalMode,
+    healthBrief,
+    decisionWindowDays,
   ]);
 
   // How much of the requested period actually exists in the record (never padded).
@@ -161,11 +209,12 @@ export function ReportsPage() {
             {astronaut.fullName} · {astronaut.role} · {mission.name} (Day {mission.currentDay})
           </p>
           <h1 className="arogya-display mt-1 text-[var(--arogya-text-primary)]">
-            Observation Report
+            Mission Health Report
           </h1>
           <p className="mt-1 max-w-3xl text-sm text-[var(--arogya-text-secondary)]">
-            A printable, medical-style record of recorded observations. Copy, download, or print the
-            same immutable report snapshot.
+            A printable mission-health decision-support document: recorded observations, recovery
+            readiness, countermeasure adherence, mission health brief, trends, reference context, and
+            data gaps. Private crew notes stay excluded unless explicitly opted in.
           </p>
         </div>
 
@@ -246,6 +295,33 @@ export function ReportsPage() {
         </div>
       </header>
 
+      {/* Missing-data summary — surfaced before configuration, hidden when printing */}
+      {report.dataGaps && report.dataGaps.length > 0 && (
+        <div
+          role="note"
+          className="no-print flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-xl border border-[var(--arogya-border)] bg-[var(--arogya-bg)] px-4 py-2.5 text-[11px] leading-relaxed text-[var(--arogya-text-secondary)]"
+        >
+          <span className="inline-flex items-center gap-1.5 font-semibold text-[var(--arogya-text-primary)]">
+            <AlertTriangle
+              className="h-3.5 w-3.5 text-[var(--arogya-warning-text)]"
+              aria-hidden="true"
+            />
+            {report.dataGaps.length} missing-data area
+            {report.dataGaps.length === 1 ? '' : 's'} in this window
+          </span>
+          {report.dataCompletenessPercent != null && (
+            <span>Recorded-vitals completeness: {report.dataCompletenessPercent}%</span>
+          )}
+          <span>Missing values are never imputed or treated as normal.</span>
+          <a
+            href="#report-data-gaps-heading"
+            className="font-semibold text-[#1E3A5F] underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1E3A5F] focus-visible:ring-offset-2"
+          >
+            Review in the brief
+          </a>
+        </div>
+      )}
+
       {/* Report configuration — hidden when printing */}
       <section
         aria-label="Report configuration"
@@ -286,6 +362,10 @@ export function ReportsPage() {
                 {periodCoverage}
               </p>
             )}
+            <p className="mt-1.5 text-[11px] text-[var(--arogya-text-muted)]">
+              Recovery readiness and countermeasure adherence use the last {decisionWindowDays}{' '}
+              recorded mission days, independent of the report period.
+            </p>
           </div>
 
           <div className="flex flex-wrap items-end gap-3">

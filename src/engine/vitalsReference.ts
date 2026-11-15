@@ -1,6 +1,6 @@
 import type { Astronaut, HealthStatusLevel, VitalReading } from '../types';
 import { CLINICAL_THRESHOLDS, REFERENCE_RANGE_DISCLAIMER } from './thresholds';
-import { celsiusToFahrenheit, kgToLb, mgDlToMmolL } from '../utils/unitConversions';
+import { mgDlToMmolL } from '../utils/unitConversions';
 
 export type VitalsTrendDirection = 'rising' | 'falling' | 'stable' | 'insufficient';
 export type VitalRowStatus = HealthStatusLevel | 'missing';
@@ -18,6 +18,7 @@ export interface VitalReferenceRow {
   name: string;
   latestNumeric: number | null;
   latestFormatted: string;
+  latestValue: string;
   unit: string;
   generalReferenceRange: string;
   personalBaseline: string;
@@ -91,15 +92,12 @@ function formatStatusLabel(status: VitalRowStatus): string {
 export function buildVitalReferenceRows(
   astronaut: Astronaut,
   windowReadings: VitalReading[],
-  allReadings: VitalReading[],
-  units: 'metric' | 'imperial' = 'metric'
+  allReadings: VitalReading[]
 ): VitalReferenceRow[] {
   const sortedAll = [...allReadings].sort((a, b) => a.missionDay - b.missionDay);
   const sortedWin = [...windowReadings].sort((a, b) => a.missionDay - b.missionDay);
   const latest = sortedAll[sortedAll.length - 1] ?? null;
   const prev = sortedAll.length >= 2 ? sortedAll[sortedAll.length - 2] : null;
-
-  const isImperial = units === 'imperial';
 
   // 1. Resting Heart Rate
   const hr = latest?.heartRateBpm ?? null;
@@ -229,24 +227,13 @@ export function buildVitalReferenceRows(
 
   // 4. Temperature
   const tempC = latest?.bodyTempC ?? null;
-  const tempDisplay = isPresent(tempC)
-    ? isImperial
-      ? celsiusToFahrenheit(tempC).toFixed(1)
-      : tempC.toFixed(1)
-    : 'MISSING';
-  const tempBaselineDisplay = isImperial
-    ? `${celsiusToFahrenheit(astronaut.baseline.bodyTempC).toFixed(1)} °F`
-    : `${astronaut.baseline.bodyTempC.toFixed(1)} °C`;
-  const tempUnit = isImperial ? '°F' : '°C';
+  const tempDisplay = isPresent(tempC) ? tempC.toFixed(1) : 'MISSING';
+  const tempBaselineDisplay = `${astronaut.baseline.bodyTempC.toFixed(1)} °C`;
+  const tempUnit = '°C';
   const tempTrend = computeTrend(
     sortedWin,
-    (v) =>
-      isPresent(v.bodyTempC)
-        ? isImperial
-          ? celsiusToFahrenheit(v.bodyTempC)
-          : v.bodyTempC
-        : null,
-    isImperial ? 0.5 : 0.3,
+    (v) => (isPresent(v.bodyTempC) ? v.bodyTempC : null),
+    0.3,
     1,
     tempUnit
   );
@@ -290,26 +277,15 @@ export function buildVitalReferenceRows(
 
   // 5. Blood Glucose
   const bgMgDl = latest?.bloodGlucoseMgDl ?? null;
-  const bgDisplay = isPresent(bgMgDl)
-    ? isImperial
-      ? mgDlToMmolL(bgMgDl).toFixed(1)
-      : String(bgMgDl)
-    : 'MISSING';
-  const bgUnit = isImperial ? 'mmol/L' : 'mg/dL';
-  const bgBaselineDisplay = isImperial
-    ? `${mgDlToMmolL(astronaut.baseline.fastingGlucoseMgDl).toFixed(1)} mmol/L fasting`
-    : `${astronaut.baseline.fastingGlucoseMgDl} mg/dL fasting`;
-  const bgGeneralRef = isImperial ? '3.9–6.9 mmol/L (fasting)' : '70–125 mg/dL (fasting)';
+  const bgDisplay = isPresent(bgMgDl) ? mgDlToMmolL(bgMgDl).toFixed(1) : 'MISSING';
+  const bgUnit = 'mmol/L';
+  const bgBaselineDisplay = `${mgDlToMmolL(astronaut.baseline.fastingGlucoseMgDl).toFixed(1)} mmol/L fasting`;
+  const bgGeneralRef = '3.9–6.9 mmol/L (fasting)';
   const bgTrend = computeTrend(
     sortedWin,
-    (v) =>
-      isPresent(v.bloodGlucoseMgDl)
-        ? isImperial
-          ? mgDlToMmolL(v.bloodGlucoseMgDl)
-          : v.bloodGlucoseMgDl
-        : null,
-    isImperial ? 0.6 : 10,
-    isImperial ? 1 : 0,
+    (v) => (isPresent(v.bloodGlucoseMgDl) ? mgDlToMmolL(v.bloodGlucoseMgDl) : null),
+    0.6,
+    1,
     bgUnit
   );
   let bgStatus: VitalRowStatus = 'green';
@@ -363,22 +339,15 @@ export function buildVitalReferenceRows(
   // 6. Body Mass
   const massKg = latest?.bodyMassKg ?? null;
   const baselineMassKg = astronaut.baseline.bodyMassKg;
-  const massUnit = isImperial ? 'lb' : 'kg';
-  const massDisplay = isPresent(massKg)
-    ? isImperial
-      ? kgToLb(massKg).toFixed(1)
-      : massKg.toFixed(1)
-    : 'MISSING';
+  const massUnit = 'kg';
+  const massDisplay = isPresent(massKg) ? massKg.toFixed(1) : 'MISSING';
   const massBaselineDisplay = isPresent(baselineMassKg)
-    ? isImperial
-      ? `${kgToLb(baselineMassKg).toFixed(1)} lb pre-flight`
-      : `${baselineMassKg.toFixed(1)} kg pre-flight`
+    ? `${baselineMassKg.toFixed(1)} kg pre-flight`
     : 'Pre-flight baseline unrecorded';
   const massTrend = computeTrend(
     sortedWin,
-    (v) =>
-      isPresent(v.bodyMassKg) ? (isImperial ? kgToLb(v.bodyMassKg) : v.bodyMassKg) : null,
-    isImperial ? 1.1 : 0.5,
+    (v) => (isPresent(v.bodyMassKg) ? v.bodyMassKg : null),
+    0.5,
     1,
     massUnit
   );
@@ -483,6 +452,7 @@ export function buildVitalReferenceRows(
       name: 'Resting heart rate',
       latestNumeric: hr,
       latestFormatted: isPresent(hr) ? `${hr} bpm` : 'MISSING',
+      latestValue: isPresent(hr) ? String(hr) : 'MISSING',
       unit: 'bpm',
       generalReferenceRange: `${CLINICAL_THRESHOLDS.generalRestingHrMin}–${CLINICAL_THRESHOLDS.generalRestingHrMax} bpm (adult resting)`,
       personalBaseline: `${hrBaseline} bpm personal resting`,
@@ -500,6 +470,7 @@ export function buildVitalReferenceRows(
       name: 'Systolic blood pressure',
       latestNumeric: sys,
       latestFormatted: isPresent(sys) ? `${sys} mmHg` : 'MISSING',
+      latestValue: isPresent(sys) ? String(sys) : 'MISSING',
       unit: 'mmHg',
       generalReferenceRange: `${CLINICAL_THRESHOLDS.generalSystolicMin}–${CLINICAL_THRESHOLDS.generalSystolicMax} mmHg (seated adult)`,
       personalBaseline: `${sysBaseline} mmHg personal baseline`,
@@ -517,6 +488,7 @@ export function buildVitalReferenceRows(
       name: 'Diastolic blood pressure',
       latestNumeric: dia,
       latestFormatted: isPresent(dia) ? `${dia} mmHg` : 'MISSING',
+      latestValue: isPresent(dia) ? String(dia) : 'MISSING',
       unit: 'mmHg',
       generalReferenceRange: `${CLINICAL_THRESHOLDS.generalDiastolicMin}–${CLINICAL_THRESHOLDS.generalDiastolicMax} mmHg (seated adult)`,
       personalBaseline: `${diaBaseline} mmHg personal baseline`,
@@ -534,8 +506,9 @@ export function buildVitalReferenceRows(
       name: 'Temperature',
       latestNumeric: tempC,
       latestFormatted: isPresent(tempC) ? `${tempDisplay} ${tempUnit}` : 'MISSING',
+      latestValue: isPresent(tempC) ? tempDisplay : 'MISSING',
       unit: tempUnit,
-      generalReferenceRange: isImperial ? '97.0–99.5 °F (oral adult)' : '36.1–37.5 °C (oral adult)',
+      generalReferenceRange: '36.1–37.5 °C (oral adult)',
       personalBaseline: `${tempBaselineDisplay} personal baseline`,
       trendDirection: tempTrend.direction,
       trendLabel: tempTrend.label,
@@ -543,7 +516,7 @@ export function buildVitalReferenceRows(
       statusLabel: formatStatusLabel(tempStatus),
       explanation: tempExplanation,
       recommendedAction: tempAction,
-      escalationThreshold: '>= 38.0 °C (100.4 °F) with symptoms, repeated >= 38.0 °C, or >= 38.8 °C',
+      escalationThreshold: '>= 38.0 °C with symptoms, repeated >= 38.0 °C, or >= 38.8 °C',
       latestDay: latest?.missionDay ?? null,
     },
     {
@@ -551,6 +524,7 @@ export function buildVitalReferenceRows(
       name: 'Blood glucose',
       latestNumeric: bgMgDl,
       latestFormatted: isPresent(bgMgDl) ? `${bgDisplay} ${bgUnit}` : 'MISSING',
+      latestValue: isPresent(bgMgDl) ? bgDisplay : 'MISSING',
       unit: bgUnit,
       generalReferenceRange: bgGeneralRef,
       personalBaseline: bgBaselineDisplay,
@@ -560,7 +534,7 @@ export function buildVitalReferenceRows(
       statusLabel: formatStatusLabel(bgStatus),
       explanation: bgExplanation,
       recommendedAction: bgAction,
-      escalationThreshold: '<= 60 mg/dL, >= 200 mg/dL, or >= 140 mg/dL repeated fasting',
+      escalationThreshold: '<= 3.3 mmol/L, >= 11.1 mmol/L, or >= 7.8 mmol/L repeated fasting',
       latestDay: latest?.missionDay ?? null,
     },
     {
@@ -568,6 +542,7 @@ export function buildVitalReferenceRows(
       name: 'Body mass',
       latestNumeric: massKg,
       latestFormatted: isPresent(massKg) ? `${massDisplay} ${massUnit}` : 'MISSING',
+      latestValue: isPresent(massKg) ? massDisplay : 'MISSING',
       unit: massUnit,
       generalReferenceRange: 'Within +/- 5% of pre-flight crew stability',
       personalBaseline: massBaselineDisplay,
@@ -587,7 +562,8 @@ export function buildVitalReferenceRows(
       latestFormatted: isPresent(dailyRad)
         ? `${dailyRad.toFixed(2)} mSv/d${isPresent(cumRad) ? ` (${cumRad.toFixed(1)} mSv cum.)` : ''}`
         : 'MISSING',
-      unit: 'mSv/d · mSv cum.',
+      latestValue: isPresent(dailyRad) ? dailyRad.toFixed(2) : 'MISSING',
+      unit: 'mSv/d',
       generalReferenceRange: '< 1.20 mSv/day LEO/cruise operational watch threshold',
       personalBaseline: `${radBudget} mSv mission ALARA budget`,
       trendDirection: radTrend.direction,
@@ -604,6 +580,7 @@ export function buildVitalReferenceRows(
       name: 'Oxygen saturation (if available)',
       latestNumeric: spo2,
       latestFormatted: isPresent(spo2) ? `${spo2}%` : 'MISSING',
+      latestValue: isPresent(spo2) ? String(spo2) : 'MISSING',
       unit: '%',
       generalReferenceRange: '95–100% (sea-level adult)',
       personalBaseline: `${spo2Baseline}% personal baseline`,
