@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 import {
   Activity,
   Calendar,
-  CheckCircle2,
-  Clock,
   Compass,
   Gauge,
   Radio,
@@ -38,6 +36,10 @@ import {
 } from '../components/ui';
 import { MarsTrajectoryMap } from '../components/mission/MarsTrajectoryMap';
 import { MissionFlightScene } from '../components/mission/MissionFlightScene';
+import { MissionPhaseTimeline } from '../components/mission/MissionPhaseTimeline';
+import { CrewMissionStatusPanel } from '../components/mission/CrewMissionStatusPanel';
+import { MissionEventFeed } from '../components/mission/MissionEventFeed';
+import { buildMissionPhaseTimeline } from '../engine/missionPhases';
 
 function formatDateShort(iso: string): string {
   const d = new Date(iso);
@@ -57,15 +59,20 @@ function toDateInputValue(iso?: string): string {
 }
 
 export function MissionPage() {
-  const { astronaut, mission, vitals14d } = useActiveAssessment();
+  const { astronaut, mission, vitals14d, assessment } = useActiveAssessment();
   const astronauts = useArogyaStore((s) => s.astronauts);
   const vitalsByAstronaut = useArogyaStore((s) => s.vitalsByAstronaut);
   const checkInsByAstronaut = useArogyaStore((s) => s.checkInsByAstronaut);
+  const reports = useArogyaStore((s) => s.reports);
   const setActiveAstronaut = useArogyaStore((s) => s.setActiveAstronaut);
   const updateMissionSimulation = useArogyaStore((s) => s.updateMissionSimulation);
   const updateMissionEnvironment = useArogyaStore((s) => s.updateMissionEnvironment);
   const resetDemoData = useArogyaStore((s) => s.resetDemoData);
   const { allAssets, imageAssets, supplementaryFiles } = useDriveMedia();
+  const activeCheckIns = useMemo(
+    () => checkInsByAstronaut[astronaut.id] ?? [],
+    [checkInsByAstronaut, astronaut.id]
+  );
 
   const configuredVelocityKmH = mission.configuredVelocityKmH ?? DEFAULT_VELOCITY_KMH;
   const syncDayToCurrentDate = mission.syncDayToCurrentDate ?? false;
@@ -87,6 +94,17 @@ export function MissionPage() {
       syncDayToCurrentDate,
     ]
   );
+
+  const currentPhase = useMemo(() => {
+    const timeline = buildMissionPhaseTimeline({
+      transitDay: telemetry.missionDay,
+      transitDurationDays: telemetry.totalDurationDays,
+    });
+    return (
+      timeline.phases.find((phase) => phase.id === timeline.currentPhaseId) ??
+      timeline.phases[0]
+    );
+  }, [telemetry.missionDay, telemetry.totalDurationDays]);
 
   const commitSimulationUpdate = (nextParams: {
     name?: string;
@@ -278,61 +296,31 @@ export function MissionPage() {
       {/* Primary mission visualization: full-width flight scene below the heading */}
       <MissionFlightScene telemetry={telemetry} vehicleName={mission.vehicleName} />
 
-      {/* Mission Phase Timeline */}
-      <Card padding="md" className="space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <h2 className="arogya-h2 text-[var(--arogya-text-primary)]">Mission Timeline</h2>
-            <p className="text-xs text-[var(--arogya-text-secondary)]">
-              Simulated mission telemetry · {telemetry.totalDurationDays}-day transfer schedule from Earth departure to Mars surface
-            </p>
-          </div>
-          <span className="rounded-md border border-[var(--arogya-info-border)] bg-[var(--arogya-info-soft)] px-2.5 py-1 font-mono-tabular text-xs font-semibold text-[var(--arogya-info)]">
-            Current Phase: {telemetry.phase}
-          </span>
-        </div>
+      <MissionPhaseTimeline
+        transitDay={telemetry.missionDay}
+        transitDurationDays={telemetry.totalDurationDays}
+      />
 
-        <ol className="grid grid-cols-1 gap-2 sm:grid-cols-5" aria-label="Mission transit timeline">
-          {telemetry.timelineMilestones.map((step) => {
-            const isActive = step.status === 'active';
-            const isDone = step.status === 'completed';
-            return (
-              <li
-                key={step.phase}
-                aria-current={isActive ? 'step' : undefined}
-                className={`rounded-lg border p-3 transition-colors ${
-                  isActive
-                    ? 'border-[#1E3A5F] bg-[var(--arogya-selected-bg)]'
-                    : isDone
-                    ? 'border-[var(--arogya-success-border)] bg-[var(--arogya-success-soft)]'
-                    : 'border-[var(--arogya-border)] bg-[var(--arogya-surface-elevated)]'
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold capitalize text-[var(--arogya-text-primary)]">
-                    {step.label}
-                  </span>
-                  {isDone ? (
-                    <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-[var(--arogya-success-text)]" aria-hidden="true" />
-                  ) : isActive ? (
-                    <span
-                      className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#1E3A5F] motion-safe:animate-pulse"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <Clock className="h-3.5 w-3.5 shrink-0 text-[var(--arogya-text-muted)]" aria-hidden="true" />
-                  )}
-                </div>
-                <p className="mt-1 font-mono-tabular text-[11px] text-[var(--arogya-text-secondary)]">
-                  {step.startDay === step.endDay
-                    ? `Day ${step.startDay}`
-                    : `Days ${step.startDay}–${step.endDay}`}
-                </p>
-              </li>
-            );
-          })}
-        </ol>
-      </Card>
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 xl:grid-cols-12">
+        <div className="min-w-0 xl:col-span-7">
+          <CrewMissionStatusPanel
+            astronaut={astronaut}
+            missionDay={telemetry.missionDay}
+            transitDurationDays={telemetry.totalDurationDays}
+            currentPhase={currentPhase}
+            checkIns={activeCheckIns}
+            alerts={assessment.alerts}
+          />
+        </div>
+        <div className="min-w-0 xl:col-span-5">
+          <MissionEventFeed
+            astronautId={astronaut.id}
+            checkIns={activeCheckIns}
+            reports={reports}
+            currentPhase={currentPhase}
+          />
+        </div>
+      </div>
 
       {/* Transfer geometry (simplified model, not ephemeris) */}
       <Card padding="md">
