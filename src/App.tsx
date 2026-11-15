@@ -16,6 +16,9 @@ const VitalsPage = lazy(() =>
 const ReportsPage = lazy(() =>
   import('./pages/ReportsPage').then((module) => ({ default: module.ReportsPage }))
 );
+const ResearchPage = lazy(() =>
+  import('./pages/ResearchPage').then((module) => ({ default: module.ResearchPage }))
+);
 const MissionPage = lazy(() =>
   import('./pages/MissionPage').then((module) => ({ default: module.MissionPage }))
 );
@@ -31,6 +34,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/check-in': 'Daily Crew Check-In',
   '/vitals': 'Biometric Vitals',
   '/reports': 'Flight Surgeon Briefings',
+  '/research': 'NASA Research Library',
   '/mission': 'Mission & Environment',
   '/settings': 'Settings & Crew Profile',
   '/about': 'About, Sources & Licenses',
@@ -61,6 +65,7 @@ function RoutedContent() {
             <Route path="/check-in" element={<CheckInPage />} />
             <Route path="/vitals" element={<VitalsPage />} />
             <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/research" element={<ResearchPage />} />
             <Route path="/mission" element={<MissionPage />} />
             <Route path="/settings" element={<SettingsPage />} />
             <Route path="/about" element={<AboutPage />} />

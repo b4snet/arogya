@@ -4,6 +4,7 @@ import {
   Activity,
   BookOpen,
   ClipboardCheck,
+  Database,
   FileText,
   Globe2,
   LayoutDashboard,
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { to: '/vitals', label: 'Vitals', shortLabel: 'Vitals', icon: Activity },
   { to: '/reports', label: 'Reports', shortLabel: 'Reports', icon: FileText },
   { to: '/mission', label: 'Mission', shortLabel: 'Mission', icon: Globe2 },
+  { to: '/research', label: 'Research Library', shortLabel: 'Research', icon: Database },
   { to: '/settings', label: 'Settings', shortLabel: 'Settings', icon: Settings },
   { to: '/about', label: 'About & Sources', shortLabel: 'About', icon: BookOpen },
 ];

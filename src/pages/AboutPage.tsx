@@ -312,7 +312,7 @@ export function AboutPage() {
             action={<Database className="h-4 w-4 text-[var(--arogya-info)]" aria-hidden="true" />}
           />
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
-            Vitals includes 28 archived sample rows from NASA OSDR study OSD-575 (Version 3, DOI 10.26030/mc5d-p710), covering 19 CMP analytes and four source pseudonyms. These research results remain separate from fictional crew records and simulated telemetry; the application does not link or re-identify participants.
+            The Vitals research view and dedicated Research Library include 28 archived sample rows from NASA OSDR study OSD-575 (Version 3, DOI 10.26030/mc5d-p710), covering 19 CMP analytes and four source pseudonyms. The Research Library adds cohort coverage, analyte search, and NASA reference context. These research results remain separate from fictional crew records and simulated telemetry; the application does not link or re-identify participants.
           </p>
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
             The selected transformed CSV and import provenance are bundled locally; page loading does not depend on NASA availability. Source units and relative timepoint labels are retained, missing values remain missing, and no diagnostic interpretation is applied. The official OSDR OSD-575 Version 3 study page lists CC0-1.0; this license was verified against the official study listing.

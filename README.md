@@ -13,10 +13,11 @@ Arogya is an offline-first astronaut health-monitoring and early-warning decisio
 1. **Mission-Control Dashboard (`/`)**: Crew selector, overall health-readiness score, active alerts, next best action, interactive 3D astronaut preview, today's check-in status, compact trend tiles, and Mars transit/comms-delay widget. The public release uses a procedural astronaut and static CSS space backdrop; local development can still use the supplied GLBs and MP4.
 2. **Guided Check-In (`/check-in`)**: Fast offline logging of sleep, mood, stress, cognitive focus, fatigue, hydration, countermeasure exercise, pain score, symptoms, and crew notes.
 3. **Biometric Vitals (`/vitals`)**: Cardiovascular, respiratory, radiation, and cabin CO₂ trend charts with personal baseline thresholds, plus a separately labeled NASA OSD-575 archived serum CMP research view.
-4. **Structured Briefings (`/reports`)**: One-click SBAR Flight Surgeon brief generator with offline Markdown, JSON, and Print export.
-5. **Mission & Environment (`/mission`)**: Mars distance, remaining travel time, communication light-delay context, solar particle drill, and synced Google Drive files viewer.
-6. **Settings & Profile (`/settings`)**: Personal baseline calibration, display/reduced-motion preferences, and offline cache management.
-7. **About, Sources & Licenses (`/about`)**: Safety policy, NASA HRP references, asset inventory, and open-source licenses.
+4. **NASA Research Library (`/research`)**: Bundled OSD-575 cohort coverage, searchable analyte explorer, source-subject pseudonyms, provenance, and a separate NASA reference catalog. No live NASA API is used.
+5. **Structured Briefings (`/reports`)**: One-click SBAR Flight Surgeon brief generator with offline Markdown, JSON, and Print export.
+6. **Mission & Environment (`/mission`)**: Mars distance, remaining travel time, communication light-delay context, solar particle drill, and synced Google Drive files viewer.
+7. **Settings & Profile (`/settings`)**: Personal baseline calibration, display/reduced-motion preferences, and offline cache management.
+8. **About, Sources & Licenses (`/about`)**: Safety policy, NASA HRP references, asset inventory, and open-source licenses.
 
 ## Google Drive Asset Integration
 
@@ -52,7 +53,7 @@ The Zustand mission store persists through IndexedDB. Browser storage errors are
 
 ### NASA OSD-575 Research Data Import
 
-The Vitals research section uses a local processed artifact generated from the NASA OSDR OSD-575 transformed CMP CSV. Runtime remains a static Vite frontend; no NASA API request or backend is needed to view the bundled subset. The source CSV, OSDR metadata and file manifest are preserved under `data/nasa/osd-575/source/`, with checksum and transformation details in `data/nasa/osd-575/provenance.json`. Rebuild the artifact with `npx tsx scripts/import-nasa-osd575.ts` after obtaining/verifying the source file. Source values, physical units, missing values, and relative timepoint labels are retained; the data is not clinical advice and is not connected to Arogya's demo subjects or simulated stream. The official OSDR study page lists CC0-1.0; this was verified against the official OSD-575 listing.
+The Vitals research view and dedicated Research Library use a local processed artifact generated from the NASA OSDR OSD-575 transformed CMP CSV. `src/data/researchLibrary.ts` provides the typed dataset summary, source-subject coverage, analyte coverage/search, and reference catalog selectors. Runtime remains a static Vite frontend; no NASA API request or backend is needed to view the bundled subset. The source CSV, OSDR metadata and file manifest are preserved under `data/nasa/osd-575/source/`, with checksum and transformation details in `data/nasa/osd-575/provenance.json`. Rebuild the artifact with `npx tsx scripts/import-nasa-osd575.ts` after obtaining/verifying the source file. Source values, physical units, missing values, and relative timepoint labels are retained; the data is not clinical advice and is not connected to Arogya's demo subjects or simulated stream. The bundled NASA reference catalog informs hazard framing but is not part of the dataset and does not validate the application. The official OSDR study page lists CC0-1.0; this was verified against the official OSD-575 listing.
 
 ### Third-Party Mission Model
 

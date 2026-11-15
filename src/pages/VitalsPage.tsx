@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Activity,
   CheckCircle2,
@@ -68,6 +68,7 @@ function downloadFile(content: string, filename: string, mime: string) {
 }
 
 export function VitalsPage() {
+  const { hash } = useLocation();
   const { astronaut, mission, vitals14d, checkIns14d, assessment } = useActiveAssessment();
   const addVitals = useArogyaStore((s) => s.addVitals);
   const addReport = useArogyaStore((s) => s.addReport);
@@ -86,6 +87,11 @@ export function VitalsPage() {
     setFeedbackBanner(null);
     setShowManualForm(false);
   }, [astronaut.id]);
+
+  useEffect(() => {
+    if (!hash) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' });
+  }, [hash]);
 
   const sortedVitals = useMemo(
     () => [...vitals14d].sort((a, b) => a.missionDay - b.missionDay),
