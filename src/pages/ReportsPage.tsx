@@ -211,11 +211,6 @@ export function ReportsPage() {
           <h1 className="arogya-display mt-1 text-[var(--arogya-text-primary)]">
             Mission Health Report
           </h1>
-          <p className="mt-1 max-w-3xl text-sm text-[var(--arogya-text-secondary)]">
-            A printable mission-health decision-support document: recorded observations, recovery
-            readiness, countermeasure adherence, mission health brief, trends, reference context, and
-            data gaps. Private crew notes stay excluded unless explicitly opted in.
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">

@@ -7,12 +7,20 @@ import {
 } from './localAssets';
 
 describe('release-safe bundled media selection', () => {
-  it('selects only project-authored fallback visuals in the public release policy', () => {
-    expect(bundledMediaPolicy('release')).toEqual({ bundledModels: false, bundledDashboardVideo: false });
-    expect(bundledMediaPolicy('development')).toEqual({ bundledModels: true, bundledDashboardVideo: true });
+  it('ships only the astronaut model and the dashboard video in the release policy', () => {
+    expect(bundledMediaPolicy('release')).toEqual({
+      bundledModels: true,
+      bundledDashboardVideo: true,
+      releaseModelKeys: ['astronaut'],
+    });
+    expect(bundledMediaPolicy('development')).toEqual({
+      bundledModels: true,
+      bundledDashboardVideo: true,
+      releaseModelKeys: ['astronaut', 'brain', 'heart', 'lungs'],
+    });
   });
 
-  it('keeps local development asset paths available to non-release builds', async () => {
+  it('resolves the approved astronaut model and dashboard video in every mode', async () => {
     expect(hasBundledLocalModel('astronaut')).toBe(true);
     expect(await resolveBundledLocalModelUrl('astronaut')).toBe('/models/astronaut.glb');
     expect(getBundledDashboardVideos().mp4Url).toBe('/videos/dashboard-background.mp4');

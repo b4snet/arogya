@@ -233,24 +233,24 @@ export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
   },
   {
     id: 'asset-procedural-3d',
-    assetName: 'Procedural Astronaut, Organ Illustrations & Mission Spacecraft Fallback',
+    assetName: 'Procedural Astronaut Fallback, Organ Illustrations & Mission Spacecraft Fallback',
     type: '3D Geometry',
     source: 'Arogya-authored Three.js geometry in src/components/three/ProceduralOrganModels.tsx and ProceduralSpaceship.tsx',
     license: 'MIT License (Project Source)',
     notes:
-      'Used by the public release for the Dashboard astronaut and Vitals organ illustrations, and as the automatic Mission fallback when the Programme ERIZON GLB cannot load or WebGL is unavailable. Illustrative project geometry; no third-party model file is used here.',
+      'Used for Vitals organ illustrations, the static astronaut fallback when WebGL or the GLB fails, and the automatic Mission fallback when the Programme ERIZON GLB cannot load. Illustrative project geometry; no third-party model file is used here.',
   },
   {
     id: 'asset-local-astronaut-glb',
-    assetName: 'Astronaut GLB — local development only',
+    assetName: 'Astronaut GLB — dashboard model',
     type: '3D Geometry',
     source: 'Sketchfab metadata embedded in the GLB',
     creator: 'Jungle Jim',
     sourceUrl: 'https://sketchfab.com/3d-models/astronaut-by-jungle-jim-c775a977606a4e4e990afe783c6bc845',
-    license: 'Embedded metadata states CC BY 4.0; source-page verification pending',
+    license: 'License unverified — embedded metadata states CC BY 4.0; source page not independently verified',
     licenseUrl: 'https://creativecommons.org/licenses/by/4.0/',
     notes:
-      'Embedded title: “Astronaut by Jungle Jim”. The Sketchfab source page was not independently accessible during this pass. Not included in the public release; no redistribution permission is inferred from the local file.',
+      'Included in the release as models/astronaut.glb (1,804,556 bytes; SHA-256 b60ccce157bbbda177deda47e29bff248e00765f757ebc9fe04e064e50f96046). Embedded title: “Astronaut by Jungle Jim”. The Sketchfab source page was not independently accessible during this pass, so the embedded licence claim is unverified and no redistribution permission is inferred beyond it.',
   },
   {
     id: 'asset-local-brain-glb',
@@ -296,12 +296,12 @@ export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
   },
   {
     id: 'asset-local-dashboard-video',
-    assetName: 'Dashboard background video — local development only',
+    assetName: 'Dashboard background video',
     type: 'Background Media',
     source: 'Project-provided dashboard-background.mp4',
-    license: 'Unverified; no creator, original source, or license record available',
+    license: 'License unverified — no creator, original source, or license record available',
     notes:
-      'Embedded MP4 metadata contains only the Lavf 63.1.101 encoder tag; it does not identify a creator or license. Kept for local development behavior only. The public release uses a static CSS backdrop and does not request this file.',
+      'Included in the release as videos/dashboard-background.mp4 (965,925 bytes; ≈16.1 s; SHA-256 f3a84c95ed8a17634294e4a6855f14f89c32117d141b9491308129dd70908b0e). Embedded MP4 metadata contains only the Lavf 63.1.101 encoder tag; it does not identify a creator or license. The licence must be verified before relying on this media outside the prototype.',
   },
   {
     id: 'asset-local-unused-aistudio-image',

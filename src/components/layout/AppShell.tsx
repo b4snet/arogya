@@ -1,7 +1,8 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { WifiOff } from 'lucide-react';
 import { SidebarNav } from './SidebarNav';
-import { TopTelemetryBar, SafetyDisclaimerFooter } from './TopTelemetryBar';
+import { TopTelemetryBar } from './TopTelemetryBar';
 import { DriveSyncModal } from './DriveSyncModal';
 import { useArogyaStore } from '../../store/useArogyaStore';
 import { initAuth } from '../../services/firebaseAuth';
@@ -16,6 +17,7 @@ interface AppShellProps {
 export function AppShell({ pageTitle, children }: AppShellProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [driveModalOpen, setDriveModalOpen] = useState(false);
+  const consoleMode = useLocation().pathname === '/';
 
   const hydrateCachedDriveAssets = useArogyaStore((s) => s.hydrateCachedDriveAssets);
   const setDriveAuthState = useArogyaStore((s) => s.setDriveAuthState);
@@ -51,10 +53,18 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
   }, [reducedMotion]);
 
   return (
-    <div className="flex min-h-screen w-full bg-[var(--arogya-bg)] text-[var(--arogya-text-primary)]">
+    <div
+      className={`flex min-h-screen w-full text-[var(--arogya-text-primary)] ${
+        consoleMode ? 'bg-[#02060f]' : 'bg-[var(--arogya-bg)]'
+      }`}
+    >
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-[var(--radius-md)] focus:border focus:border-[var(--arogya-accent-primary)] focus:bg-[var(--arogya-surface)] focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:text-[var(--arogya-accent-primary)] focus:shadow-[var(--arogya-shadow-2)]"
+        className={`sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-[var(--radius-md)] focus:border focus:px-4 focus:py-2.5 focus:text-xs focus:font-semibold focus:shadow-[var(--arogya-shadow-2)] ${
+          consoleMode
+            ? 'focus:border-cyan-300 focus:bg-[#06101d] focus:text-cyan-200'
+            : 'focus:border-[var(--arogya-accent-primary)] focus:bg-[var(--arogya-surface)] focus:text-[var(--arogya-accent-primary)]'
+        }`}
       >
         Skip to main content
       </a>
@@ -68,6 +78,7 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
       <div className="flex min-w-0 flex-1 flex-col">
         <TopTelemetryBar
           pageTitle={pageTitle}
+          consoleMode={consoleMode}
           mobileMenuOpen={mobileMenuOpen}
           onOpenMobileMenu={() => setMobileMenuOpen(true)}
           onOpenDriveModal={() => setDriveModalOpen(true)}
@@ -89,12 +100,12 @@ export function AppShell({ pageTitle, children }: AppShellProps) {
         <main
           id="main-content"
           tabIndex={-1}
-          className="relative min-w-0 flex-1 overflow-x-hidden pb-20 focus:outline-none lg:pb-0"
+          className={`relative min-w-0 flex-1 overflow-x-hidden pb-20 focus:outline-none lg:pb-0 ${
+            consoleMode ? 'bg-[#02060f]' : ''
+          }`}
         >
           {children}
         </main>
-
-        <SafetyDisclaimerFooter />
       </div>
 
       <DriveSyncModal

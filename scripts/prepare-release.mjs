@@ -9,21 +9,26 @@ const outputRoot = join(root, 'dist-release');
 const defaultMaxAssetBytes = 25 * 1024 * 1024;
 // Vercel Hobby static-file upload limit: 100 MB (https://vercel.com/docs/limits).
 const deploymentFileLimitBytes = 100 * 1000 * 1000;
-const programmeErizonProvenance = JSON.parse(
-  await readFile(join(root, 'src/data/programmeErizonProvenance.json'), 'utf8')
-);
 
-// The only supplied media cleared for the public release. The exact byte size and
-// SHA-256 are checked so the original, unmodified file is the only model emitted.
+// The only supplied media cleared for the public release: the dashboard astronaut GLB and
+// the dashboard background video. Exact byte size and SHA-256 are checked so the original,
+// unmodified files are the only non-code assets emitted.
 const runtimeAssets = [
   {
-    path: programmeErizonProvenance.modelPath,
-    bytes: programmeErizonProvenance.bytes,
-    sha256: programmeErizonProvenance.sha256,
+    path: 'models/astronaut.glb',
+    bytes: 1_804_556,
+    sha256: 'b60ccce157bbbda177deda47e29bff248e00765f757ebc9fe04e064e50f96046',
+  },
+  {
+    path: 'videos/dashboard-background.mp4',
+    bytes: 965_925,
+    sha256: 'f3a84c95ed8a17634294e4a6855f14f89c32117d141b9491308129dd70908b0e',
   },
 ];
 const runtimeAssetByPath = new Map(runtimeAssets.map((asset) => [asset.path, asset]));
-const excludedLocalAssetPattern = /(?:^|\/)(?:programme[_-]?erizon|sci-fi_space_station|need_some_space)[^/]*\.(?:glb|gltf|mp4|webm)$/i;
+// Defence in depth: local-only media that must never be swept into the artifact.
+const excludedLocalAssetPattern =
+  /(?:^|\/)(?:programme[_-]?erizon|sci-fi_space_station|need_some_space|brain|heart|lungs)[^/]*\.(?:glb|gltf|mp4|webm)$/i;
 
 async function sha256(file) {
   return createHash('sha256').update(await readFile(file)).digest('hex');
@@ -35,12 +40,12 @@ async function copyAllowlistedAssets() {
     const sourceSize = (await stat(source)).size;
     if (sourceSize !== asset.bytes) {
       throw new Error(
-        `Programme ERIZON source size changed: expected ${asset.bytes}, found ${sourceSize}`
+        `Allowlisted source size changed: ${asset.path} (expected ${asset.bytes}, found ${sourceSize})`
       );
     }
     const sourceHash = await sha256(source);
     if (sourceHash !== asset.sha256) {
-      throw new Error('Programme ERIZON source SHA-256 does not match the recorded provenance');
+      throw new Error(`Allowlisted source SHA-256 does not match the recorded value: ${asset.path}`);
     }
 
     const destination = join(outputRoot, asset.path);
@@ -117,10 +122,10 @@ async function verifyArtifact() {
       throw new Error(`Release asset size changed: ${path} (${size} bytes)`);
     }
     if (!/\.(?:html|js|css)$/i.test(path) && !allowedAsset) {
-      throw new Error(`Unexpected non-code release file (only HTML/JS/CSS plus the allowlisted model are allowed): ${path}`);
+      throw new Error(`Unexpected non-code release file (only HTML/JS/CSS plus the allowlisted astronaut and video are allowed): ${path}`);
     }
     if (allowedAsset && (await sha256(join(outputRoot, path))) !== allowedAsset.sha256) {
-      throw new Error(`Release asset SHA-256 does not match provenance: ${path}`);
+      throw new Error(`Release asset SHA-256 does not match the recorded value: ${path}`);
     }
   }
 
@@ -133,14 +138,11 @@ async function verifyArtifact() {
   if (!/C001_serum_L-3/.test(bundledJs)) {
     throw new Error('NASA OSD-575 sample marker not found in bundled JavaScript');
   }
-  if (/models\/(?:astronaut|brain|heart|lungs|need_some_space|sci-fi_space_station)\.glb|videos\/dashboard-background\.mp4/i.test(bundledJs)) {
-    throw new Error('Release JavaScript references an uncleared local model, video, or poster asset');
+  if (!bundledJs.includes('models/astronaut.glb')) {
+    throw new Error('Release JavaScript does not reference the approved astronaut GLB');
   }
-  if (!bundledJs.includes(programmeErizonProvenance.modelPath)) {
-    throw new Error('Release JavaScript does not reference the approved Programme ERIZON model');
-  }
-  if (!bundledJs.includes(programmeErizonProvenance.title) || !bundledJs.includes(programmeErizonProvenance.licenseShortName)) {
-    throw new Error('Programme ERIZON attribution metadata is missing from release JavaScript');
+  if (!bundledJs.includes('videos/dashboard-background.mp4')) {
+    throw new Error('Release JavaScript does not reference the approved dashboard video');
   }
   if (!bundledJs.includes('Static CSS background')) {
     throw new Error('Intentional static CSS backdrop label missing from release JavaScript');
@@ -149,21 +151,26 @@ async function verifyArtifact() {
     throw new Error('Original CSS starfield fallback missing from release JavaScript');
   }
   if (!bundledJs.includes('Interactive 3D astronaut preview')) {
-    throw new Error('Procedural astronaut preview fallback missing from release JavaScript');
+    throw new Error('Astronaut preview label missing from release JavaScript');
   }
   if (!bundledJs.includes('Illustrative procedural spacecraft')) {
     throw new Error('Intentional procedural spacecraft fallback missing from release JavaScript');
+  }
+  if (!bundledJs.includes('Not live NASA telemetry')) {
+    throw new Error('Simulated-telemetry disclaimer missing from release JavaScript');
   }
   verifyNoCyclicStaticChunks(jsSources);
 
   const totalBytes = (await Promise.all(files.map(async (file) => (await stat(file)).size)))
     .reduce((sum, size) => sum + size, 0);
   console.log(`Release artifact verified: ${files.length} files, ${(totalBytes / 1024 / 1024).toFixed(2)} MiB total.`);
+  for (const asset of runtimeAssets) {
+    console.log(
+      `Allowlisted asset: ${asset.path} — ${asset.bytes} bytes, SHA-256 verified; below the ${deploymentFileLimitBytes}-byte Vercel Hobby static-file limit.`
+    );
+  }
   console.log(
-    `Programme ERIZON: ${programmeErizonProvenance.bytes} bytes, SHA-256 verified; below the ${deploymentFileLimitBytes}-byte Vercel Hobby static-file limit.`
-  );
-  console.log(
-    `All other files are at or below ${defaultMaxAssetBytes} bytes; ${runtimeAssets.length} runtime public asset copied from the allowlist.`
+    `All other files are at or below ${defaultMaxAssetBytes} bytes; ${runtimeAssets.length} runtime public assets copied from the allowlist.`
   );
 }
 

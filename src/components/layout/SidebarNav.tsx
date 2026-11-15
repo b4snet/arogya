@@ -16,6 +16,7 @@ import {
 import { useActiveAssessment } from '../../hooks/useActiveAssessment';
 import { STATUS_META } from '../../engine/thresholds';
 import { AstronautAvatar } from '../ui/AstronautAvatar';
+import { ArogyaMark } from '../ui/ArogyaMark';
 
 interface NavItem {
   to: string;
@@ -27,14 +28,14 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard', shortLabel: 'Home', icon: LayoutDashboard, end: true },
-  { to: '/check-in', label: 'Daily Check-In', shortLabel: 'Check-In', icon: ClipboardCheck },
+  { to: '/check-in', label: 'Check-In', shortLabel: 'Check-In', icon: ClipboardCheck },
   { to: '/vitals', label: 'Vitals', shortLabel: 'Vitals', icon: Activity },
   { to: '/mission', label: 'Mission', shortLabel: 'Mission', icon: Globe2 },
   { to: '/reports', label: 'Reports', shortLabel: 'Reports', icon: FileText },
 ];
 
 const SECONDARY_NAV_ITEMS: NavItem[] = [
-  { to: '/research', label: 'Research Context', shortLabel: 'Research', icon: Database },
+  { to: '/research', label: 'Research', shortLabel: 'Research', icon: Database },
   { to: '/settings', label: 'Settings', shortLabel: 'Settings', icon: Settings },
   { to: '/about', label: 'About & Sources', shortLabel: 'About', icon: BookOpen },
 ];
@@ -140,12 +141,10 @@ export function SidebarNav({ mobileOpen, onCloseMobile, onOpenMobileMenu }: Side
   }, [mobileOpen, onCloseMobile]);
 
   const navContent = (
-    <div className="arogya-chrome flex h-full min-h-0 flex-col bg-[var(--arogya-chrome-bg)] text-[var(--arogya-chrome-text)]">
+    <div className="arogya-chrome flex h-full min-h-0 flex-col text-[var(--arogya-chrome-text)]">
       <div className="flex h-16 shrink-0 items-center gap-3 border-b border-[var(--arogya-chrome-border)] px-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--radius-md)] border border-[var(--arogya-chrome-border)] bg-[var(--arogya-chrome-surface)]">
-          <span className="font-mono-tabular text-sm font-semibold text-[var(--arogya-chrome-accent)]">
-            A
-          </span>
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-cyan-300/25 bg-cyan-300/10 text-cyan-200">
+          <ArogyaMark className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-[13px] font-semibold tracking-tight text-[var(--arogya-chrome-text)]">
@@ -181,7 +180,7 @@ export function SidebarNav({ mobileOpen, onCloseMobile, onOpenMobileMenu }: Side
         />
 
         <p className="arogya-overline px-3 pb-2 text-[var(--arogya-chrome-muted)]">
-          Resources
+          Reference
         </p>
         <nav
           aria-label="Reference and system navigation"
@@ -232,9 +231,11 @@ export function SidebarNav({ mobileOpen, onCloseMobile, onOpenMobileMenu }: Side
     <>
       <aside
         aria-label="Application navigation"
-        className="no-print sticky top-0 hidden h-screen w-[232px] shrink-0 lg:block"
+        className="no-print sticky top-0 z-20 hidden h-screen w-[250px] shrink-0 p-3 lg:block"
       >
-        {navContent}
+        <div className="h-full overflow-hidden rounded-2xl border border-white/10 bg-[#050b18]/55 shadow-[0_24px_70px_-30px_rgba(2,8,20,0.9)] backdrop-blur-xl">
+          {navContent}
+        </div>
       </aside>
 
       {mobileOpen && (
@@ -252,7 +253,7 @@ export function SidebarNav({ mobileOpen, onCloseMobile, onOpenMobileMenu }: Side
           <aside
             ref={drawerRef}
             id="mobile-navigation-drawer"
-            className="arogya-elevation-2 relative z-10 h-full w-[280px] max-w-[86vw]"
+            className="arogya-elevation-2 relative z-10 h-full w-[280px] max-w-[86vw] bg-[var(--arogya-chrome-bg)]"
           >
             {navContent}
           </aside>

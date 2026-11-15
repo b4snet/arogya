@@ -479,7 +479,7 @@ export function AboutPage() {
       <Card padding="md" className="space-y-4">
         <CardHeader
           title="Third-Party Asset Attribution & Media Inventory"
-          subtitle={`Public procedural visuals, local-only media records, typography, and ${allAssets.length} synced Google Drive item(s)`}
+          subtitle={`Shipped dashboard media, procedural fallbacks, typography, and ${allAssets.length} synced Google Drive item(s)`}
         />
 
         <div className="space-y-3">

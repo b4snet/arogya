@@ -11,13 +11,8 @@ import {
 } from 'lucide-react';
 import { useActiveAssessment } from '../hooks/useActiveAssessment';
 import { useArogyaStore } from '../store/useArogyaStore';
-import { Button, EmptyState } from '../components/ui';
-import { DashboardMissionStrip } from '../components/dashboard/DashboardMissionStrip';
-import { DashboardProfileTodayCard } from '../components/dashboard/DashboardProfileTodayCard';
-import { LiveMonitorPanel } from '../components/monitor/LiveMonitorPanel';
-import { CountermeasureCoachPanel } from '../components/recovery/CountermeasureCoachPanel';
-import { RecoveryReadinessPanel } from '../components/recovery/RecoveryReadinessPanel';
-import { RecoveryReadinessSummary } from '../components/recovery/RecoveryReadinessSummary';
+import { DashboardVideoBackdrop } from '../components/dashboard/DashboardVideoBackdrop';
+import { ConsoleTelemetryGrid } from '../components/dashboard/ConsoleTelemetryGrid';
 import { MissionMonitorScene } from '../components/three/MissionMonitorScene';
 
 export function DashboardPage() {
@@ -26,180 +21,151 @@ export function DashboardPage() {
 
   const [alertsTrayOpen, setAlertsTrayOpen] = useState(false);
 
-  const latestCheckIn = checkIns14d[checkIns14d.length - 1];
   const hasNoCrewData = checkIns14d.length === 0 && vitals14d.length === 0;
 
   return (
-    <div className="mx-auto max-w-[1680px] space-y-4 p-3.5 sm:p-5 lg:p-6">
-      <header className="min-w-0">
-        <p className="arogya-overline text-[var(--arogya-text-muted)]">Live mission monitor</p>
-        <h1 className="arogya-display mt-1 text-[var(--arogya-text-primary)]">
-          Mission Health Dashboard
-        </h1>
-        <p className="mt-1 max-w-3xl text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
-          {astronaut.fullName} · {mission.name} · Sol {mission.currentDay} — today’s recovery
-          readiness is derived from recorded check-ins and vitals.
-        </p>
-      </header>
+    <div className="relative min-h-[calc(100vh-60px)] overflow-hidden bg-[#02060f] text-slate-100">
+      <DashboardVideoBackdrop />
 
-      {assessment.escalationRequired && (
-        <div
-          role="alert"
-          className="flex flex-col gap-3 rounded-2xl border border-[#DC2626]/40 bg-[#FEF2F2] p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
-        >
-          <div className="flex items-start gap-3">
-            <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#DC2626]" aria-hidden="true" />
-            <div>
-              <p className="text-xs font-bold uppercase tracking-wider text-[#DC2626]">
-                Recorded observations exceed an escalation threshold
-              </p>
-              <p className="mt-0.5 text-xs text-[var(--arogya-text-secondary)] sm:text-sm">
-                {assessment.escalationReasons[0] ??
-                  'A recorded deviation exceeds the configured safety boundary. Notify the Crew Medical Lead.'}
-              </p>
-            </div>
+      <div className="relative z-10 mx-auto w-full max-w-[1680px] px-3 py-3 sm:px-5 sm:py-5 lg:px-6 lg:py-6">
+        <h1 className="sr-only">Mission Health Dashboard</h1>
+
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-2 px-1">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-300/80">
+              ARES-7 · Mission control
+            </p>
+            <p className="mt-0.5 text-lg font-semibold tracking-tight text-white sm:text-xl">
+              Crew health console
+            </p>
           </div>
+          <p className="font-mono-tabular text-[10px] text-slate-400">
+            {astronaut.callSign} · Sol {mission.currentDay} · {mission.phase}
+          </p>
+        </div>
 
-          <Link
-            to="/reports?escalate=1"
-            className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-xl bg-[#DC2626] px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#B91C1C]"
+        {assessment.escalationRequired && (
+          <div
+            role="alert"
+            className="mb-3 flex flex-col gap-3 rounded-2xl border border-red-400/30 bg-red-500/10 p-4 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between"
           >
-            <span>Open escalation brief</span>
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-          </Link>
-        </div>
-      )}
-
-      {hasNoCrewData && (
-        <EmptyState
-          icon={<Activity className="h-5 w-5" />}
-          title={`No Check-In or Vitals Logged Yet for ${astronaut.fullName}`}
-          description="The live monitor runs on a demonstration stream. Record a daily crew check-in or load the demo mission dataset to review recorded health trends."
-          action={
-            <Link
-              to="/check-in"
-              className="inline-flex min-h-[40px] items-center rounded-lg bg-[#1E3A5F] px-4 text-xs font-semibold text-white transition-colors hover:bg-[#2D4A6F]"
-            >
-              Start Daily Check-In
-            </Link>
-          }
-          secondaryAction={
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              leftIcon={<RotateCcw className="h-3.5 w-3.5" />}
-              onClick={resetDemoData}
-            >
-              Load Demo Mission
-            </Button>
-          }
-        />
-      )}
-
-      {assessment.alerts.length > 0 && !assessment.escalationRequired && (
-        <div className="rounded-2xl border border-[#CA8A04]/25 bg-[#FFFBEB] px-4 py-2.5">
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <AlertTriangle className="h-4 w-4 shrink-0 text-[#CA8A04]" aria-hidden="true" />
-              <span className="truncate text-xs font-medium text-[#92400E]">
-                {assessment.alerts.length} recorded observation
-                {assessment.alerts.length === 1 ? '' : 's'} flagged
-              </span>
+            <div className="flex items-start gap-3">
+              <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-red-300" aria-hidden="true" />
+              <div>
+                <p className="text-xs font-bold uppercase tracking-wider text-red-200">
+                  Logged observations exceed an escalation threshold
+                </p>
+                <p className="mt-0.5 text-xs text-slate-300 sm:text-sm">
+                  {assessment.escalationReasons[0] ??
+                    'A logged deviation exceeds the configured safety boundary. Notify the Crew Medical Lead.'}
+                </p>
+              </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setAlertsTrayOpen((prev) => !prev)}
-              className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-[#1E3A5F] hover:text-[var(--arogya-text-primary)]"
+
+            <Link
+              to="/reports?escalate=1"
+              className="inline-flex min-h-[40px] shrink-0 items-center justify-center gap-1.5 rounded-xl bg-red-500 px-4 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-red-400"
             >
-              <span>{alertsTrayOpen ? 'Hide findings' : 'View findings'}</span>
-              {alertsTrayOpen ? (
-                <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
-              )}
-            </button>
+              <span>Open escalation brief</span>
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+            </Link>
           </div>
+        )}
 
-          {alertsTrayOpen && (
-            <ul className="mt-3 divide-y divide-[var(--arogya-border)] border-t border-[var(--arogya-border)] pt-2 text-xs">
-              {assessment.alerts.map((alert) => (
-                <li key={alert.id} className="py-2">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold text-[var(--arogya-text-primary)]">
-                      {alert.title}
-                    </span>
-                    <span className="font-mono-tabular text-[10px] uppercase text-[#CA8A04]">
-                      {alert.severity}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-[var(--arogya-text-secondary)]">{alert.rationale}</p>
-                </li>
-              ))}
-            </ul>
-          )}
+        {hasNoCrewData && (
+          <div className="mb-3 flex flex-col gap-3 rounded-2xl border border-sky-300/15 bg-white/[0.045] p-4 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <Activity className="mt-0.5 h-5 w-5 shrink-0 text-sky-300" aria-hidden="true" />
+              <div>
+                <p className="text-sm font-semibold text-white">
+                  No check-in or vitals logged yet for {astronaut.fullName}
+                </p>
+                <p className="mt-0.5 text-xs text-slate-300">
+                  Log a daily check-in or load the demo mission dataset to review health trends in
+                  the reports.
+                </p>
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap items-center gap-2">
+              <Link
+                to="/check-in"
+                className="inline-flex min-h-[36px] items-center rounded-lg bg-cyan-300 px-3 text-xs font-bold text-[#03141c] transition-colors hover:bg-cyan-200"
+              >
+                Start check-in
+              </Link>
+              <button
+                type="button"
+                onClick={resetDemoData}
+                className="inline-flex min-h-[36px] items-center gap-1.5 rounded-lg border border-white/20 bg-white/5 px-3 text-xs font-semibold text-white transition-colors hover:bg-white/10"
+              >
+                <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
+                Load demo mission
+              </button>
+            </div>
+          </div>
+        )}
+
+        {assessment.alerts.length > 0 && !assessment.escalationRequired && (
+          <div className="mb-3 rounded-2xl border border-amber-300/25 bg-amber-400/10 px-4 py-2.5 backdrop-blur-md">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <AlertTriangle className="h-4 w-4 shrink-0 text-amber-300" aria-hidden="true" />
+                <span className="truncate text-xs font-medium text-amber-100">
+                  {assessment.alerts.length} logged observation
+                  {assessment.alerts.length === 1 ? '' : 's'} flagged
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAlertsTrayOpen((prev) => !prev)}
+                className="inline-flex shrink-0 items-center gap-1 text-xs font-semibold text-sky-200 hover:text-white"
+              >
+                <span>{alertsTrayOpen ? 'Hide findings' : 'View findings'}</span>
+                {alertsTrayOpen ? (
+                  <ChevronUp className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+              </button>
+            </div>
+
+            {alertsTrayOpen && (
+              <ul className="mt-3 divide-y divide-white/10 border-t border-white/10 pt-2 text-xs">
+                {assessment.alerts.map((alert) => (
+                  <li key={alert.id} className="py-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-semibold text-white">{alert.title}</span>
+                      <span className="font-mono-tabular text-[10px] uppercase text-amber-300">
+                        {alert.severity}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-slate-300">{alert.rationale}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-12 lg:items-stretch">
+          <div className="lg:col-span-7">
+            <MissionMonitorScene
+              status={assessment.overallStatus}
+              astronautName={astronaut.fullName}
+            />
+          </div>
+          <div className="lg:col-span-5">
+            <ConsoleTelemetryGrid astronaut={astronaut} mission={mission} />
+          </div>
         </div>
-      )}
 
-      {/* Hero: floating astronaut paired with the live monitor and today's readiness */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <div className="order-1 lg:col-span-7">
-          <MissionMonitorScene
-            status={assessment.overallStatus}
-            astronautName={astronaut.fullName}
-          />
-        </div>
-
-        <RecoveryReadinessSummary
-          astronaut={astronaut}
-          missionDay={mission.currentDay}
-          checkIns={checkIns14d}
-          vitals={vitals14d}
-          escalationRequired={assessment.escalationRequired}
-          escalationReasons={assessment.escalationReasons}
-          className="order-2 lg:order-3 lg:col-span-12"
-        />
-
-        <div className="order-3 min-w-0 lg:order-2 lg:col-span-5">
-          <LiveMonitorPanel astronaut={astronaut} latestCheckIn={latestCheckIn} />
-        </div>
+        <p className="mt-3 px-1 text-[10px] leading-relaxed text-slate-500">
+          Simulated mission-control demonstration. Values are generated locally for interface
+          testing and are not live NASA telemetry. Arogya is an independent prototype, not made,
+          reviewed, or endorsed by NASA. Readiness and health content remain educational decision
+          support, not medical advice.
+        </p>
       </div>
-
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <DashboardMissionStrip mission={mission} />
-        </div>
-        <div className="lg:col-span-5">
-          <DashboardProfileTodayCard
-            astronaut={astronaut}
-            assessment={assessment}
-            latestCheckIn={latestCheckIn}
-            missionDay={mission.currentDay}
-          />
-        </div>
-      </div>
-
-      <RecoveryReadinessPanel
-        astronaut={astronaut}
-        missionDay={mission.currentDay}
-        checkIns={checkIns14d}
-        vitals={vitals14d}
-        escalationRequired={assessment.escalationRequired}
-        escalationReasons={assessment.escalationReasons}
-      />
-
-      <CountermeasureCoachPanel
-        astronaut={astronaut}
-        missionDay={mission.currentDay}
-        checkIns={checkIns14d}
-      />
-
-      <p className="text-[11px] leading-relaxed text-[var(--arogya-text-muted)]">
-        The monitor above is a seeded demonstration stream: heart rate, oxygen saturation and
-        intermittent cuff values are simulated for interface evaluation, never written into
-        recorded observations, and never included in a medical report. Recorded observations remain
-        available on Vitals and Reports.
-      </p>
     </div>
   );
 }

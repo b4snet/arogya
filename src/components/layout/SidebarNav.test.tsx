@@ -23,7 +23,7 @@ test('mission operations stay primary while research and system pages are second
   assert.ok(primaryStart >= 0 && secondaryStart > primaryStart, 'both navigation groups render');
 
   const primary = html.slice(primaryStart, secondaryStart);
-  for (const label of ['Dashboard', 'Daily Check-In', 'Vitals', 'Mission', 'Reports']) {
+  for (const label of ['Dashboard', 'Check-In', 'Vitals', 'Mission', 'Reports']) {
     assert.match(primary, new RegExp(`>${label.replace('-', '\\-')}<`));
   }
   assert.doesNotMatch(primary, /Research Context/);
@@ -31,7 +31,7 @@ test('mission operations stay primary while research and system pages are second
   assert.doesNotMatch(primary, /About &amp; Sources/);
 
   const secondary = html.slice(secondaryStart);
-  assert.match(secondary, /Research Context/);
+  assert.match(secondary, />Research</);
   assert.match(secondary, /Settings/);
   assert.match(secondary, /About &amp; Sources/);
 

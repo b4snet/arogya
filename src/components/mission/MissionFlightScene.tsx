@@ -20,10 +20,6 @@ import {
 import { VehicleGltfModel, type VehicleModelResult } from '../three/VehicleGltfModel';
 import { detectWebGLCapability } from '../three/StudioLightingRig';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import {
-  MissionSceneFallback,
-  type MissionSceneFailure,
-} from './MissionSceneFallback';
 import { ProgrammeErizonAttribution } from './ProgrammeErizonAttribution';
 
 class MissionCanvasBoundary extends Component<{
@@ -229,10 +225,9 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
   const [modelDetail, setModelDetail] = useState<string | null>(null);
   const [modelProgress, setModelProgress] = useState<number | null>(null);
   const [modelRadius, setModelRadius] = useState(3.3);
-  const [webglFailure, setWebglFailure] = useState<MissionSceneFailure | null>(() =>
-    detectWebGLCapability() === 'unavailable' ? 'webgl-unavailable' : null
+  const [webglUnavailable, setWebglUnavailable] = useState(
+    () => detectWebGLCapability() === 'unavailable'
   );
-  const [canvasAttempt, setCanvasAttempt] = useState(0);
   const [renderRevision, setRenderRevision] = useState(0);
 
   const candidates = useMemo(
@@ -319,15 +314,6 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
     controlsRef.current.update();
   };
 
-  const retryCanvas = () => {
-    setWebglFailure(null);
-    setCanvasAttempt((attempt) => attempt + 1);
-    setModelStatus('loading');
-    setModelSource('procedural');
-    setModelProgress(null);
-    setModelDetail(null);
-  };
-
   return (
     <section aria-labelledby="mission-flight-scene-heading" className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-2">
@@ -345,6 +331,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
       </div>
 
       {/* Full content-width scene */}
+      {!webglUnavailable && (
       <div
         ref={wrapperRef}
         tabIndex={0}
@@ -354,19 +341,9 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
         role="region"
         aria-label={`Illustrative 3D flight scene for the ${vehicleName}. Focus this scene and use arrow keys to orbit. Simulated mission context, not live telemetry.`}
       >
-        {webglFailure ? (
-          <MissionSceneFallback failure={webglFailure} overlay={overlay} onRetry={retryCanvas} />
-        ) : (
         <MissionCanvasBoundary
-          key={canvasAttempt}
-          onError={() => setWebglFailure('webgl-unavailable')}
-          fallback={
-            <MissionSceneFallback
-              failure="webgl-unavailable"
-              overlay={overlay}
-              onRetry={retryCanvas}
-            />
-          }
+          onError={() => setWebglUnavailable(true)}
+          fallback={null}
         >
         <Canvas
           frameloop={animate ? 'always' : 'demand'}
@@ -374,7 +351,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
           camera={{ position: [0, 1.2, 6.4], fov: 40, near: 0.1, far: 80 }}
           gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         >
-          <CanvasContextLossMonitor onLost={() => setWebglFailure('context-lost')} />
+          <CanvasContextLossMonitor onLost={() => setWebglUnavailable(true)} />
           <FrameInvalidator revision={renderRevision} />
           <ambientLight intensity={0.45} />
           <hemisphereLight args={['#bfdbfe', '#020617', 0.55]} />
@@ -408,11 +385,8 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
           />
         </Canvas>
         </MissionCanvasBoundary>
-        )}
 
         {/* Scene title + view controls (wraps instead of overlapping on narrow screens) */}
-        {!webglFailure && (
-        <>
         <div className="pointer-events-none absolute inset-x-2 top-2 flex flex-wrap items-start justify-between gap-2 sm:inset-x-3 sm:top-3">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <span className="rounded-full border border-white/15 bg-[#0b1220]/85 px-2.5 py-1 text-[10px] font-semibold text-slate-100 sm:px-3 sm:text-[11px]">
@@ -570,9 +544,8 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
             {overlay.velocityLabel}. {MISSION_NOT_LIVE_NOTE}
           </p>
         </div>
-        </>
-        )}
       </div>
+      )}
 
       <ProgrammeErizonAttribution />
 

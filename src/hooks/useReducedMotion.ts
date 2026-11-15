@@ -3,9 +3,16 @@ import { useArogyaStore } from '../store/useArogyaStore';
 
 export function useReducedMotion(): boolean {
   const override = useArogyaStore((s) => s.preferences.reducedMotionOverride);
-  const [systemReduced, setSystemReduced] = useState(false);
+  // Read synchronously so motion-reducing users never mount animated media for a first frame.
+  const [systemReduced, setSystemReduced] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  );
 
   useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     setSystemReduced(mq.matches);
     const listener = (e: MediaQueryListEvent) => setSystemReduced(e.matches);
