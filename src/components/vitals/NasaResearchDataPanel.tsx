@@ -40,7 +40,7 @@ export function NasaResearchDataPanel() {
 
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
-            This Vitals view shows one source subject at a time. The Research Library adds cohort
+            This Vitals view shows one source subject at a time. Research Context adds cohort
             coverage, analyte search, and NASA reference context.
           </p>
           <Link
@@ -48,7 +48,7 @@ export function NasaResearchDataPanel() {
             className="inline-flex min-h-9 items-center gap-1.5 rounded-lg border border-[var(--arogya-info-border)] bg-[var(--arogya-info-soft)] px-3 text-xs font-semibold text-[var(--arogya-info)] hover:bg-white"
           >
             <BookOpen className="h-3.5 w-3.5" aria-hidden="true" />
-            Open full research library
+            Open research context
           </Link>
         </div>
 

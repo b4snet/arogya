@@ -5,7 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { NasaResearchDataPanel } from './NasaResearchDataPanel';
 
-test('renders a source-traceable NASA result, research labels, and a link to the research library', () => {
+test('renders a source-traceable NASA result, research labels, and a link to research context', () => {
   const html = renderToStaticMarkup(
     createElement(MemoryRouter, null, createElement(NasaResearchDataPanel))
   );
@@ -14,7 +14,7 @@ test('renders a source-traceable NASA result, research labels, and a link to the
   assert.match(html, /These are archived serum research measurements, not live sensor readings/);
   assert.match(html, /Source subject/);
   assert.match(html, /C001_serum_L-3/);
-  assert.match(html, /Open full research library/);
+  assert.match(html, /Open research context/);
   assert.match(html, /href="\/research"/);
   const sampleStart = html.indexOf('C001_serum_L-3');
   const sampleRowEnd = html.indexOf('</tr>', sampleStart);

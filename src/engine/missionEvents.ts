@@ -239,7 +239,7 @@ function buildResearchEvent(input: MissionEventFeedInput): MissionEvent {
     description,
     source: 'research',
     link: '/research',
-    linkLabel: 'Research Library',
+    linkLabel: 'Research Context',
   };
 }
 

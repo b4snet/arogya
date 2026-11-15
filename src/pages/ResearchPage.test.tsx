@@ -5,13 +5,14 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router-dom';
 import { ResearchPage } from './ResearchPage';
 
-test('renders the NASA research library, source boundaries, coverage, and reference catalog', () => {
+test('renders the secondary research context view, source boundaries, coverage, and reference catalog', () => {
   const html = renderToStaticMarkup(
     createElement(MemoryRouter, null, createElement(ResearchPage))
   );
 
-  assert.match(html, /NASA Research Library/);
-  assert.match(html, /NASA OSDR · Archived research library/);
+  assert.match(html, /Research Context/);
+  assert.match(html, /NASA OSDR · Archived research context/);
+  assert.match(html, /no model is trained on it/i);
   assert.match(html, /Research boundaries/);
   assert.match(html, /not live telemetry/i);
   assert.match(html, /OSD-575 · Inspiration4 serum CMP/);

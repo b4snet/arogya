@@ -39,6 +39,7 @@ import { MissionFlightScene } from '../components/mission/MissionFlightScene';
 import { MissionPhaseTimeline } from '../components/mission/MissionPhaseTimeline';
 import { CrewMissionStatusPanel } from '../components/mission/CrewMissionStatusPanel';
 import { MissionEventFeed } from '../components/mission/MissionEventFeed';
+import { MissionHealthPanels } from '../components/mission/MissionHealthPanels';
 import { buildMissionPhaseTimeline } from '../engine/missionPhases';
 
 function formatDateShort(iso: string): string {
@@ -321,6 +322,13 @@ export function MissionPage() {
           />
         </div>
       </div>
+
+      <MissionHealthPanels
+        astronaut={astronaut}
+        missionDay={telemetry.missionDay}
+        vitals={vitals14d}
+        checkIns={activeCheckIns}
+      />
 
       {/* Transfer geometry (simplified model, not ephemeris) */}
       <Card padding="md">

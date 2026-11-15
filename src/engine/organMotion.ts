@@ -276,6 +276,64 @@ export function buildOrganSystemStatuses(
   return result;
 }
 
+export type BrainActivitySource = 'simulated_workload' | 'recorded_focus' | 'demonstration';
+
+export interface BrainActivityTiming {
+  /** Displayed illustrative pulses per minute. Never a neural measurement. */
+  ratePerMinute: number;
+  hertz: number;
+  source: BrainActivitySource;
+  sourceLabel: string;
+  isDemonstration: boolean;
+}
+
+export const DEMONSTRATION_BRAIN_ACTIVITY_PER_MIN = 24;
+
+function clampActivityHz(ratePerMinute: number): number {
+  return Math.min(1.6, Math.max(0.3, ratePerMinute / 60));
+}
+
+/**
+ * Brain illustration pacing. No neural signal, EEG or cognitive measurement exists in this
+ * build, so the rhythm is either tied to a clearly simulated workload scenario, loosely paced
+ * from a recorded self-reported focus score, or labelled as a demonstration.
+ */
+export function resolveBrainTiming(params: {
+  simulatedScenario?: string | null;
+  recordedCognitiveFocus?: number | null;
+}): BrainActivityTiming {
+  if (params.simulatedScenario === 'high_workload' || params.simulatedScenario === 'synthetic_anomaly') {
+    const ratePerMinute = params.simulatedScenario === 'synthetic_anomaly' ? 38 : 34;
+    return {
+      ratePerMinute,
+      hertz: clampActivityHz(ratePerMinute),
+      source: 'simulated_workload',
+      sourceLabel: `Illustrative activity rhythm synchronized to the simulated ${params.simulatedScenario === 'synthetic_anomaly' ? 'synthetic-anomaly' : 'high-workload'} scenario — not EEG or a brain measurement`,
+      isDemonstration: true,
+    };
+  }
+
+  const focus = params.recordedCognitiveFocus;
+  if (typeof focus === 'number' && Number.isFinite(focus) && focus >= 1 && focus <= 5) {
+    const ratePerMinute = 18 + Math.round(focus) * 4;
+    return {
+      ratePerMinute,
+      hertz: clampActivityHz(ratePerMinute),
+      source: 'recorded_focus',
+      sourceLabel: `Illustrative rhythm paced from the latest recorded cognitive-focus score (${focus}/5) — not EEG or a brain measurement`,
+      isDemonstration: false,
+    };
+  }
+
+  return {
+    ratePerMinute: DEMONSTRATION_BRAIN_ACTIVITY_PER_MIN,
+    hertz: clampActivityHz(DEMONSTRATION_BRAIN_ACTIVITY_PER_MIN),
+    source: 'demonstration',
+    sourceLabel: `Demonstration activity rhythm (${DEMONSTRATION_BRAIN_ACTIVITY_PER_MIN} pulses/min) — no neural signal recorded`,
+    isDemonstration: true,
+  };
+}
+
 export type OrganRenderMode = 'animated' | 'static' | 'fallback';
 
 /**
@@ -296,15 +354,19 @@ export function resolveOrganRenderMode(params: {
 
 /** Screen-reader summary: a complete text equivalent of the illustration state. */
 export function describeOrganMotionText(params: {
-  organ: 'heart' | 'lungs';
+  organ: 'heart' | 'lungs' | 'brain';
   heart: OrganMotionTiming;
   lungs: OrganMotionTiming;
+  brain?: BrainActivityTiming;
   selectedFinding: OrganFinding | null;
   renderMode: OrganRenderMode;
 }): string {
   const heartLine = `Heart illustration: gentle contraction and relaxation at ${params.heart.ratePerMinute} per minute. ${params.heart.sourceLabel}.`;
   const lungLine = `Lung illustration: gentle expansion and contraction at ${params.lungs.ratePerMinute} breaths per minute. ${params.lungs.sourceLabel}.`;
-  const organLine = `Currently showing the ${params.organ} illustration. ${heartLine} ${lungLine}`;
+  const brainLine = params.brain
+    ? `Brain illustration: subtle activity pulses at ${params.brain.ratePerMinute} per minute. ${params.brain.sourceLabel}.`
+    : '';
+  const organLine = `Currently showing the ${params.organ} illustration. ${heartLine} ${lungLine} ${brainLine}`;
 
   const stateLine =
     params.renderMode === 'animated'
@@ -317,7 +379,7 @@ export function describeOrganMotionText(params: {
     ? ` Selected finding: ${params.selectedFinding.measurementName} ${params.selectedFinding.valueLabel}, flag ${params.selectedFinding.statusLabel}. Related body system: ${params.selectedFinding.system.label}. This is not a disease location.`
     : ' No flagged measurement is selected.';
 
-  return `${organLine} ${stateLine}${findingLine} ${ORGAN_MOTION_DISCLAIMER}`;
+  return `${organLine} ${stateLine}${findingLine} A highlighted organ is a related body system, never a disease location. ${ORGAN_MOTION_DISCLAIMER}`;
 }
 
 /** Latest respiratory-rate observation carried on a vital reading, if any. */

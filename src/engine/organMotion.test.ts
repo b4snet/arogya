@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'vitest';
 import type { VitalReferenceRow } from './vitalsReference';
 import {
+  DEMONSTRATION_BRAIN_ACTIVITY_PER_MIN,
   DEMONSTRATION_HEART_RATE_BPM,
   DEMONSTRATION_RESPIRATORY_RATE_PER_MIN,
   ORGAN_MOTION_DISCLAIMER,
@@ -11,6 +12,7 @@ import {
   describeOrganMotionText,
   mapMeasurementToSystem,
   recordedRespiratoryRateFrom,
+  resolveBrainTiming,
   resolveHeartTiming,
   resolveLungTiming,
   resolveOrganRenderMode,
@@ -198,6 +200,36 @@ test('text equivalent states the source, the system and the disclaimer', () => {
   assert.match(text, /Cardiovascular system/);
   assert.match(text, /not a disease location/i);
   assert.match(text, /Animation is running/);
+});
+
+test('brain illustration pacing is always labeled as illustrative', () => {
+  const workload = resolveBrainTiming({ simulatedScenario: 'high_workload' });
+  assert.equal(workload.source, 'simulated_workload');
+  assert.ok(workload.ratePerMinute > DEMONSTRATION_BRAIN_ACTIVITY_PER_MIN);
+  assert.match(workload.sourceLabel, /not EEG/i);
+  assert.ok(workload.isDemonstration);
+
+  const focus = resolveBrainTiming({ recordedCognitiveFocus: 5 });
+  assert.equal(focus.source, 'recorded_focus');
+  assert.match(focus.sourceLabel, /not EEG or a brain measurement/i);
+
+  const demo = resolveBrainTiming({});
+  assert.equal(demo.source, 'demonstration');
+  assert.match(demo.sourceLabel, /no neural signal recorded/i);
+});
+
+test('brain text equivalent never implies a neural recording or diagnosis', () => {
+  const text = describeOrganMotionText({
+    organ: 'brain',
+    heart: resolveHeartTiming({ recordedHeartRateBpm: 62 }),
+    lungs: resolveLungTiming({ recordedRespiratoryRatePerMin: 13 }),
+    brain: resolveBrainTiming({ simulatedScenario: 'synthetic_anomaly' }),
+    selectedFinding: null,
+    renderMode: 'animated',
+  });
+  assert.match(text, /Brain illustration/i);
+  assert.match(text, /not EEG/i);
+  assert.match(text, /never a disease location/i);
 });
 
 test('the panel reads real flagged vitals without inventing localization', () => {

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import {
   Activity,
   BookOpen,
@@ -15,16 +16,48 @@ import { useActiveAssessment } from '../../hooks/useActiveAssessment';
 import { AstronautAvatar } from '../ui/AstronautAvatar';
 import { StatusPill, healthStatusToTone } from '../ui/StatusPill';
 
-const NAV_ITEMS = [
+interface NavItem {
+  to: string;
+  label: string;
+  shortLabel: string;
+  icon: LucideIcon;
+  end?: boolean;
+}
+
+const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard', shortLabel: 'Home', icon: LayoutDashboard, end: true },
   { to: '/check-in', label: 'Daily Check-In', shortLabel: 'Check-In', icon: ClipboardCheck },
   { to: '/vitals', label: 'Vitals', shortLabel: 'Vitals', icon: Activity },
-  { to: '/reports', label: 'Reports', shortLabel: 'Reports', icon: FileText },
   { to: '/mission', label: 'Mission', shortLabel: 'Mission', icon: Globe2 },
-  { to: '/research', label: 'Research Library', shortLabel: 'Research', icon: Database },
+  { to: '/reports', label: 'Reports', shortLabel: 'Reports', icon: FileText },
+];
+
+const SECONDARY_NAV_ITEMS: NavItem[] = [
+  { to: '/research', label: 'Research Context', shortLabel: 'Research', icon: Database },
   { to: '/settings', label: 'Settings', shortLabel: 'Settings', icon: Settings },
   { to: '/about', label: 'About & Sources', shortLabel: 'About', icon: BookOpen },
 ];
+
+function SidebarLink({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
+  const Icon = item.icon;
+  return (
+    <NavLink
+      to={item.to}
+      end={item.end}
+      onClick={onNavigate}
+      className={({ isActive }) =>
+        `flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors duration-150 whitespace-nowrap ${
+          isActive
+            ? 'border border-[#1E3A5F]/20 bg-[#1E3A5F]/8 text-[#1E3A5F] shadow-sm'
+            : 'border border-transparent text-[var(--arogya-text-secondary)] hover:bg-[var(--arogya-bg)] hover:text-[var(--arogya-text-primary)]'
+        }`
+      }
+    >
+      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+      <span>{item.label}</span>
+    </NavLink>
+  );
+}
 
 interface SidebarNavProps {
   mobileOpen: boolean;
@@ -80,27 +113,21 @@ export function SidebarNav({ mobileOpen, onCloseMobile }: SidebarNavProps) {
         </div>
 
         <nav aria-label="Primary Navigation" className="space-y-1">
-          {NAV_ITEMS.map((item) => {
-            const Icon = item.icon;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                end={item.end}
-                onClick={onCloseMobile}
-                className={({ isActive }) =>
-                  `flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors duration-150 whitespace-nowrap ${
-                    isActive
-                      ? 'border border-[#1E3A5F]/20 bg-[#1E3A5F]/8 text-[#1E3A5F] shadow-sm'
-                      : 'border border-transparent text-[var(--arogya-text-secondary)] hover:bg-[var(--arogya-bg)] hover:text-[var(--arogya-text-primary)]'
-                  }`
-                }
-              >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span>{item.label}</span>
-              </NavLink>
-            );
-          })}
+          {NAV_ITEMS.map((item) => (
+            <SidebarLink key={item.to} item={item} onNavigate={onCloseMobile} />
+          ))}
+        </nav>
+
+        <nav
+          aria-label="Reference and system navigation"
+          className="mt-5 space-y-1 border-t border-[var(--arogya-border)] pt-4"
+        >
+          <p className="px-3 pb-1 text-[10px] font-medium uppercase tracking-wider text-[var(--arogya-text-muted)]">
+            Reference
+          </p>
+          {SECONDARY_NAV_ITEMS.map((item) => (
+            <SidebarLink key={item.to} item={item} onNavigate={onCloseMobile} />
+          ))}
         </nav>
       </div>
 

@@ -3,7 +3,7 @@ import type { Mission } from '../types';
 export const SEED_MISSION: Mission = {
   id: 'ARES-7-MARS',
   name: 'ARES-7 Transit',
-  vehicleName: 'DSV Endurance',
+  vehicleName: 'Programme ERIZON',
   phase: 'transit',
   currentDay: 14,
   totalPlannedDays: 260,

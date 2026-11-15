@@ -63,15 +63,16 @@ export function ResearchPage() {
     <div className="mx-auto max-w-6xl space-y-6 p-4 sm:p-6">
       <header className="border-b border-[var(--arogya-border)] pb-5">
         <p className="text-xs font-medium text-[var(--arogya-info)]">
-          NASA OSDR · Archived research library
+          NASA OSDR · Archived research context
         </p>
         <h1 className="arogya-display mt-1 text-[var(--arogya-text-primary)]">
-          NASA Research Library
+          Research Context
         </h1>
         <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[var(--arogya-text-secondary)]">
-          Explore the bundled OSD-575 Inspiration4 serum comprehensive metabolic panel and the NASA
-          references that frame Arogya&apos;s monitoring questions. Data is bundled at build time; no
-          live NASA connection is used.
+          A secondary reference view of the bundled OSD-575 Inspiration4 serum comprehensive
+          metabolic panel and the NASA references that frame Arogya&apos;s monitoring questions.
+          This dataset provides context and reference ranges only; no model is trained on it. Data
+          is bundled at build time; no live NASA connection is used.
         </p>
       </header>
 
@@ -99,7 +100,7 @@ export function ResearchPage() {
         </div>
       </Card>
 
-      <section aria-label="NASA research library summary" className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+      <section aria-label="NASA research context summary" className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
         {metrics.map(({ label, value, unit, icon: Icon }) => (
           <Card key={label} padding="sm" className="min-w-0">
             <div className="flex items-start justify-between gap-2">

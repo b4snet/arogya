@@ -260,10 +260,12 @@ export function VitalsPage() {
             )}
           </div>
           <h1 className="arogya-display text-[var(--arogya-text-primary)]">
-            Biometric Vitals & Reference Surveillance
+            Vitals Monitor
           </h1>
           <p className="max-w-3xl text-sm text-[var(--arogya-text-secondary)]">
-            Longitudinal vital-sign tracking compares personal crew baselines separately from general reference ranges. {SAFETY_DISCLAIMER}
+            A large illustrative organ view beside recorded and simulated-live readouts. Longitudinal
+            tracking compares personal crew baselines separately from general reference ranges.{' '}
+            {SAFETY_DISCLAIMER}
           </p>
         </div>
 
@@ -476,6 +478,14 @@ export function VitalsPage() {
         </Card>
       </div>
 
+      {/* Large procedural organ monitor with readouts */}
+      <OrganMotionPanel
+        astronaut={astronaut}
+        latestVital={latest ?? null}
+        latestCheckIn={checkIns14d[checkIns14d.length - 1] ?? null}
+        rows={referenceRows}
+      />
+
       {/* No-Vitals-Yet Empty State */}
       {sortedVitals.length === 0 ? (
         <EmptyState
@@ -588,9 +598,6 @@ export function VitalsPage() {
           })}
         </div>
       </section>
-
-      {/* Illustrative heart/lung motion, thematically separate from the removed Atlas route */}
-      <OrganMotionPanel astronaut={astronaut} latestVital={latest ?? null} rows={referenceRows} />
 
       {/* 7D / 14D / 30D Recharts Visualizations */}
       <VitalsChartsGrid

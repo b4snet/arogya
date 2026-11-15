@@ -39,6 +39,13 @@ interface LungsModelProps extends OrganModelProps {
   paused?: boolean;
 }
 
+interface BrainModelProps extends OrganModelProps {
+  /** Illustrative activity pulse rate in Hz. Not derived from any neural recording. */
+  activityHz?: number;
+  /** Freeze the cycle on a still frame (pause control, reduced motion). */
+  paused?: boolean;
+}
+
 export function ProceduralBrainModel({
   status,
   selected = false,
@@ -46,15 +53,32 @@ export function ProceduralBrainModel({
   reducedMotion = false,
   onSelect,
   onHoverChange,
-}: OrganModelProps) {
+  activityHz,
+  paused = false,
+}: BrainModelProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const neuralRef = useRef<THREE.Group>(null);
+  const pathwayMaterialRef = useRef<THREE.MeshStandardMaterial>(null);
   const accent = statusEmissiveColor(status);
   const emissiveIntensity = selected ? 0.36 : hovered ? 0.24 : status === 'green' ? 0.08 : 0.16;
 
   useFrame((state) => {
-    if (!groupRef.current || reducedMotion) return;
+    if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
+    if (reducedMotion || paused) {
+      groupRef.current.position.y = 0;
+      if (neuralRef.current) neuralRef.current.scale.setScalar(1);
+      if (pathwayMaterialRef.current) pathwayMaterialRef.current.emissiveIntensity = 0.6;
+      return;
+    }
     groupRef.current.position.y = Math.sin(t * 1.4) * 0.008;
+    const hz = activityHz != null && activityHz > 0 ? activityHz : 0.22;
+    const pulse = 0.5 + 0.5 * Math.sin(t * Math.PI * 2 * hz);
+    if (neuralRef.current) neuralRef.current.scale.setScalar(1 + pulse * 0.1);
+    if (pathwayMaterialRef.current) {
+      // Illustrative activity glow only; nothing here is an EEG or neural measurement.
+      pathwayMaterialRef.current.emissiveIntensity = (selected ? 0.9 : 0.45) + pulse * 0.75;
+    }
   });
 
   const sulcusCurveA = useMemo(
@@ -131,6 +155,7 @@ export function ProceduralBrainModel({
       <mesh>
         <tubeGeometry args={[sulcusCurveA, 20, 0.008, 8, false]} />
         <meshStandardMaterial
+          ref={pathwayMaterialRef}
           color={accent}
           emissive={accent}
           emissiveIntensity={selected ? 1.2 : 0.6}
@@ -146,6 +171,31 @@ export function ProceduralBrainModel({
           roughness={0.25}
         />
       </mesh>
+      {/* Illustrative activity nodes — a rhythm proxy, never a neural recording */}
+      <group ref={neuralRef}>
+        {[
+          [-0.07, 0.035, 0.06],
+          [0.02, 0.075, 0.045],
+          [0.075, 0.02, 0.05],
+          [-0.03, -0.02, 0.085],
+          [0.055, -0.05, 0.04],
+          [0, 0.06, -0.055],
+        ].map((position, index) => (
+          <mesh
+            key={index}
+            position={position as unknown as [number, number, number]}
+            scale={0.55 + index * 0.05}
+          >
+            <sphereGeometry args={[0.006, 10, 10]} />
+            <meshStandardMaterial
+              color={accent}
+              emissive={accent}
+              emissiveIntensity={1.1}
+              roughness={0.2}
+            />
+          </mesh>
+        ))}
+      </group>
     </group>
   );
 }
@@ -173,8 +223,9 @@ export function ProceduralHeartModel({
     const t = state.clock.getElapsedTime();
     // A gentle contraction/relaxation pulse: a stylized proxy, not cardiac mechanics.
     const phase = beatHz != null && beatHz > 0 ? t * Math.PI * 2 * beatHz : t * 3.8;
-    const beat = 1 + Math.pow(Math.max(0, Math.sin(phase)), 4) * 0.045;
-    groupRef.current.scale.setScalar(beat);
+    const contraction = Math.pow(Math.max(0, Math.sin(phase)), 4);
+    const beat = 1 + contraction * 0.06;
+    groupRef.current.scale.set(beat, 1 + contraction * 0.04, beat);
   });
 
   const aortaCurve = useMemo(
@@ -184,6 +235,16 @@ export function ProceduralHeartModel({
         new THREE.Vector3(-0.01, 0.11, 0.01),
         new THREE.Vector3(0.03, 0.13, -0.01),
         new THREE.Vector3(0.05, 0.05, -0.03),
+      ]),
+    []
+  );
+
+  const pulmonaryCurve = useMemo(
+    () =>
+      new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-0.02, 0.055, 0.02),
+        new THREE.Vector3(-0.055, 0.095, 0.0),
+        new THREE.Vector3(-0.07, 0.055, -0.03),
       ]),
     []
   );
@@ -234,6 +295,48 @@ export function ProceduralHeartModel({
         <tubeGeometry args={[aortaCurve, 24, 0.016, 12, false]} />
         <meshStandardMaterial color="#dc2626" roughness={0.35} metalness={0.1} />
       </mesh>
+      {/* Pulmonary Artery */}
+      <mesh castShadow>
+        <tubeGeometry args={[pulmonaryCurve, 20, 0.013, 10, false]} />
+        <meshStandardMaterial color="#1d4ed8" roughness={0.38} metalness={0.12} />
+      </mesh>
+      {/* Left & Right Atria */}
+      <mesh position={[-0.045, 0.058, 0.014]} scale={[0.95, 0.8, 0.9]} castShadow>
+        <sphereGeometry args={[0.04, 20, 20]} />
+        <meshPhysicalMaterial
+          color="#b45309"
+          roughness={0.4}
+          metalness={0.06}
+          clearcoat={0.3}
+          emissive={accent}
+          emissiveIntensity={emissiveIntensity * 0.7}
+        />
+      </mesh>
+      <mesh position={[0.038, 0.05, 0.012]} scale={[0.9, 0.75, 0.85]} castShadow>
+        <sphereGeometry args={[0.037, 20, 20]} />
+        <meshPhysicalMaterial
+          color="#92400e"
+          roughness={0.42}
+          metalness={0.06}
+          clearcoat={0.3}
+          emissive={accent}
+          emissiveIntensity={emissiveIntensity * 0.7}
+        />
+      </mesh>
+      {/* Atrioventricular valve rings — generic anatomy, no region is being labelled */}
+      <mesh position={[-0.03, 0.025, 0.02]} rotation={[Math.PI / 2, 0, 0.2]}>
+        <torusGeometry args={[0.021, 0.0035, 8, 28]} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.5} metalness={0.1} />
+      </mesh>
+      <mesh position={[0.028, 0.02, 0.018]} rotation={[Math.PI / 2, 0, -0.2]}>
+        <torusGeometry args={[0.018, 0.003, 8, 28]} />
+        <meshStandardMaterial color="#f8fafc" roughness={0.5} metalness={0.1} />
+      </mesh>
+      {/* Interventricular septum — a shape cue only */}
+      <mesh position={[0.002, -0.02, 0.036]} rotation={[0, 0.1, 0]} scale={[0.35, 1.5, 0.4]}>
+        <sphereGeometry args={[0.038, 16, 16]} />
+        <meshStandardMaterial color="#7f1d1d" roughness={0.55} metalness={0.05} />
+      </mesh>
       {/* Superior Vena Cava */}
       <mesh position={[-0.042, 0.075, -0.012]}>
         <cylinderGeometry args={[0.014, 0.015, 0.09, 14]} />
@@ -271,9 +374,9 @@ export function ProceduralLungsModel({
     }
     const t = state.clock.getElapsedTime();
     const phase = breathHz != null && breathHz > 0 ? t * Math.PI * 2 * breathHz : t * 1.5;
-    const breath = 1 + Math.sin(phase) * 0.035;
-    if (leftRef.current) leftRef.current.scale.set(0.82 * breath, 1.35, 0.72 * breath);
-    if (rightRef.current) rightRef.current.scale.set(0.86 * breath, 1.4, 0.74 * breath);
+    const breath = 1 + Math.sin(phase) * 0.05;
+    if (leftRef.current) leftRef.current.scale.set(0.82 * breath, 1.35 * (1 + (breath - 1) * 0.35), 0.72 * breath);
+    if (rightRef.current) rightRef.current.scale.set(0.86 * breath, 1.4 * (1 + (breath - 1) * 0.35), 0.74 * breath);
   });
 
   return (

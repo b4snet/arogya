@@ -1,12 +1,6 @@
 import { useEffect } from 'react';
 import type { Astronaut, CheckIn } from '../../types';
-import {
-  Pause,
-  Play,
-  RotateCcw,
-  Stethoscope,
-  Timer,
-} from 'lucide-react';
+import { SlidersHorizontal, Stethoscope, Timer } from 'lucide-react';
 import {
   useSimulatedTelemetryStore,
 } from '../../store/useSimulatedTelemetryStore';
@@ -75,20 +69,16 @@ function LiveCard({
 }
 
 /**
- * Simulated live demonstration.
+ * Simulated demonstration values.
  *
- * Uses the shared demonstration timer. Route unmounts preserve an explicitly running stream;
- * only the explicit Stop control ends it. Recorded observations remain untouched.
+ * Uses the shared demonstration timer. Lifecycle controls live in the Mission Simulation
+ * Control Panel; route unmounts preserve an explicitly running stream. Recorded observations
+ * remain untouched.
  */
 export function SimulatedTelemetryPanel({ astronaut, latestCheckIn }: SimulatedTelemetryPanelProps) {
-  const running = useSimulatedTelemetryStore((s) => s.running);
   const points = useSimulatedTelemetryStore((s) => s.points);
   const bpSamples = useSimulatedTelemetryStore((s) => s.bpSamples);
-  const startSimulation = useSimulatedTelemetryStore((s) => s.startSimulation);
   const ensureSubject = useSimulatedTelemetryStore((s) => s.ensureSubject);
-  const stopSimulation = useSimulatedTelemetryStore((s) => s.stopSimulation);
-  const pauseSimulation = useSimulatedTelemetryStore((s) => s.pauseSimulation);
-  const resumeSimulation = useSimulatedTelemetryStore((s) => s.resumeSimulation);
   const takeSimulatedBpReading = useSimulatedTelemetryStore((s) => s.takeSimulatedBpReading);
   const setPageHidden = useSimulatedTelemetryStore((s) => s.setPageHidden);
 
@@ -131,7 +121,7 @@ export function SimulatedTelemetryPanel({ astronaut, latestCheckIn }: SimulatedT
 
   return (
     <section
-      aria-label="Simulated live demonstration telemetry"
+      aria-label="Simulated demonstration telemetry"
       className="rounded-xl border border-[#B45309]/35 bg-[#FFFBEB] p-3 shadow-sm sm:p-4"
     >
       {/* Persistent, non-dismissible demonstration label */}
@@ -149,46 +139,10 @@ export function SimulatedTelemetryPanel({ astronaut, latestCheckIn }: SimulatedT
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => (running ? pauseSimulation() : resumeSimulation())}
-            aria-pressed={!running}
-            className="inline-flex min-h-[34px] min-w-[96px] items-center justify-center gap-1.5 rounded-lg border border-[var(--arogya-border-strong)] bg-white px-2.5 text-xs font-medium text-[var(--arogya-text-primary)] transition-colors hover:bg-[var(--arogya-bg)]"
-          >
-            {running ? (
-              <Pause className="h-3.5 w-3.5" aria-hidden="true" />
-            ) : (
-              <Play className="h-3.5 w-3.5" aria-hidden="true" />
-            )}
-            <span>{running ? 'Pause' : 'Resume'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={stopSimulation}
-            className="inline-flex min-h-[34px] items-center justify-center rounded-lg border border-[var(--arogya-border-strong)] bg-white px-2.5 text-xs font-medium text-[var(--arogya-text-primary)] hover:bg-[var(--arogya-bg)]"
-          >
-            Stop
-          </button>
-
-          <button
-            type="button"
-            onClick={() =>
-              startSimulation({
-                seed,
-                baseHeartRateBpm,
-                baseSpo2Percent,
-                baseSystolicBpMmHg,
-                baseDiastolicBpMmHg,
-              })
-            }
-            className="inline-flex min-h-[34px] min-w-[96px] items-center justify-center gap-1.5 rounded-lg border border-[var(--arogya-border-strong)] bg-white px-2.5 text-xs font-medium text-[var(--arogya-text-primary)] transition-colors hover:bg-[var(--arogya-bg)]"
-          >
-            <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
-            <span>Replay</span>
-          </button>
-        </div>
+        <p className="inline-flex items-center gap-1.5 rounded-md border border-[#B45309]/30 bg-white/70 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-[#92400E]">
+          <SlidersHorizontal className="h-3 w-3" aria-hidden="true" />
+          Controls below
+        </p>
       </div>
 
       <div className="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-3">

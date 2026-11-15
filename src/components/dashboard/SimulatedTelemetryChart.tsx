@@ -55,7 +55,7 @@ export function SimulatedTelemetryChart({ points }: SimulatedTelemetryChartProps
           </div>
           <div>
             <h3 className="text-sm font-semibold tracking-wide text-[var(--arogya-text-primary)]">
-              Simulated live window
+              Simulated demonstration window
             </h3>
             <p className="text-[11px] text-[var(--arogya-text-muted)]">
               Rolling last {SIMULATED_WINDOW_SECONDS}&nbsp;s · not a historical day-range chart

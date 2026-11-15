@@ -109,7 +109,7 @@ export function ReportTrendCharts({ series, startDay, endDay }: ReportTrendChart
       </div>
 
       <p className="text-[10px] leading-relaxed text-[var(--arogya-text-muted)]">
-        Recorded observations only. The simulated live demonstration stream is excluded from
+        Recorded observations only. The simulated demonstration stream is excluded from
         reports, and days without a reading are left as gaps rather than interpolated.
       </p>
     </div>

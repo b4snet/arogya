@@ -346,6 +346,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
         ref={wrapperRef}
         tabIndex={0}
         onKeyDown={handleSceneKeyDown}
+        data-erizon-status={modelStatus}
         className="relative h-[min(72vh,660px)] min-h-[360px] w-full overflow-hidden rounded-2xl border border-[#1e293b] bg-[#050b18]"
         role="region"
         aria-label={`Illustrative 3D flight scene for the ${vehicleName}. Focus this scene and use arrow keys to orbit. Simulated mission context, not live telemetry.`}
@@ -372,10 +373,12 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
         >
           <CanvasContextLossMonitor onLost={() => setWebglFailure('context-lost')} />
           <FrameInvalidator revision={renderRevision} />
-          <ambientLight intensity={0.55} />
-          <directionalLight position={[6, 7, 5]} intensity={2.1} color="#fff7ed" />
-          <directionalLight position={[-7, -3, -6]} intensity={0.65} color="#60a5fa" />
-          <pointLight position={[0, -0.4, 2.4]} intensity={0.45} color="#38bdf8" distance={9} />
+          <ambientLight intensity={0.45} />
+          <hemisphereLight args={['#bfdbfe', '#020617', 0.55]} />
+          <directionalLight position={[6, 7, 5]} intensity={2.2} color="#fff7ed" />
+          <directionalLight position={[-7, -3, -6]} intensity={0.8} color="#60a5fa" />
+          <pointLight position={[0, -0.4, 2.4]} intensity={0.5} color="#38bdf8" distance={9} />
+          <pointLight position={[0, 1.5, -5]} intensity={1.1} color="#7dd3fc" distance={14} />
 
           <AdaptiveSceneFraming radius={modelRadius} />
           <StarField count={starCount} animate={animate} />
@@ -437,6 +440,45 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
             </button>
           </div>
         </div>
+
+        {/* Prominent model-streaming HUD so ERIZON loading is obvious at a glance */}
+        {modelStatus === 'loading' && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="pointer-events-none absolute left-2 top-14 z-10 w-[min(calc(100%-1rem),19rem)] rounded-xl border border-[#7dd3fc]/45 bg-[#050b18]/94 p-2.5 shadow-lg backdrop-blur-sm sm:left-3 sm:top-16"
+          >
+            <p className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-100">
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-[#7dd3fc]" aria-hidden="true" />
+              Streaming Programme ERIZON
+              {modelProgress != null && (
+                <span className="font-mono-tabular text-[#7dd3fc]">{modelProgress}%</span>
+              )}
+            </p>
+            <div
+              role="progressbar"
+              aria-label="Programme ERIZON model download"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={modelProgress ?? undefined}
+              className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10"
+            >
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-[#38bdf8] to-[#a5f3fc] transition-[width] duration-300"
+                style={{ width: `${modelProgress ?? 9}%` }}
+              />
+            </div>
+            <p className="mt-1 text-[9px] leading-snug text-slate-500">
+              Local GLB served unmodified · decorative scene, not live telemetry
+            </p>
+          </div>
+        )}
+
+        {modelStatus === 'loaded' && (
+          <div className="pointer-events-none absolute left-2 top-14 z-10 rounded-lg border border-emerald-400/35 bg-[#052e1b]/90 px-2.5 py-1 text-[10px] font-semibold text-emerald-200 sm:left-3 sm:top-16">
+            Programme ERIZON loaded · ARES-7
+          </div>
+        )}
 
         {/* Telemetry overlay (includes model load/error status so nothing overlaps) */}
         <div className="pointer-events-auto absolute bottom-2 left-2 w-[min(100%-1rem,20rem)] rounded-xl border border-white/15 bg-[#050b18]/88 p-2.5 text-slate-100 shadow-lg backdrop-blur-sm sm:bottom-3 sm:left-3 sm:p-3">

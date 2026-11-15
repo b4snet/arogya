@@ -303,6 +303,9 @@ export function AboutPage() {
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
             Intentional missing values (such as Day 11 blood glucose and Day 7 body mass on AST-02) are included in the demonstration dataset to verify missing-data safety rules. Arogya does not claim live connectivity to NASA flight hardware or real-time spacecraft telemetry.
           </p>
+          <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
+            The Mission Simulation Control Panel runs a clearly labeled, seeded demonstration scenario engine in memory. Its start/pause/resume/reset controls, speed and duration selections, event timeline, and session audit trail are training and demo features only; they never write to recorded observations, assessments, medical reports, Drive exports, or the separate NASA OSD-575 research data.
+          </p>
         </Card>
 
         <Card padding="md" className="space-y-3">
@@ -312,7 +315,7 @@ export function AboutPage() {
             action={<Database className="h-4 w-4 text-[var(--arogya-info)]" aria-hidden="true" />}
           />
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
-            The Vitals research view and dedicated Research Library include 28 archived sample rows from NASA OSDR study OSD-575 (Version 3, DOI 10.26030/mc5d-p710), covering 19 CMP analytes and four source pseudonyms. The Research Library adds cohort coverage, analyte search, and NASA reference context. These research results remain separate from fictional crew records and simulated telemetry; the application does not link or re-identify participants.
+            The Vitals research view and the secondary Research Context page include 28 archived sample rows from NASA OSDR study OSD-575 (Version 3, DOI 10.26030/mc5d-p710), covering 19 CMP analytes and four source pseudonyms. OSD-575 is a SpaceX Inspiration4 pre-flight and post-flight serum metabolic-panel and cytokine study; it is bundled for context and reference tables only. Arogya is not trained on this dataset and makes no model, diagnostic, or live-telemetry claim from it. Research Context adds cohort coverage, analyte search, and NASA reference background. These research results remain separate from fictional crew records and simulated telemetry; the application does not link or re-identify participants.
           </p>
           <p className="text-xs leading-relaxed text-[var(--arogya-text-secondary)]">
             The selected transformed CSV and import provenance are bundled locally; page loading does not depend on NASA availability. Source units and relative timepoint labels are retained, missing values remain missing, and no diagnostic interpretation is applied. The official OSDR OSD-575 Version 3 study page lists CC0-1.0; this license was verified against the official study listing.

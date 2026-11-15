@@ -34,7 +34,7 @@ const ROUTE_TITLES: Record<string, string> = {
   '/check-in': 'Daily Crew Check-In',
   '/vitals': 'Biometric Vitals',
   '/reports': 'Flight Surgeon Briefings',
-  '/research': 'NASA Research Library',
+  '/research': 'Research Context',
   '/mission': 'Mission & Environment',
   '/settings': 'Settings & Crew Profile',
   '/about': 'About, Sources & Licenses',
