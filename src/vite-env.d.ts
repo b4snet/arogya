@@ -5,6 +5,8 @@ interface ImportMetaEnv {
   readonly VITE_GOOGLE_OAUTH_CLIENT_ID?: string;
   /** Optional Drive folder created by this app for report exports. */
   readonly VITE_GOOGLE_DRIVE_EXPORT_FOLDER_ID?: string;
+  /** NASA Open API key for the optional EPIC Earth backdrop. Public in the bundle. */
+  readonly VITE_NASA_API_KEY?: string;
 }
 
 declare module '*.glb' {

@@ -172,6 +172,26 @@
   }
 }
 
+@keyframes earth-drift {
+  from {
+    transform: scale(1.015) translateY(0);
+  }
+  to {
+    transform: scale(1.045) translateY(-1.2%);
+  }
+}
+
+.earth-drift {
+  animation: earth-drift 48s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .earth-drift {
+    animation: none;
+  }
+}
+
 /* Reduced Motion Support (OS preference + manual override) */
 @media (prefers-reduced-motion: reduce) {
   *,

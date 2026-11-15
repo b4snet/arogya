@@ -40,7 +40,6 @@ import {
   describeWindowCoverage,
   filterByObservationWindow,
 } from '../utils/observationWindow';
-import { SAFETY_DISCLAIMER } from '../engine/thresholds';
 
 function formatSourceLabel(source: string): string {
   switch (source) {
@@ -262,11 +261,6 @@ export function VitalsPage() {
           <h1 className="arogya-display text-[var(--arogya-text-primary)]">
             Vitals Monitor
           </h1>
-          <p className="max-w-3xl text-sm text-[var(--arogya-text-secondary)]">
-            A large illustrative organ view beside recorded and simulated-live readouts. Longitudinal
-            tracking compares personal crew baselines separately from general reference ranges.{' '}
-            {SAFETY_DISCLAIMER}
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">

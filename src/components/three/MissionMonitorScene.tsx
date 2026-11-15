@@ -1,40 +1,28 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
-import { Loader2, Orbit, Pause, Play, TriangleAlert } from 'lucide-react';
+import { Orbit, Pause, Play } from 'lucide-react';
 import * as THREE from 'three';
 import type { HealthStatusLevel } from '../../types';
 import { AtlasGltfModel, type GltfLoadStatus } from './DriveOrProceduralModel';
 import { ProceduralAstronautSuit } from './ProceduralOrganModels';
-import { VehicleGltfModel, type VehicleModelResult } from './VehicleGltfModel';
 import { StudioLightingRig, detectWebGLCapability } from './StudioLightingRig';
 import { useDriveMedia } from '../../hooks/useDriveMedia';
+import { useNasaEarthImage } from '../../hooks/useNasaEarthImage';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { resolveVehicleModelCandidates } from '../../engine/missionScene';
 import { STATUS_META } from '../../engine/thresholds';
+import { NasaEarthBackdrop } from './NasaEarthBackdrop';
 
 /**
- * Dashboard hero composition: astronaut in the foreground, Programme ERIZON staged behind.
- * The canvas is transparent over a CSS space backdrop, so the scene stays sharp at any
- * viewport and never depends on an external video or image. Both models are illustrative;
- * the vehicle is the locally served, unmodified Programme ERIZON GLB.
+ * Dashboard hero: the crew member floats in front of the CSS space backdrop.
+ * The composition is illustrative and never renders live telemetry.
  */
 
 const HERO_CAMERA = {
-  position: [0, 1.15, 6.0] as [number, number, number],
+  position: [0, 0.9, 9.6] as [number, number, number],
   fov: 40,
-  lookAt: [0, 1.15, -0.6] as [number, number, number],
+  lookAt: [0, 0.9, 0] as [number, number, number],
 };
-
-function useViewportWidth(): number {
-  const [width, setWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1440);
-  useEffect(() => {
-    const onResize = () => setWidth(window.innerWidth);
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-  return width;
-}
 
 function CameraSetup() {
   const camera = useThree((state) => state.camera) as THREE.PerspectiveCamera;
@@ -107,58 +95,17 @@ function SceneRig({
   return <group ref={ref}>{children}</group>;
 }
 
-function VehicleRig({
-  animate,
-  targetSize,
-  position,
-  onStatusChange,
-  onProgress,
-}: {
-  animate: boolean;
-  targetSize: number;
-  position: [number, number, number];
-  onStatusChange: (result: VehicleModelResult) => void;
-  onProgress: (progress: number | null) => void;
-}) {
-  const ref = useRef<THREE.Group>(null);
-
-  useFrame((state, delta) => {
-    if (!animate || !ref.current) return;
-    ref.current.rotation.y += delta * 0.02;
-    ref.current.position.y = position[1] + Math.sin(state.clock.getElapsedTime() * 0.25) * 0.05;
-  });
-
-  const candidates = useMemo(
-    () => resolveVehicleModelCandidates({ baseUrl: import.meta.env.BASE_URL }).candidates,
-    []
-  );
-
-  return (
-    <group ref={ref} position={position} rotation={[0.16, -0.62, 0.04]}>
-      <VehicleGltfModel
-        candidates={candidates}
-        targetSize={targetSize}
-        onStatusChange={onStatusChange}
-        onProgress={onProgress}
-      />
-    </group>
-  );
-}
-
 interface MissionMonitorSceneProps {
   status: HealthStatusLevel;
   astronautName: string;
 }
 
-type VehicleStatus = VehicleModelResult['status'];
-
 export function MissionMonitorScene({ status, astronautName }: MissionMonitorSceneProps) {
   const { astronautModelUrl } = useDriveMedia();
+  const earthImage = useNasaEarthImage();
   const reducedMotion = useReducedMotion();
-  const viewportWidth = useViewportWidth();
   const webglCapability = useMemo(() => detectWebGLCapability(), []);
   const isSoftwareGl = webglCapability === 'software';
-  const compact = viewportWidth < 900;
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(reducedMotion);
@@ -168,9 +115,6 @@ export function MissionMonitorScene({ status, astronautName }: MissionMonitorSce
   const [inView, setInView] = useState(true);
   const [contextLost, setContextLost] = useState(false);
   const [astronautStatus, setAstronautStatus] = useState<GltfLoadStatus>('procedural');
-  const [vehicleStatus, setVehicleStatus] = useState<VehicleStatus>('loading');
-  const [vehicleProgress, setVehicleProgress] = useState<number | null>(null);
-  const [vehicleDetail, setVehicleDetail] = useState<string | null>(null);
 
   useEffect(() => {
     setPaused(reducedMotion);
@@ -193,31 +137,12 @@ export function MissionMonitorScene({ status, astronautName }: MissionMonitorSce
     return () => observer.disconnect();
   }, []);
 
-  const handleVehicleStatus = useCallback((result: VehicleModelResult) => {
-    setVehicleStatus(result.status);
-    setVehicleDetail(result.detail ?? null);
-  }, []);
-
   const animate = !paused && inView && !tabHidden && !reducedMotion;
-  const vehiclePosition: [number, number, number] = compact
-    ? [0, 2.15, -5.6]
-    : [0.95, 2.0, -4.6];
-  const astronautPosition: [number, number, number] = compact ? [0, 0, 0] : [-0.85, 0, 0];
-  const vehicleTargetSize = compact ? 7.2 : 8.2;
   const unavailable = contextLost || webglCapability === 'unavailable';
-
-  const vehicleLabel = unavailable
-    ? 'ERIZON scene unavailable in this browser'
-    : vehicleStatus === 'loaded'
-    ? 'Programme ERIZON loaded'
-    : vehicleStatus === 'error'
-    ? 'ERIZON unavailable — procedural spacecraft shown'
-    : 'Loading Programme ERIZON';
 
   return (
     <div
       ref={wrapperRef}
-      data-erizon-status={unavailable ? 'unavailable' : vehicleStatus}
       className="relative h-[380px] w-full overflow-hidden rounded-2xl border border-[#1e293b] sm:h-[460px] lg:h-full lg:min-h-[520px]"
       style={{
         backgroundImage: [
@@ -233,8 +158,9 @@ export function MissionMonitorScene({ status, astronautName }: MissionMonitorSce
         ].join(', '),
       }}
       role="region"
-      aria-label={`Interactive 3D astronaut preview for ${astronautName}, with the Programme ERIZON spacecraft staged behind. Static CSS background; illustrative scene, not live telemetry. Drag to orbit the scene.`}
+      aria-label={`Interactive 3D astronaut preview for ${astronautName}, floating over a static CSS space backdrop. Static CSS background; illustrative scene, not live telemetry. Drag to orbit the scene.`}
     >
+      <NasaEarthBackdrop image={earthImage} animate={animate} />
       {unavailable ? (
         <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
           <Orbit className="h-8 w-8 text-[#7dd3fc]" aria-hidden="true" />
@@ -270,29 +196,20 @@ export function MissionMonitorScene({ status, astronautName }: MissionMonitorSce
             maxPolarAngle={Math.PI / 2 + 0.1}
           />
           <StudioLightingRig />
-          <ambientLight intensity={0.28} />
-          <directionalLight position={[-6, 4, -4]} intensity={1.4} color="#38bdf8" />
-          <pointLight position={[3, 1.5, -2]} intensity={0.6} color="#fb923c" distance={12} />
+          <ambientLight intensity={0.3} />
+          <directionalLight position={[-5, 3.5, 3]} intensity={1.5} color="#f8fafc" />
+          <pointLight position={[3, 1.2, 2.5]} intensity={0.55} color="#93c5fd" distance={14} />
           <HeroStars animate={animate} />
           <SceneRig animate={animate}>
-            <VehicleRig
-              animate={animate}
-              targetSize={vehicleTargetSize}
-              position={vehiclePosition}
-              onStatusChange={handleVehicleStatus}
-              onProgress={setVehicleProgress}
+            <AtlasGltfModel
+              modelKey="astronaut"
+              driveUrl={astronautModelUrl}
+              targetHeight={1.76}
+              emissiveTint={STATUS_META[status].colorHex}
+              emissiveIntensity={status === 'green' ? 0.03 : 0.12}
+              onStatusChange={setAstronautStatus}
+              fallback={<ProceduralAstronautSuit visible status={status} />}
             />
-            <group position={astronautPosition}>
-              <AtlasGltfModel
-                modelKey="astronaut"
-                driveUrl={astronautModelUrl}
-                targetHeight={1.76}
-                emissiveTint={STATUS_META[status].colorHex}
-                emissiveIntensity={status === 'green' ? 0.03 : 0.12}
-                onStatusChange={setAstronautStatus}
-                fallback={<ProceduralAstronautSuit visible status={status} />}
-              />
-            </group>
           </SceneRig>
         </Canvas>
       )}
@@ -320,55 +237,14 @@ export function MissionMonitorScene({ status, astronautName }: MissionMonitorSce
         </div>
       </div>
 
-      {/* Vehicle load status: prominent, with real byte progress when available */}
-      <div
-        role="status"
-        aria-live="polite"
-        className="absolute inset-x-3 bottom-3 rounded-xl border border-white/12 bg-[#050b18]/88 px-3 py-2 backdrop-blur-sm"
-      >
-        <div className="flex items-center justify-between gap-2">
-          <p
-            className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${
-              vehicleStatus === 'error' ? 'text-amber-200' : 'text-slate-200'
-            }`}
-          >
-            {vehicleStatus === 'loading' && !unavailable && (
-              <Loader2 className="h-3 w-3 animate-spin text-[#7dd3fc]" aria-hidden="true" />
-            )}
-            {vehicleStatus === 'error' && (
-              <TriangleAlert className="h-3 w-3 shrink-0" aria-hidden="true" />
-            )}
-            <span>{vehicleLabel}</span>
-            {vehicleStatus === 'loading' && !unavailable && vehicleProgress != null && (
-              <span className="font-mono-tabular text-slate-400">{vehicleProgress}%</span>
-            )}
-          </p>
-          <span className="hidden rounded border border-white/15 px-1.5 py-0.5 font-mono-tabular text-[9px] uppercase tracking-wider text-slate-400 sm:inline">
-            Illustrative
-          </span>
-        </div>
-        {vehicleStatus === 'loading' && !unavailable && (
-          <div
-            role="progressbar"
-            aria-label="Programme ERIZON model download"
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-valuenow={vehicleProgress ?? undefined}
-            className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10"
-          >
-            <div
-              className="h-full rounded-full bg-[#7dd3fc] transition-[width] duration-300"
-              style={{ width: `${vehicleProgress ?? 12}%` }}
-            />
-          </div>
-        )}
-        {vehicleStatus === 'error' && vehicleDetail && (
-          <p className="mt-1 text-[10px] leading-snug text-amber-200/80">{vehicleDetail}</p>
-        )}
-        <p className="mt-1 text-[9px] leading-snug text-slate-500">
-          {astronautStatus === 'loaded' ? 'Crew GLB loaded' : 'Crew illustrative model'} · Spacecraft
-          composition is not to scale. Not live NASA telemetry.
+      <div className="pointer-events-none absolute inset-x-3 bottom-3 flex items-center justify-between gap-2">
+        <p className="text-[9px] leading-snug text-slate-400">
+          {astronautStatus === 'loaded' ? 'Crew GLB loaded' : 'Crew illustrative model'} · Not live
+          NASA telemetry.
         </p>
+        <span className="hidden rounded border border-white/15 px-1.5 py-0.5 font-mono-tabular text-[9px] uppercase tracking-wider text-slate-400 sm:inline">
+          Illustrative
+        </span>
       </div>
     </div>
   );
