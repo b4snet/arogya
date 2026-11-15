@@ -23,9 +23,7 @@ import {
   MissionSceneFallback,
   type MissionSceneFailure,
 } from './MissionSceneFallback';
-import { ProceduralSpaceship } from '../three/ProceduralSpaceship';
-
-const proceduralReleaseBuild = import.meta.env.MODE === 'release';
+import { ProgrammeErizonAttribution } from './ProgrammeErizonAttribution';
 
 class MissionCanvasBoundary extends Component<{
   children: ReactNode;
@@ -59,6 +57,16 @@ function CanvasContextLossMonitor({ onLost }: { onLost: () => void }) {
     canvas.addEventListener('webglcontextlost', handleLost);
     return () => canvas.removeEventListener('webglcontextlost', handleLost);
   }, [gl, onLost]);
+
+  return null;
+}
+
+function FrameInvalidator({ revision }: { revision: number }) {
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    invalidate();
+  }, [invalidate, revision]);
 
   return null;
 }
@@ -216,12 +224,13 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
     typeof window !== 'undefined' ? window.innerWidth : 1440
   );
   const [modelSource, setModelSource] = useState<VehicleModelSource>('procedural');
-  const [modelStatus, setModelStatus] = useState<VehicleModelResult['status']>(proceduralReleaseBuild ? 'procedural' : 'loading');
+  const [modelStatus, setModelStatus] = useState<VehicleModelResult['status']>('loading');
   const [modelDetail, setModelDetail] = useState<string | null>(null);
   const [modelProgress, setModelProgress] = useState<number | null>(null);
   const [modelRadius, setModelRadius] = useState(3.3);
   const [webglFailure, setWebglFailure] = useState<MissionSceneFailure | null>(null);
   const [canvasAttempt, setCanvasAttempt] = useState(0);
+  const [renderRevision, setRenderRevision] = useState(0);
 
   const candidates = useMemo(
     () =>
@@ -261,6 +270,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
     setModelStatus(result.status);
     setModelSource(result.status === 'loaded' ? 'programme_erizon' : 'procedural');
     setModelDetail(result.detail ?? null);
+    setRenderRevision((revision) => revision + 1);
   }, []);
 
   const motionMode = resolveSceneMotionMode({ paused, visible: inView && !tabHidden });
@@ -286,6 +296,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
       rigRef.current.position.set(0, 0, 0);
     }
     controlsRef.current?.reset();
+    setRenderRevision((revision) => revision + 1);
   };
 
   const handleSceneKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -308,7 +319,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
   const retryCanvas = () => {
     setWebglFailure(null);
     setCanvasAttempt((attempt) => attempt + 1);
-    setModelStatus(proceduralReleaseBuild ? 'procedural' : 'loading');
+    setModelStatus('loading');
     setModelSource('procedural');
     setModelProgress(null);
     setModelDetail(null);
@@ -354,12 +365,13 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
           }
         >
         <Canvas
-          frameloop={animate ? 'always' : 'never'}
+          frameloop={animate ? 'always' : 'demand'}
           dpr={[1, 1.72]}
           camera={{ position: [0, 1.2, 6.4], fov: 40, near: 0.1, far: 80 }}
           gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         >
           <CanvasContextLossMonitor onLost={() => setWebglFailure('context-lost')} />
+          <FrameInvalidator revision={renderRevision} />
           <ambientLight intensity={0.55} />
           <directionalLight position={[6, 7, 5]} intensity={2.1} color="#fff7ed" />
           <directionalLight position={[-7, -3, -6]} intensity={0.65} color="#60a5fa" />
@@ -371,16 +383,12 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
           <DistantRocks animate={animate} />
 
           <ShipRig rigRef={rigRef} animate={animate}>
-            {proceduralReleaseBuild ? (
-              <ProceduralSpaceship />
-            ) : (
-              <VehicleGltfModel
-                candidates={candidates}
-                onStatusChange={handleModelStatus}
-                onProgress={setModelProgress}
-                onRadiusChange={setModelRadius}
-              />
-            )}
+            <VehicleGltfModel
+              candidates={candidates}
+              onStatusChange={handleModelStatus}
+              onProgress={setModelProgress}
+              onRadiusChange={setModelRadius}
+            />
           </ShipRig>
 
           <OrbitControls
@@ -402,7 +410,7 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
         <div className="pointer-events-none absolute inset-x-2 top-2 flex flex-wrap items-start justify-between gap-2 sm:inset-x-3 sm:top-3">
           <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
             <span className="rounded-full border border-white/15 bg-[#0b1220]/85 px-2.5 py-1 text-[10px] font-semibold text-slate-100 sm:px-3 sm:text-[11px]">
-              {describeVehicleDisplayLabel({ releaseBuild: proceduralReleaseBuild, status: modelStatus })}
+              {describeVehicleDisplayLabel({ status: modelStatus })}
             </span>
             <span className="hidden rounded-full border border-white/10 bg-[#0b1220]/70 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-slate-300 sm:inline">
               Simulated scene
@@ -520,6 +528,8 @@ export function MissionFlightScene({ telemetry, vehicleName }: MissionFlightScen
         </>
         )}
       </div>
+
+      <ProgrammeErizonAttribution />
 
       {/* Clearly separated data-integrity labels */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-3">

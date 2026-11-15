@@ -32,8 +32,6 @@ export function resolveVehicleModelCandidates(params: {
 }): VehicleCandidateResolution {
   const baseUrl = params.baseUrl ?? '/';
 
-  if (import.meta.env.MODE === 'release') return { candidates: [], rejectedExternal: [] };
-
   return {
     candidates: DEFAULT_VEHICLE_GLB_CANDIDATES.map((path) => `${baseUrl}${path}`),
     rejectedExternal: [],
@@ -73,10 +71,8 @@ export function describeVehicleLoadState(state: VehicleModelLoadState): string {
 }
 
 export function describeVehicleDisplayLabel(params: {
-  releaseBuild: boolean;
   status: VehicleModelLoadState;
 }): string {
-  if (params.releaseBuild) return 'Illustrative procedural spacecraft · ARES-7 Transit';
   if (params.status === 'loaded') return 'Programme ERIZON · ARES-7 Transit';
   if (params.status === 'error') return 'Procedural fallback · ARES-7 Transit';
   if (params.status === 'procedural') return 'Illustrative procedural spacecraft · ARES-7 Transit';

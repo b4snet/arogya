@@ -107,12 +107,15 @@ test('model load states clearly distinguish loading, success, and procedural fal
   assert.doesNotMatch(describeVehicleLoadState('error'), /Programme ERIZON loaded\./);
 });
 
-test('public release display labels the procedural ship without implying Programme ERIZON is present', () => {
-  const releaseLabel = describeVehicleDisplayLabel({ releaseBuild: true, status: 'procedural' });
-  assert.match(releaseLabel, /Illustrative procedural spacecraft/);
-  assert.match(releaseLabel, /ARES-7 Transit/);
-  assert.doesNotMatch(releaseLabel, /Programme ERIZON|loaded/i);
-  assert.match(describeVehicleLoadState('procedural'), /simulation only/i);
+test('vehicle display labels follow the actual load state', () => {
+  assert.equal(describeVehicleDisplayLabel({ status: 'loading' }), 'Loading Programme ERIZON · ARES-7 Transit');
+  assert.equal(describeVehicleDisplayLabel({ status: 'loaded' }), 'Programme ERIZON · ARES-7 Transit');
+  assert.equal(describeVehicleDisplayLabel({ status: 'error' }), 'Procedural fallback · ARES-7 Transit');
+  assert.equal(
+    describeVehicleDisplayLabel({ status: 'procedural' }),
+    'Illustrative procedural spacecraft · ARES-7 Transit'
+  );
+  assert.doesNotMatch(describeVehicleDisplayLabel({ status: 'procedural' }), /loaded/i);
 });
 
 test('motion and performance helpers behave predictably', () => {

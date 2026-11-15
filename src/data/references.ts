@@ -1,3 +1,5 @@
+import programmeErizonProvenance from './programmeErizonProvenance.json';
+
 export interface ReferenceSource {
   id: string;
   title: string;
@@ -218,25 +220,25 @@ export const SPACEFLIGHT_REFERENCES: ReferenceSource[] = [
 
 export const THIRD_PARTY_ASSET_ATTRIBUTIONS: AssetAttribution[] = [
   {
-    id: 'asset-programme-erizon',
-    assetName: 'Programme ERIZON spacecraft model',
+    id: programmeErizonProvenance.id,
+    assetName: `${programmeErizonProvenance.title} spacecraft model`,
     type: '3D Geometry',
-    source: 'Programme ERIZON — Sketchfab',
-    creator: 'nejenabinupa',
-    sourceUrl: 'https://sketchfab.com/3d-models/programme-erizon-1dfbae39ee674334848da02301b77d68',
-    license: 'CC BY-NC-ND 4.0 (separate third-party asset license)',
-    licenseUrl: 'https://creativecommons.org/licenses/by-nc-nd/4.0/',
+    source: programmeErizonProvenance.source,
+    creator: programmeErizonProvenance.creator,
+    sourceUrl: programmeErizonProvenance.sourceUrl,
+    license: `${programmeErizonProvenance.licenseShortName} (separate third-party asset license)`,
+    licenseUrl: programmeErizonProvenance.licenseUrl,
     notes:
-      'Creator, title, source, and license are preserved from the GLB metadata. Source-page license verification is pending (the page returned HTTP 403). No copyright notice was supplied in the embedded metadata. NonCommercial and NoDerivatives restrictions require public-release review. The model remains local and is excluded from the initial public release; Arogya code MIT licensing does not cover this asset.',
+      `Creator, title, source, and license were verified against the official Sketchfab source page on ${programmeErizonProvenance.sourcePageVerifiedAt}. The original GLB is included unchanged (SHA-256 ${programmeErizonProvenance.sha256}), with no re-export, decimation, retopology, or other derivative. ${programmeErizonProvenance.commercialUse} ${programmeErizonProvenance.derivatives} Arogya code MIT licensing does not cover this asset.`,
   },
   {
     id: 'asset-procedural-3d',
-    assetName: 'Procedural Astronaut, Organ Illustrations & Mission Spacecraft',
+    assetName: 'Procedural Astronaut, Organ Illustrations & Mission Spacecraft Fallback',
     type: '3D Geometry',
     source: 'Arogya-authored Three.js geometry in src/components/three/ProceduralOrganModels.tsx and ProceduralSpaceship.tsx',
     license: 'MIT License (Project Source)',
     notes:
-      'Used by the public release for the Dashboard astronaut, Vitals heart/lungs and Mission spacecraft. Illustrative project geometry; no third-party model file is shipped.',
+      'Used by the public release for the Dashboard astronaut and Vitals organ illustrations, and as the automatic Mission fallback when the Programme ERIZON GLB cannot load or WebGL is unavailable. Illustrative project geometry; no third-party model file is used here.',
   },
   {
     id: 'asset-local-astronaut-glb',

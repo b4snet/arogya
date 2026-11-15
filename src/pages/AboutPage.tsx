@@ -450,7 +450,8 @@ export function AboutPage() {
               )}
               {asset.id === 'asset-programme-erizon' && (
                 <p className="mt-1 font-semibold text-amber-800">
-                  Separately licensed third-party model; not covered by Arogya’s MIT code license.
+                  Separately licensed third-party model; non-commercial use only, no derivatives;
+                  not covered by Arogya’s MIT code license.
                 </p>
               )}
               <p className="mt-1 text-[var(--arogya-text-muted)]">{asset.notes}</p>
